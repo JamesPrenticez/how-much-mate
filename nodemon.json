@@ -1,0 +1,6 @@
+{
+  "watch": ["apps/lobby/backend/src"],
+  "ext": "ts",
+  "exec": "ts-node apps/lobby/backend/src/main.ts",
+  "ignore": ["dist/*", "node_modules/*"]
+}

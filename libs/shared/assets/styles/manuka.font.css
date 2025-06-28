@@ -1,0 +1,9 @@
+/* Manuka */
+/* Black - 900 */
+@font-face {
+  font-family: "Manuka";
+  src: url("./fonts/manuka-black.woff") format("woff");
+  font-weight: black;
+  font-style: normal;
+  font-display: swap;
+}

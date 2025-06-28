@@ -1,0 +1,154 @@
+:root {
+  /* *************************************************** */
+  /* COlORS
+/* *************************************************** */
+  /* Orange */
+  --color-orange-100-opacity: 242, 153, 74;   /* #f2994a */
+
+  /* Yellow */
+  --color-orange-100-opacity: 255, 214, 10;   /* #ffd60a */
+
+  /* Yellow */
+  --color-purple-100-opacity: 167, 79, 249;   /* #A74FF9 */
+
+  /* Purple */
+  --color-purple-100-opacity: 167, 79, 249;   /* #A74FF9 */
+  --color-purple-80-opacity: 116, 77, 255;    /* #744DFF */
+  --color-purple-60-opacity: 192, 128, 251;   /* #C080FB */
+  --color-purple-40-opacity: 255, 107, 235;   /* #FF6BEB */
+  --color-purple-20-opacity: 242, 164, 242;   /* #F2A4F2 */
+
+  /* Green */
+  --color-green-100-opacity: 34, 139, 34; /* #228B22 */
+  --color-green-80-opacity: 50, 205, 50; /* #32CD32 */
+  --color-green-60-opacity: 77, 218, 77; /* #4DDA4D */
+  --color-green-40-opacity: 102, 230, 102; /* #66E666 */
+  --color-green-20-opacity: 144, 238, 144; /* #90EE90 */
+
+  /* Blue */
+  --color-blue-100-opacity: 117, 222, 255; /*#75deff;*/
+  --color-blue-80-opacity: 147, 194, 232; /*#93c2e8;*/
+  --color-blue-60-opacity: 144, 189, 227; /*#90bde3;*/
+  --color-blue-40-opacity: 99, 131, 158; /*#63839e;*/
+  --color-blue-20-opacity: 171, 171, 171; /*#ababab;*/
+
+  /* Gold */
+  --color-gold-100-opacity: 255, 221, 170; /*#ffddaa;*/
+  --color-gold-80-opacity: 255, 210, 158; /*#ffd29e;*/
+  --color-gold-60-opacity: 255, 209, 123; /*#ffd17b;*/
+  --color-gold-40-opacity: 205, 177, 135; /*#cdb187;*/
+  --color-gold-20-opacity: 129, 107, 81; /*#816b51;*/
+
+  /* RAG */
+  --color-rag-green-opacity: 50, 205, 50; /*#32CD32;*/
+  --color-rag-amber-opacity: 255, 166, 0; /*#ffa600;*/
+  --color-rag-red-opacity: 255, 0, 0; /*#ff0000;*/
+
+  /* White */
+  --color-white-100-opacity: 255, 255, 255; /*#ffffff;*/
+  --color-white-80-opacity: 248, 248, 255; /*#f8f8ff;*/
+  --color-white-60-opacity: 208, 208, 208; /*#d0d0d0;*/
+  --color-white-40-opacity: 200, 200, 200; /*#c8c8c8;*/ 
+  --color-white-20-opacity: 230, 230, 230; /*#e6e6e6;*/
+
+  /* Grey */
+  --color-grey-100-opacity: 96, 96, 96;     /* #606060 */
+  --color-grey-80-opacity: 128, 128, 128;   /* #808080 */
+  --color-grey-60-opacity: 160, 160, 160;   /* #a0a0a0 */
+  --color-grey-40-opacity: 192, 192, 192;   /* #c0c0c0 */
+  --color-grey-20-opacity: 224, 224, 224;   /* #e0e0e0 */
+
+  /* Dark Grey */
+  --color-dark-grey-100-opacity: 51, 51, 51; /*#333333;*/
+  --color-dark-grey-90-opacity: 55, 57, 61; /*#37393D;*/
+  --color-dark-grey-80-opacity: 67, 67, 67; /*#434343;*/
+  --color-dark-grey-60-opacity: 76, 76, 76; /*#4c4c4c;*/
+  --color-dark-grey-40-opacity: 81, 81, 81; /*#515151;*/
+  --color-dark-grey-30-opacity: 90, 90, 90; /*#5a5a5a;*/
+  --color-dark-grey-20-opacity: 102, 102, 102; /*#666666;*/
+  --color-dark-grey-10-opacity: 118, 118, 118; /*#767676*/
+
+  /* Black */
+  --color-black-100-opacity: 0, 0, 0; /*#000000;*/
+  --color-black-90-opacity: 9, 9, 10; /*#09090A;*/
+  --color-black-80-opacity: 13, 13, 13; /*#0d0d0d;*/
+  --color-black-70-opacity: 18, 18, 18; /*#121212;*/
+  --color-black-60-opacity: 21, 21, 21; /*#151515;*/
+  --color-black-40-opacity: 32, 32, 32; /*#202020;*/
+  --color-black-20-opacity: 44, 44, 44; /*#2c2c2c;*/
+  /* *************************************************** */
+  /* OTHER
+/* *************************************************** */
+  /* Blur / Filters */
+  --filter-blur-primary: blur(10px);
+
+  /* Strokes / Borders */
+  --border-thickness: calc(max(0.1rem, 1px));
+}
+
+:root {
+  /* Purple */
+  --color-purple-100: rgb(var(--color-purple-100-opacity));
+  --color-purple-80: rgb(var(--color-purple-80-opacity));
+  --color-purple-60: rgb(var(--color-purple-60-opacity));
+  --color-purple-40: rgb(var(--color-purple-40-opacity));
+  --color-purple-20: rgb(var(--color-purple-20-opacity));
+
+  /* Green */
+  --color-green-100: rgb(var(--color-green-100-opacity));
+  --color-green-80: rgb(var(--color-green-80-opacity));
+  --color-green-60: rgb(var(--color-green-60-opacity));
+  --color-green-40: rgb(var(--color-green-40-opacity));
+  --color-green-20: rgb(var(--color-green-20-opacity));
+
+  /* Blue */
+  --color-blue-100: rgb(var(--color-blue-100-opacity));
+  --color-blue-80: rgb(var(--color-blue-80-opacity));
+  --color-blue-60: rgb(var(--color-blue-60-opacity));
+  --color-blue-40: rgb(var(--color-blue-40-opacity));
+  --color-blue-20: rgb(var(--color-blue-20-opacity));
+
+  /* Gold */
+  --color-gold-100: rgb(var(--color-gold-100-opacity));
+  --color-gold-80: rgb(var(--color-gold-80-opacity));
+  --color-gold-60: rgb(var(--color-gold-60-opacity));
+  --color-gold-40: rgb(var(--color-gold-40-opacity));
+  --color-gold-20: rgb(var(--color-gold-20-opacity));
+
+  /* RAG */
+  --color-rag-green: rgb(var(--color-rag-green-opacity));
+  --color-rag-amber: rgb(var(--color-rag-amber-opacity));
+  --color-rag-red: rgb(var(--color-rag-red-opacity));
+
+  /* White */
+  --color-white-100: rgb(var(--color-white-100-opacity));
+  --color-white-80: rgb(var(--color-white-80-opacity));
+  --color-white-60: rgb(var(--color-white-60-opacity));
+  --color-white-40: rgb(var(--color-white-40-opacity));
+  --color-white-20: rgb(var(--color-white-20-opacity));
+
+  /* Grey */
+  --color-grey-100: rgb(var(--color-grey-100-opacity));
+  --color-grey-80: rgb(var(--color-grey-80-opacity));
+  --color-grey-60: rgb(var(--color-grey-60-opacity));
+  --color-grey-40: rgb(var(--color-grey-40-opacity));
+  --color-grey-20: rgb(var(--color-grey-20-opacity));
+
+  /* Dark Grey */
+  --color-dark-grey-100: rgb(var(--color-dark-grey-100-opacity));
+  --color-dark-grey-90: rgb(var(--color-dark-grey-90-opacity));
+  --color-dark-grey-80: rgb(var(--color-dark-grey-80-opacity));
+  --color-dark-grey-60: rgb(var(--color-dark-grey-60-opacity));
+  --color-dark-grey-40: rgb(var(--color-dark-grey-40-opacity));
+  --color-dark-grey-30: rgb(var(--color-dark-grey-30-opacity));
+  --color-dark-grey-20: rgb(var(--color-dark-grey-20-opacity));
+  --color-dark-grey-10: rgb(var(--color-dark-grey-10-opacity));
+
+  /* Black */
+  --color-black-100: rgb(var(--color-black-100-opacity));
+  --color-black-80: rgb(var(--color-black-80-opacity));
+  --color-black-70: rgb(var(--color-black-70-opacity));
+  --color-black-60: rgb(var(--color-black-60-opacity));
+  --color-black-40: rgb(var(--color-black-40-opacity));
+  --color-black-20: rgb(var(--color-black-20-opacity));
+}

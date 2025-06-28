@@ -1,0 +1,52 @@
+/* NOTE: Here as a fallback for when themes aren't applied yet, i.e. the data hasn't come from the server etc or someone has missed a variable in a theme */
+
+:root {
+  --color-base-black: 0 0 0;
+  --color-base-white: 255 255 255;
+  /* RGB values to pass in as CSS variables for change in opacity */
+  --color-primary-opacity: var(--color-base-white);
+  --color-secondary-opacity: var(--color-base-black);
+  --color-accent-opacity: var(--color-base-black);
+
+  --color-action-opacity: var(--color-base-black);
+  --color-action-hover-opacity: var(--color-base-black);
+  --color-focus-opacity: var(--color-base-black);
+  --color-disabled-opacity: var(--color-base-black);
+
+  --color-border-opacity: var(--color-grey-80-opacity);
+  --color-border-accent-opacity: var(--color-base-black);
+
+  --color-background-opacity: var(--color-black-20-opacity);
+
+  --color-text-opacity: var(--color-white-80-opacity);
+  --color-text-accent-opacity: var(--color-base-black);
+
+  --color-theme-white-opacity: var(--color-base-black);
+  --color-theme-black-opacity: var(--color-base-black);
+
+  --theme-background-opacity: 1;
+  --theme-border-opacity: 1;
+
+  --color-dark-black: rgb(var(--color-base-black));
+  --color-light-black: rgb(var(--color-base-black));
+
+  --color-primary: rgb(var(--color-primary-opacity));
+  --color-secondary: rgb(var(--color-secondary-opacity));
+  --color-accent: rgb(var(--color-accent-opacity));
+
+  --color-action: rgb(var(--color-action-opacity));
+  --color-action-hover: rgb(var(--color-action-hover-opacity));
+  --color-focus: rgb(var(--color-focus-opacity));
+  --color-disabled: rgb(var(--color-disabled-opacity));
+
+  --color-border: rgb(var(--color-border-opacity));
+  --color-border-accent: rgb(var(--color-border-accent-opacity));
+
+  --color-background: rgb(var(--color-background-opacity));
+
+  --color-text: rgb(var(--color-text-opacity));
+  --color-text-accent: rgb(var(--color-text-accent-opacity));
+
+  --color-theme-white: rgb(var(--color-theme-white-opacity));
+  --color-theme-black: rgb(var(--color-theme-black-opacity));
+}

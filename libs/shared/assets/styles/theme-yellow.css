@@ -1,0 +1,41 @@
+.theme-yellow {
+  --color-primary-opacity: 220, 130, 50;           /* #dc8232 brick orange darker */
+  --color-secondary-opacity: 145, 124, 92;         /* #917c5c timber tan */
+  --color-accent-opacity: 255, 214, 10;            /* #ffd60a hi-vis yellow */
+
+  --color-action-opacity: 220, 130, 50;            /* #dc8232 */
+  --color-action-hover-opacity: 242, 153, 74;      /* #f2994a */
+  --color-focus-opacity: 255, 214, 10;             /* #ffd60a */
+  --color-disabled-opacity: 200, 200, 200;         /* #c8c8c8 */
+
+  --color-border-opacity: 145, 124, 92;            /* #917c5c */
+  --color-border-accent-opacity: 220, 130, 50;     /* #dc8232 */
+
+  --color-text-opacity: 33, 33, 33;                /* #212121 dark text */
+  --color-text-subtle-opacity: 100, 100, 100;      /* #646464 */
+  --color-text-accent-opacity: 220, 130, 50;       /* #dc8232 */
+
+  --color-background-opacity: 250, 250, 250;       /* #fafafa concrete pale */
+  --color-background-subtle-opacity: 240, 240, 240;/* #f0f0f0 */
+}
+
+.theme-yellow {
+  --color-primary: rgb(var(--color-primary-opacity));
+  --color-secondary: rgb(var(--color-secondary-opacity));
+  --color-accent: rgb(var(--color-accent-opacity));
+
+  --color-action: rgb(var(--color-action-opacity));
+  --color-action-hover: rgb(var(--color-action-hover-opacity));
+  --color-focus: rgb(var(--color-focus-opacity));
+  --color-disabled: rgb(var(--color-disabled-opacity));
+
+  --color-border: rgb(var(--color-border-opacity));
+  --color-border-accent: rgb(var(--color-border-accent-opacity));
+
+  --color-text: rgb(var(--color-text-opacity));
+  --color-text-subtle: rgb(var(--color-text-subtle-opacity));
+  --color-text-accent: rgb(var(--color-text-accent-opacity));
+
+  --color-background: rgb(var(--color-background-opacity));
+  --color-background-subtle: rgb(var(--color-background-subtle-opacity));
+}

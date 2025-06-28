@@ -1,0 +1,68 @@
+/* NOTE: If fonts aren't working make sure vite.config server allows paths to @shared */
+/* NOTE: OTF files dont work needa convert to woff */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800;900&display=swap');
+
+/* @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash:wght@400;700&display=swap'); */
+/* Berkshire Swash */
+/* Miltonian Tattoo  */
+/* MedievalSharp  */
+/* IM Fell English SC */
+
+/* Aronui */
+@font-face {
+  font-family: "Aronui";
+  src: url("../fonts/aronui-regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aronui";
+  src: url("../fonts/aronui-bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Aux Mono */
+/* Normal - 400 */
+@font-face {
+  font-family: "Aux Mono";
+  src: url("../fonts/aux-mono.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Enduro */
+/* Normal - 400 */
+@font-face {
+  font-family: "Enduro";
+  src: url("../fonts/enduro.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Manuka */
+/* Normal - 400 */
+@font-face {
+  font-family: "Manuka";
+  src: url("../fonts/manuka-regular.woff") format("woff");
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Manuka */
+/* Black - 900 */
+@font-face {
+  font-family: "Manuka Black";
+  src: url("../fonts/manuka-black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}

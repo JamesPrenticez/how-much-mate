@@ -1,0 +1,74 @@
+:root {
+  font-family: Aronui, Quicksand, sans-serif, system-ui;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: #151515;
+  background-color: #dadada;
+
+  font-synthesis: none;
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+a,
+a:visited,
+a:hover,
+a:active {
+  all: unset;
+}
+
+@media only screen {
+    html,
+    body {
+        font-size: calc((min(100vw, (1920 / 1080) * 100vh) / 1920) * 10);
+    }
+}
+
+@media only screen and (max-width: 768px) and (orientation: portrait) {
+    html,
+    body {
+        font-size: var(
+            --mobile-font-size,
+            calc(
+                (
+                    min(
+                        var(--mobile-multiplier, 100vh),
+                        (var(--mobile-base-width, 932) * 1px)
+                    ) /
+                    var(--mobile-base-width, 932)
+                ) *
+                10
+            )
+        );
+    }
+}
+/* a {
+  all: unset;
+  color: lime;
+  text-decoration: underline;
+  cursor: pointer;
+} */
+
+/* a:visited {
+  color: fuchsia;
+}
+
+a:hover {
+  color: lime;
+  text-decoration: underline;
+}
+
+a:active {
+  color: fuchsia;
+} */
