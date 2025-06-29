@@ -4,9 +4,8 @@
 /* *************************************************** */
   /* Orange */
   --color-orange-100-opacity: 242, 153, 74;   /* #f2994a */
-
-  /* Yellow */
-  --color-orange-100-opacity: 255, 214, 10;   /* #ffd60a */
+  --color-orange-dark-100-opacity: 242, 153, 74;   /* #f2994a */
+  --color-orange-light-100-opacity: 145, 124, 92;   /* #917c5c */
 
   /* Yellow */
   --color-purple-100-opacity: 167, 79, 249;   /* #A74FF9 */
@@ -87,6 +86,12 @@
 }
 
 :root {
+  /* Orange */
+  --color-orange-100: rgb(var(--color-orange-100-opacity));
+  --color-orange-dark-100: rgb(var(--color-orange-dark-100-opacity));
+  --color-orange-light-100: rgb(var(--color-orange-light-100-opacity));
+
+
   /* Purple */
   --color-purple-100: rgb(var(--color-purple-100-opacity));
   --color-purple-80: rgb(var(--color-purple-80-opacity));

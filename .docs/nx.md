@@ -24,7 +24,8 @@ operable program or batch file.
 ```bash
 npm install --save-dev @nx/react
 npx nx g @nx/react:application dice-magic-app --directory=apps/dice-magic/app
-npx nx g @nx/react:application comoponent-library --directory=apps/component-library/app
+npx nx g @nx/react:application component-library --directory=apps/component-library/app
+npx nx g @nx/react:application website-app --directory=apps/website/app
 ```
 
 ### App - BACKEND - Express

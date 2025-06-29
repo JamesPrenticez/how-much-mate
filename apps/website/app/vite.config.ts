@@ -7,14 +7,12 @@ import path from 'path';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../../node_modules/.vite/apps/component-library/app',
+  cacheDir: '../../../node_modules/.vite/apps/website/app',
   server: {
-    port: 4201,
+    port: 4200,
     host: 'localhost',
     fs: {
-      allow: [
-        path.resolve(__dirname, '../../../libs/shared'),
-      ],
+      allow: [path.resolve(__dirname, '../../../libs/shared')],
     },
   },
   preview: {
@@ -27,7 +25,7 @@ export default defineConfig({
   //  plugins: [ nxViteTsPaths() ],
   // },
   build: {
-    outDir: '../../../dist/apps/component-library/app',
+    outDir: '../../../dist/apps/website/app',
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {

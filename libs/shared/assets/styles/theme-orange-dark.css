@@ -1,15 +1,15 @@
-.theme-orange {
-  --color-primary-opacity: 242, 153, 74;            /* #f2994a brick orange */
+.theme-orange-dark {
+  --color-primary-opacity: 242, 153, 74;            /* #fda82f or #fda82f brick orange */
   --color-secondary-opacity: 108, 92, 68;           /* #6c5c44 timber brown */
   --color-accent-opacity: 255, 214, 10;             /* #ffd60a hi-vis yellow */
 
-  --color-action-opacity: 242, 153, 74;             /* #f2994a */
+  --color-action-opacity: 242, 153, 74;             /* #fda82f */
   --color-action-hover-opacity: 220, 130, 50;       /* #dc8232 */
   --color-focus-opacity: 255, 214, 10;              /* #ffd60a */
   --color-disabled-opacity: 153, 153, 153;          /* #999999 */
 
   --color-border-opacity: 108, 92, 68;              /* #6c5c44 */
-  --color-border-accent-opacity: 242, 153, 74;      /* #f2994a */
+  --color-border-accent-opacity: 242, 153, 74;      /* #fda82f */
 
   --color-text-opacity: 248, 248, 255;              /* #F8F8FF */
   --color-text-subtle-opacity: 170, 170, 170;       /* #aaaaaa */
@@ -19,7 +19,7 @@
   --color-background-subtle-opacity: 60, 60, 60;    /* #3c3c3c */
 }
 
-.theme-orange {
+.theme-orange-dark {
   --color-primary: rgb(var(--color-primary-opacity));
   --color-secondary: rgb(var(--color-secondary-opacity));
   --color-accent: rgb(var(--color-accent-opacity));

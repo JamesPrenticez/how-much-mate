@@ -21,13 +21,6 @@ body,
   margin: 0;
 }
 
-a,
-a:visited,
-a:hover,
-a:active {
-  all: unset;
-}
-
 @media only screen {
     html,
     body {

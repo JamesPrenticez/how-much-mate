@@ -1,5 +1,0 @@
-procs:
-  'dice-magic:server':
-    shell: 'nx serve dice-magic-server'
-  'dice-magic:app':
-    shell: 'nx serve dice-magic-app'

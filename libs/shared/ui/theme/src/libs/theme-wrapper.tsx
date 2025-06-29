@@ -15,8 +15,8 @@ export enum Themes {
   BLUE = 'blue',
   GREEN = 'green',
   PURPLE = 'purple',
-  ORANGE = 'orange',
-  YELLOW = 'yellow',
+  ORANGE_DARK = 'orange-dark',
+  ORANGE_LIGHT = 'orange-light',
 }
 
 export interface Theme {

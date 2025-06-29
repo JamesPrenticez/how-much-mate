@@ -2,12 +2,13 @@ import type { HTMLAttributes } from 'react';
 import styled from '@emotion/styled'
 
 const Container = styled.h1`
-  font-family: 'Orbitron', monospace;
-  color: var(--color-white-80);
-  font-size: 2.8rem;
-  letter-spacing: 0.2rem;
+  font-family: 'Aronui', monospace;
+  color: var(--color-text);
+  font-size: 3.6rem;
+  font-weight: 900;
+  letter-spacing: -0.1rem;
 `
-interface TitleProps extends HTMLAttributes<HTMLHeadingElement>{};
+type TitleProps = HTMLAttributes<HTMLHeadingElement>;
 
 export const Title = ({ children, ...props }: TitleProps) => {
   return (
