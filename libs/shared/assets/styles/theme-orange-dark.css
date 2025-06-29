@@ -1,21 +1,21 @@
 .theme-orange-dark {
-  --color-primary-opacity: 242, 153, 74;            /* #fda82f or #fda82f brick orange */
-  --color-secondary-opacity: 108, 92, 68;           /* #6c5c44 timber brown */
-  --color-accent-opacity: 255, 214, 10;             /* #ffd60a hi-vis yellow */
+  --color-primary-opacity: 253, 168, 47;            /* #fda82f */
+  --color-secondary-opacity: 108, 92, 68;           /* #6c5c44 */
+  --color-accent-opacity: 255, 214, 10;             /* #ffd60a */
 
-  --color-action-opacity: 242, 153, 74;             /* #fda82f */
+  --color-action-opacity: 253, 168, 47;             /* #fda82f */
   --color-action-hover-opacity: 220, 130, 50;       /* #dc8232 */
   --color-focus-opacity: 255, 214, 10;              /* #ffd60a */
   --color-disabled-opacity: 153, 153, 153;          /* #999999 */
 
   --color-border-opacity: 108, 92, 68;              /* #6c5c44 */
-  --color-border-accent-opacity: 242, 153, 74;      /* #fda82f */
+  --color-border-accent-opacity: 253, 168, 47;      /* #fda82f */
 
   --color-text-opacity: 248, 248, 255;              /* #F8F8FF */
   --color-text-subtle-opacity: 170, 170, 170;       /* #aaaaaa */
   --color-text-accent-opacity: 255, 214, 10;        /* #ffd60a */
 
-  --color-background-opacity: 33, 33, 33;           /* #212121 concrete dark */
+  --color-background-opacity: 33, 33, 33;           /* #212121 */
   --color-background-subtle-opacity: 60, 60, 60;    /* #3c3c3c */
 }
 
