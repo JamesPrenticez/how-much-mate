@@ -10,7 +10,7 @@ const Container = styled.div`
   padding: 0rem 2rem;
   height: 6rem;
   gap: 0.5rem;
-  background-color: var(--color-background);
+  background-color: var(--color-background-strong);
 
 
 `;
@@ -21,7 +21,7 @@ const LogoNavLink = styled(NavLink)`
   height: 100%;
   gap: 1rem;
 
-    :hover {
+  :hover {
     display: flex;
   }
 
