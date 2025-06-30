@@ -103,16 +103,13 @@ export enum InputVariants {
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant?: InputVariants;
-  isMobile?: boolean;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ variant = InputVariants.DEFAULT, isMobile, ...rest }, ref) => {
+  ({ variant = InputVariants.DEFAULT, ...rest }, ref) => {
     return (
       <InputContainer
-        className={clsx(variant, {
-          mobile: isMobile,
-        })}
+        className={clsx(variant)}
         ref={ref}
         {...rest}
       />

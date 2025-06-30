@@ -17,6 +17,11 @@
 
   --color-background-opacity: 33, 33, 33;           /* #212121 */
   --color-background-subtle-opacity: 60, 60, 60;    /* #3c3c3c */
+
+  --color-background-opacity: 33, 33, 33;          /* #212121 */
+  --color-background-weak-opacity: 44, 44, 44;     /* #2c2c2c */
+  --color-background-medium-opacity: 60, 60, 60;   /* #3c3c3c */
+  --color-background-strong-opacity: 33, 33, 33;   /* #212121 */
 }
 
 .theme-orange-dark {
@@ -37,5 +42,7 @@
   --color-text-accent: rgb(var(--color-text-accent-opacity));
 
   --color-background: rgb(var(--color-background-opacity));
-  --color-background-subtle: rgb(var(--color-background-subtle-opacity));
+  --color-background-weak: rgb(var(--color-background-weak-opacity));
+  --color-background-medium: rgb(var(--color-background-medium-opacity));
+  --color-background-strong: rgb(var(--color-background-strong-opacity));
 }

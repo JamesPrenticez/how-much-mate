@@ -13,18 +13,18 @@ const Container = styled.div`
   width: 30rem;
   max-width: 30rem;
 
-  background-color: var(--color-black-80);
+  background-color: var(--color-background-strong);
 
   user-select: none;
 
   .title {
-    color: var(--color-grey-20);
+    color: var(--color-text-subtle);
     font-size: 2rem;
   }
 
   .nav-item {
     font-size: 2rem;
-    color: var(--color-grey-40);
+    color: var(--color-text-subtle);
     padding: 0.5rem 1.5rem;
     border-radius: 0.75rem;
     transition: color ease-in-out 200ms;
@@ -32,11 +32,12 @@ const Container = styled.div`
 
     :hover,
     :focus-visible {
-      background-color: var(--color-black-20);
+      background-color: var(--color-primary);
     }
 
     &.active {
-      color: var(--color-primary);
+      color: var(--color-secondary);
+      background-color: var(--color-primary);
     }
   }
 `;

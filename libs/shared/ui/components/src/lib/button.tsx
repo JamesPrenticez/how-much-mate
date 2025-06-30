@@ -113,12 +113,11 @@ export const Button = ({
   variant = ButtonVariants.DEFAULT,
   children,
   onClick,
-  isMobile,
   ...rest
 }: ButtonProps) => {
   return (
     <ButtonContainer
-      className={clsx(variant, { mobile: isMobile })}
+      className={clsx(variant)}
       onClick={onClick}
       {...rest}
     >

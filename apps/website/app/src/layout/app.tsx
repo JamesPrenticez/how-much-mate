@@ -23,13 +23,12 @@ const Container = styled.div`
     flex-grow: 1;
     height: calc(100dvh - 6rem); // deduct height of navnar
     overflow-y: auto;
-    background-color: var(--color-black-20);
-    border-radius: 0.5rem;
+    background-color: var(--color-background-medium);
 
     /* margin: 1rem; */
     padding: 1rem;
 
-    color: var(--color-white-100);
+    color: var(--color-text);
     font-size: 1.8rem;
   }
 `;
