@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input, InputVariants } from '@shared/components';
 import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { calculateVolume } from '@shared/utils';
 import { SlabResults } from './slab.results';
@@ -45,13 +45,13 @@ export const SlabForm = () => {
   const [dimensions, setDimensions] = useState<Volume | null>(null);
 
   // Watch all fields
-  const values = watch();
+  const values = useWatch({ control }); // returns current form values
 
   useEffect(() => {
     if (
-      typeof values.width === 'number' &&
-      typeof values.height === 'number' &&
-      typeof values.depth === 'number'
+      typeof values?.width === 'number' &&
+      typeof values?.height === 'number' &&
+      typeof values?.depth === 'number'
     ) {
       setResult(calculateVolume(values.width, values.height, values.depth));
       setDimensions({
@@ -60,8 +60,7 @@ export const SlabForm = () => {
         depth: values.depth,
       });
     }
-  }, [values]);
-
+  }, [values?.width, values?.height, values?.depth]);
   return (
     <Container>
       <FormContainer>

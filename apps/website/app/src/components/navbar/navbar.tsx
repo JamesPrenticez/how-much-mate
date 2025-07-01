@@ -4,6 +4,7 @@ import { Title } from '@shared/components';
 import { NavLink } from 'react-router-dom';
 import { Path } from '../../models/paths';
 import { UnitSystemChanger } from './unit-system-changer';
+import { MobileMenu } from './mobile-menu';
 
 const Container = styled.div`
   display: flex;
@@ -55,6 +56,10 @@ export const Navbar = () => {
 
       <div>
         <UnitSystemChanger />
+      </div>
+
+      <div>
+        <MobileMenu />
       </div>
     </Container>
   );

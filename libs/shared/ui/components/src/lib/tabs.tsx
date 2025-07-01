@@ -19,7 +19,7 @@ const Tab = styled.div`
   height: 5rem;
   cursor: pointer;
 
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Aronui', sans-serif;
   font-size: 3rem;
   font-weight: 700;
 

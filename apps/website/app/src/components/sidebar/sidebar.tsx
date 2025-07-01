@@ -3,6 +3,7 @@ import { COMPONENT_DATA } from '../../data/components.data';
 import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
 import { Path } from '../../models/paths';
+import { device } from "@shared/hooks"
 
 const Container = styled.div`
   display: flex;
@@ -39,6 +40,10 @@ const Container = styled.div`
       color: var(--color-secondary);
       background-color: var(--color-primary);
     }
+  }
+
+  @media ${device.tablet} {
+    display: none;
   }
 `;
 
