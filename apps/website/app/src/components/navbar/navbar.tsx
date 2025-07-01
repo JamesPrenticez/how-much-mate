@@ -3,6 +3,7 @@ import TowlSVG from '../../assets/icons/calc.svg?react';
 import { Title } from '@shared/components';
 import { NavLink } from 'react-router-dom';
 import { Path } from '../../models/paths';
+import { UnitSystemChanger } from './unit-system-changer';
 
 const Container = styled.div`
   display: flex;
@@ -11,8 +12,6 @@ const Container = styled.div`
   height: 6rem;
   gap: 0.5rem;
   background-color: var(--color-background-strong);
-
-
 `;
 
 const LogoNavLink = styled(NavLink)`
@@ -53,6 +52,10 @@ export const Navbar = () => {
           HowMuchMate<span className="primary">.</span>
         </Title>
       </LogoNavLink>
+
+      <div>
+        <UnitSystemChanger />
+      </div>
     </Container>
   );
 };

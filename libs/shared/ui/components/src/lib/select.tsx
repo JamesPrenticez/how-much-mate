@@ -1,180 +1,198 @@
-import styled from '@emotion/styled';
-import clsx from 'clsx';
-// import Chevron from '@shared/assets/icons/chevron.icon.svg?react' // what a waste of time
+import React, { useState, useRef, useEffect, type ReactNode } from 'react'
+import styled from '@emotion/styled'
 
-const SelectWrapper = styled.div`
+const Container = styled.div`
   position: relative;
-  display: flex;
-  width: fit-content;
-  height: fit-content;
-  
-  .chevron {
-    position: absolute;
-    pointer-events: none;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3rem;
-    height: 3rem;
-  }
-`;
+  width: 100%; // space for caret
 
-const SelectContainer = styled.select`
-  appearance: none;
-  width: fit-content;
-
-  color: var(--color-text);
-  font-size: 3rem;
-  line-height: 4.44rem;
-  font-weight: 400;
-
-  outline: none;
-  border-radius: 0.8rem;
-  border: var(--color-border) solid 0.2rem;
-  box-sizing: border-box;
-
-  padding: 0.5rem 3rem 0.5rem 1.5rem;
-  margin: 0rem;
-
-  transition: all 300ms ease;
   cursor: pointer;
-  background-color: var(--color-background);
+  user-select: none;
+`
 
+const Selected = styled.div<{ isOpen: boolean }>`
+  font-size: 1.6rem;
+  padding: 1rem;
+  border: 0.1rem solid var(--color-border, #ccc);
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  color: var(--color-text, #333);
+  background: var(--color-background, #fff);
+  position: relative;
 
-  &.mobile {
-    font-size: 2rem;
-    line-height: 2rem;
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary, blue);
   }
+`
 
-  &.default {
-    color: var(--color-text);
-    background-color: var(--color-background);
-    border-color: var(--color-border);
+const Caret = styled.div`
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-text, #333);
+`
 
-    :focus-visible {
-      border: 0.2rem var(--color-primary) solid;
-    }
+const Dropdown = styled.div`
+  position: absolute;
+  top: calc(100% - 0.1rem);
+  left: 0;
+  right: 0;
+  background: var(--color-background, #fff);
+  border: 0.1rem solid var(--color-border, #ccc);
+  border-radius: 0 0 0.2rem 0.2rem;
+  overflow-y: auto;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+`
 
-    :hover {
-      color: var(--color-primary);
-      background-color: var(--color-background);
-      border-color: var(--color-primary);
-    }
+const Option = styled.div<{ isActive: boolean }>`
+  font-size: 1.6rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background: ${({ isActive }) => (isActive ? 'var(--color-primary, #007bff)' : 'transparent')};
+  color: ${({ isActive }) => (isActive ? 'white' : 'var(--color-text, #333)')};
 
-    :disabled {
-      color: var(--color-dark-grey-80);
-      border-color: var(--color-grey-80);
-      background-color: var(--color-grey-60);
-    }
+  &:hover {
+    background: var(--color-primary, #007bff);
+    color: white;
   }
+`
 
-  &.filled {
-    background-color: var(--color-primary);
-    color: var(--color-white-100);
-    border-color: var(--color-primary);
+type OptionType = { label: string; value: string }
 
-    :hover {
-      background-color: var(--color-primary-80);
-    }
-  }
-
-  &.outlined {
-    border-color: var(--color-primary);
-    background-color: transparent;
-
-    :hover {
-      background-color: rgba(var(--color-primary-opacity), 0.1);
-    }
-  }
-
-  &.link {
-    background: none;
-    border: none;
-    color: var(--color-primary);
-    text-decoration: underline;
-    padding: 0;
-    line-height: inherit;
-  }
-
-  &.form {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(var(--color-secondary-opacity), 0.5);
-
-    :hover {
-      color: var(--color-white-100);
-      background-color: var(--color-primary);
-      border-color: var(--color-primary);
-    }
-  }
-
-  &.skeleton {
-    color: var(--color-secondary);
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-
-    :hover {
-      color: var(--color-primary);
-    }
-  }
-`;
-
-// const Chevron = styled.span`
-//   position: absolute;
-//   pointer-events: none;
-//   right: 1rem;
-//   top: 50%;
-//   transform: translateY(-50%);
-//   width: 1.5rem;
-//   height: 1.5rem;
-// `;
-
-export enum SelectVariants {
-  DEFAULT = 'default',
-  OUTLINED = 'outlined',
-  FILLED = 'filled',
-  LINK = 'link',
-  FORM = 'form',
-  SKELETON = 'skeleton',
+interface CustomSelectProps {
+  options: OptionType[]
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  renderIcon?: ReactNode
 }
 
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  variant?: SelectVariants;
-  isMobile?: boolean;
+export const Select = ({ options, value, onChange, placeholder, renderIcon }: CustomSelectProps) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const selectedOption = options.find((o) => o.value === value)
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+        setHighlightedIndex(-1)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Reset highlighted index when dropdown opens
+  useEffect(() => {
+    if (isOpen) {
+      // Find the currently selected option and highlight it
+      const selectedIndex = options.findIndex(option => option.value === value)
+      setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0)
+    }
+  }, [isOpen, value, options])
+
+  // Keyboard navigation
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      // Only handle keyboard events when the container is focused
+      if (!isOpen || !containerRef.current?.contains(document.activeElement)) return
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setHighlightedIndex((prev) => (prev < options.length - 1 ? prev + 1 : 0))
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : options.length - 1))
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        if (highlightedIndex >= 0 && highlightedIndex < options.length) {
+          onChange(options[highlightedIndex].value)
+          setIsOpen(false)
+          setHighlightedIndex(-1)
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault()
+        setIsOpen(false)
+        setHighlightedIndex(-1)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, highlightedIndex, options, onChange])
+
+  const handleSelectedKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      if (!isOpen) {
+        setIsOpen(true)
+      }
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      if (!isOpen) {
+        setIsOpen(true)
+      }
+    }
+  }
+
+  return (
+    <Container ref={containerRef}>
+      <Selected
+        tabIndex={0}
+        onClick={() => setIsOpen((open) => !open)}
+        onKeyDown={handleSelectedKeyDown}
+        isOpen={isOpen}
+        role="combobox"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-controls="custom-select-listbox"
+      >
+        {renderIcon && <span style={{ marginRight: '0.5rem' }}>{renderIcon}</span>}
+        {selectedOption ? selectedOption.label : placeholder || 'Select...'}
+        <Caret>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height={20}
+            width={20}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d='M18 15l-6-6-6 6' />
+          </svg>
+        </Caret>
+      </Selected>
+
+      {isOpen && (
+        <Dropdown role="listbox" id="custom-select-listbox" tabIndex={-1}>
+          {options.map((option, i) => (
+            <Option
+              key={option.value}
+              isActive={highlightedIndex === i}
+              onClick={() => {
+                onChange(option.value)
+                setIsOpen(false)
+                setHighlightedIndex(-1)
+              }}
+              onMouseEnter={() => setHighlightedIndex(i)}
+              role="option"
+              aria-selected={value === option.value}
+              tabIndex={-1}
+            >
+              {option.label}
+            </Option>
+          ))}
+        </Dropdown>
+      )}
+    </Container>
+  )
 }
-
-export const Select = ({
-  variant = SelectVariants.DEFAULT,
-  children,
-  isMobile,
-  ...rest
-}: SelectProps) => (
-  <SelectWrapper>
-    <SelectContainer
-      className={clsx(variant, { mobile: isMobile })}
-      {...rest}
-    >
-      {children}
-    </SelectContainer>
-       <svg 
-         className='chevron'
-         xmlns="http://www.w3.org/2000/svg"
-         width="24"
-         height="24"
-         viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor"
-         strokeWidth="2"
-         strokeLinecap="round"
-         strokeLinejoin="round"
-       >
-         <path d="m6 9 6 6 6-6"/>
-       </svg>
-  </SelectWrapper>
-);
-
-
-
