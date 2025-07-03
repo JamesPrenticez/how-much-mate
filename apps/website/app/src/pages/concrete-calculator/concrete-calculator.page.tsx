@@ -13,6 +13,8 @@ import {
   Tabs,
 } from '@shared/components';
 import { SlabForm } from './slab.form';
+import { CaclculatorRenderer } from '../../components/calculator';
+import { createCalculator } from '../../components/calculator/create-calculator';
 
 export enum TabKeys {
   SLAB = 'slab',
@@ -38,7 +40,13 @@ export const ConcreteCalculatorPage = () => {
 let render = (() => {
   switch (selectedTabItem) {
     case TabKeys.SLAB:
-      return <SlabForm />;
+      createCalculator.cube({
+        name: "Slab",
+        width: { dim: 0, unit: "m" },
+        height: { dim: 0, unit: "m" },
+        depth: { dim: 0, unit: "m" },
+      });
+      return <CaclculatorRenderer />;
     case TabKeys.POST:
       return <>Posts content here</>;
     case TabKeys.BLOCK:
