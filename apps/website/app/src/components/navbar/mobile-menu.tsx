@@ -5,7 +5,7 @@ import { useAppLayoutStore } from '@shared/stores';
 import clsx from 'clsx';
 
 const Container = styled.div`
-  background-color: var(--color-background-weak);
+  background-color: var(--color-background-medium);
   width: 100%;
 `;
 

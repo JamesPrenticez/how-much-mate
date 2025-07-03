@@ -8,7 +8,7 @@ const Container = styled.div`
   overflow: hidden;
   
   & * div {
-    transition: all 500ms ease-in-out;
+    transition: color background-color 200ms ease-in-out;
   }
 `;
 

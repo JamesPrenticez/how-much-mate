@@ -14,6 +14,19 @@ const Container = styled.div`
   gap: 0.5rem;
   background-color: var(--color-background-strong);
 
+  .switches {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+    width: 19rem;
+    height: 5rem;
+
+    & button {
+      height: 2rem;
+    }
+  }
+
   .mobile-only {
     display: none;
   }
@@ -26,7 +39,7 @@ const Container = styled.div`
       display: block;
     }
 
-    .desktop-only {
+    .switches {
       display: none;
     }
   }
@@ -37,7 +50,7 @@ export const Navbar = () => {
     <Container>
       <NavLogo />
 
-      <div className='desktop-only'>
+      <div className='switches'>
         <SystemSwitcher />
         <ThemeSwitcher />
       </div>

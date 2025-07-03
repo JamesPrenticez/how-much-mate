@@ -4,14 +4,17 @@ import { Path } from '../models/paths';
 import { HomePage } from '../pages/home.page';
 import { ConcreteCalculatorPage } from '../pages';
 
-interface ComponentDataProps {
+interface NavItemProps {
   id: string;
   title: string;
   path: Path | string;
   page: ReactNode;
 }
 
-export const COMPONENT_DATA: ComponentDataProps[] = [
+export const General_Nav_Items: NavItemProps[] = [
   {id: '0', title: 'Home', path: Path.HOME, page: <HomePage /> },
-  {id: '4', title: 'Concrete Calculator', path: Path.SELECT, page: <ConcreteCalculatorPage />},
+]
+
+export const Calculator_Nav_Items: NavItemProps[] = [
+  {id: '1', title: 'Concrete Calculator', path: Path.CONCRETE_CALCULATOR, page: <ConcreteCalculatorPage />},
 ]

@@ -4,7 +4,7 @@ import { ThemeWrapper } from '@shared/theme';
 import { Navbar } from '../components/navbar/navbar';
 import { Sidebar } from '../components/sidebar/sidebar';
 import { Route, Routes } from 'react-router-dom';
-import { COMPONENT_DATA } from '../data/components.data';
+import { Calculator_Nav_Items, General_Nav_Items } from '../data/navigation.data';
 import { device } from '@shared/hooks';
 
 const Container = styled.div`
@@ -48,7 +48,12 @@ export const AppLayoutWebsite = () => {
           <Sidebar />
           <main>
             <Routes>
-              {COMPONENT_DATA.map((item) => (
+              {General_Nav_Items.map((item) => (
+                <Route key={item.id} path={item.path} element={item.page} />
+              ))}
+            </Routes>
+            <Routes>
+              {Calculator_Nav_Items.map((item) => (
                 <Route key={item.id} path={item.path} element={item.page} />
               ))}
             </Routes>
