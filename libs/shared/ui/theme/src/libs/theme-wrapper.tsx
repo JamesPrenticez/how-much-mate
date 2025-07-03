@@ -3,10 +3,13 @@ import styled from '@emotion/styled';
 import { useThemeStore } from './theme.store';
 
 const Container = styled.div`
-  display: contents;
+  display: block; /* or flex/grid */
   position: relative;
   overflow: hidden;
-  transition: all 2000ms ease-in-out;
+  
+  & * div {
+    transition: all 500ms ease-in-out;
+  }
 `;
 
 export const ThemeWrapper = ({

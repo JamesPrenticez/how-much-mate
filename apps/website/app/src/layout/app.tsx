@@ -5,6 +5,7 @@ import { Navbar } from '../components/navbar/navbar';
 import { Sidebar } from '../components/sidebar/sidebar';
 import { Route, Routes } from 'react-router-dom';
 import { COMPONENT_DATA } from '../data/components.data';
+import { device } from '@shared/hooks';
 
 const Container = styled.div`
   display: flex;
@@ -21,7 +22,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    height: calc(100dvh - 6rem); // deduct height of navnar
+    height: calc(100dvh - 6rem); // deduct height of navbar
     overflow-y: auto;
     background-color: var(--color-background-medium);
 
@@ -30,6 +31,10 @@ const Container = styled.div`
 
     color: var(--color-text);
     font-size: 1.8rem;
+
+    @media ${device.tablet} {
+      height: calc(100dvh - 5rem); // deduct height of navbar
+    }
   }
 `;
 

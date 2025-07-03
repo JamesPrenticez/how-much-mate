@@ -1,29 +1,46 @@
 import styled from '@emotion/styled';
-
+import clsx from 'clsx';
 
 const ToggleContainer = styled.div`
   display: flex;
-  background-color: #f3f4f6;
-  border-radius: 0.375rem;
+  background-color: var(--color-background-strong);
+
+  border-radius: 0.25rem;
   overflow: hidden;
+  border: var(--color-border) 0.1rem solid;
 `;
 
-const ToggleButton = styled.button<{ active: boolean }>`
+const ToggleButton = styled.button`
+  width: 100%;
+  height: 3rem;
   padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
+  
+  font-size: 1.5rem;
+  line-height: 100%;
+  font-family: 'Aronui';
   font-weight: 500;
-  border: none;
-  cursor: pointer;
-  background-color: ${props => props.active ? '#3b82f6' : 'transparent'};
-  color: ${props => props.active ? '#ffffff' : '#6b7280'};
+
+  text-align: center;
+  text-transform: uppercase;
+
+  color: var(--color-disabled);
+
+  background-color: var(--color-background-strong);
+
   transition: all 0.2s ease;
+  cursor: pointer;
+
+  &.active {
+    color: var(--color-text-on-primary);
+    background-color: var(--color-primary);
+  }
 
   &:hover {
-    background-color: ${props => props.active ? '#2563eb' : '#e5e7eb'};
+    /* background-color: var(--background-colorp); */
   }
 
   &:not(:last-of-type) {
-    border-right: 1px solid #d1d5db;
+    border-right: var(--color-border) 0.1rem solid;
   }
 `;
 
@@ -40,10 +57,10 @@ export const ToggleButtonGroup = <T extends string>({
 }: ToggleButtonGroupProps<T>) => {
   return (
     <ToggleContainer>
-      {options.map(option => (
+      {options.map((option) => (
         <ToggleButton
           key={option}
-          active={active === option}
+          className={clsx({ active: option === active })}
           onClick={() => onChange(option)}
         >
           {option}

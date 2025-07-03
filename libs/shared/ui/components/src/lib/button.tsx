@@ -86,12 +86,6 @@ const ButtonContainer = styled.button`
     gap: 1rem;
     padding: 0rem;
     margin: 0rem;
-
-    :hover {
-      color: var(--color-primary);
-      background-color: var(--color-background);
-      border-color: var(--color-primary);
-    }
   }
 `;
 
@@ -113,11 +107,12 @@ export const Button = ({
   variant = ButtonVariants.DEFAULT,
   children,
   onClick,
+  className,
   ...rest
 }: ButtonProps) => {
   return (
     <ButtonContainer
-      className={clsx(variant)}
+      className={clsx(variant, className)}
       onClick={onClick}
       {...rest}
     >

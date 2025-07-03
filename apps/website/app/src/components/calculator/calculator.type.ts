@@ -44,8 +44,8 @@ export type CalculatorData = CubeCalculatorData | SquareCalculatorData | LinearC
 //========== System Of Measurement ==========
 //===========================================
 export enum System {
-  METRIC = 'metric',
-  IMPERIAL = 'imperial'
+  IMPERIAL = 'imperial',
+  METRIC = 'metric'
 }
 
 export type SystemType = System.METRIC | System.IMPERIAL;

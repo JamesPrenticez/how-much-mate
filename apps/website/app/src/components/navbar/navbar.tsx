@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { SystemChanger } from './system-changer';
+import { SystemSwitcher } from './system-switcher';
 import { MobileMenu } from './mobile-menu';
 import { device } from '@shared/hooks';
 import { NavLogo } from './navbar-logo';
@@ -14,11 +14,19 @@ const Container = styled.div`
   gap: 0.5rem;
   background-color: var(--color-background-strong);
 
+  .mobile-only {
+    display: none;
+  }
+
   @media ${device.tablet} {
     padding: 0rem 1rem;
     height: 5rem;
 
-    .system-changer {
+    .mobile-only {
+      display: block;
+    }
+
+    .desktop-only {
       display: none;
     }
   }
@@ -28,11 +36,15 @@ export const Navbar = () => {
   return (
     <Container>
       <NavLogo />
-      <div className='system-changer'>
-        <SystemChanger />
+
+      <div className='desktop-only'>
+        <SystemSwitcher />
+        <ThemeSwitcher />
       </div>
-      <ThemeSwitcher />
-      <MobileMenu />
+
+      <div className='mobile-only'>
+        <MobileMenu />
+      </div>
     </Container>
   );
 };

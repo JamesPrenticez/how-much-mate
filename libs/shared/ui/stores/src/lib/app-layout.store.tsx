@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 
 type AppLayoutStore = {
-  mobileMenuOpen: boolean;
+  isOpenMobileMenu: boolean;
   toggleMobileMenu: () => void;
   setMobileMenuOpen: (open: boolean) => void;
 };
 
 export const useAppLayoutStore = create<AppLayoutStore>((set) => ({
-  mobileMenuOpen: false,
+  isOpenMobileMenu: false,
   toggleMobileMenu: () =>
-    set((state) => ({ mobileMenuOpen: !state.mobileMenuOpen })),
-  setMobileMenuOpen: (open) => set({ mobileMenuOpen: open }),
+    set((state) => ({ isOpenMobileMenu: !state.isOpenMobileMenu })),
+  setMobileMenuOpen: (open) => set({ isOpenMobileMenu: open }),
 }));
