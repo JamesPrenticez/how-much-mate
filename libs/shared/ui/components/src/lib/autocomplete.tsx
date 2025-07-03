@@ -82,12 +82,9 @@ const OptionItem = styled.div<{ active: boolean }>`
     color: white;
   }
 `
-
-type Option = { label: string; value: string }
-
 interface AutoCompleteProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   value: string
-  options: Option[]
+  options: { label: string; value: string }[]
   onChange: (newValue: string) => void
   placeholder?: string
   renderIcon?: ReactNode
@@ -106,7 +103,7 @@ export const Autocomplete = ({
   const itemsRef = useRef<(HTMLDivElement | null)[]>([])
 
   const [isOpen, setIsOpen] = useState(false)
-  const [filteredArray, setFilteredArray] = useState<Option[]>(options)
+  const [filteredArray, setFilteredArray] = useState< { label: string; value: string }[]>(options)
   const [activeIndex, setActiveIndex] = useState(0)
   const [searchValue, setSearchValue] = useState('')
 

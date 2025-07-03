@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Themes, ThemeWrapper } from '@shared/theme';
+import { ThemeWrapper } from '@shared/theme';
 
 import { Navbar } from '../components/navbar/navbar';
 import { Sidebar } from '../components/sidebar/sidebar';
@@ -35,7 +35,7 @@ const Container = styled.div`
 
 export const AppLayoutWebsite = () => {
   return (
-    <ThemeWrapper theme={Themes.ORANGE_LIGHT} showSwitcher>
+    <ThemeWrapper>
       <Container>
         <Navbar />
 

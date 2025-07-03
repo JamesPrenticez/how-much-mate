@@ -61,8 +61,6 @@ const Option = styled.div<{ isActive: boolean }>`
   }
 `
 
-type OptionType = { label: string; value: string }
-
 interface CustomSelectProps {
   options: { label: string; value: string }[]
   value: string

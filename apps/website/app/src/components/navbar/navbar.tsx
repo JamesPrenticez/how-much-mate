@@ -4,6 +4,7 @@ import { SystemChanger } from './system-changer';
 import { MobileMenu } from './mobile-menu';
 import { device } from '@shared/hooks';
 import { NavLogo } from './navbar-logo';
+import { ThemeSwitcher } from '@shared/theme';
 
 const Container = styled.div`
   display: flex;
@@ -30,6 +31,7 @@ export const Navbar = () => {
       <div className='system-changer'>
         <SystemChanger />
       </div>
+      <ThemeSwitcher />
       <MobileMenu />
     </Container>
   );
