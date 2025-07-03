@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
 export enum Themes {
-  ORANGE_DARK = 'orange-dark',
-  ORANGE_LIGHT = 'orange-light',
+  DARK = 'dark',
+  LIGHT = 'light',
 }
 
 interface ThemeStore {
@@ -11,7 +11,7 @@ interface ThemeStore {
 }
 
 export const useThemeStore = create<ThemeStore>((set) => {
-  const savedTheme = (localStorage.getItem('theme') as Themes | null) || Themes.ORANGE_DARK;
+  const savedTheme = (localStorage.getItem('theme') as Themes | null) || Themes.DARK;
 
   return {
     activeTheme: savedTheme,

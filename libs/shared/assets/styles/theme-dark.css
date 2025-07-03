@@ -1,4 +1,4 @@
-.theme-orange-dark {
+.theme-dark {
   --color-primary-opacity: 253, 168, 47;            /* #fda82f */
   --color-secondary-opacity: 108, 92, 68;           /* #6c5c44 */
   --color-accent-opacity: 255, 214, 10;             /* #ffd60a */
@@ -24,7 +24,7 @@
   --color-background-strong-opacity: 33, 33, 33;   /* #212121 */
 }
 
-.theme-orange-dark {
+.theme-dark {
   --color-primary: rgb(var(--color-primary-opacity));
   --color-secondary: rgb(var(--color-secondary-opacity));
   --color-accent: rgb(var(--color-accent-opacity));

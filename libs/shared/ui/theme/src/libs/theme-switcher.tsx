@@ -5,7 +5,7 @@ export const ThemeSwitcher = () => {
   const activeTheme = useThemeStore(s => s.activeTheme);
   const setTheme = useThemeStore(s => s.setTheme);
 
-  const options = [Themes.ORANGE_LIGHT, Themes.ORANGE_DARK]
+  const options = [Themes.LIGHT, Themes.DARK]
 
   const handleUnitChange = (theme: Themes) => {
     setTheme(theme)

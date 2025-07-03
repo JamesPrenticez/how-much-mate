@@ -1,4 +1,4 @@
-.theme-orange-light {
+.theme-light {
   --color-primary-opacity: 253, 168, 47;           /* #fda82f */
   --color-secondary-opacity: 108, 92, 68;          /* #6c5c44 */
   --color-accent-opacity: 255, 214, 10;            /* #ffd60a */
@@ -21,7 +21,7 @@
   --color-background-strong-opacity: 235, 235, 235; /* #ebebeb */
 }
 
-.theme-orange-light {
+.theme-light {
   --color-primary: rgb(var(--color-primary-opacity));
   --color-secondary: rgb(var(--color-secondary-opacity));
   --color-accent: rgb(var(--color-accent-opacity));

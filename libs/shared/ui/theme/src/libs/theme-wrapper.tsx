@@ -1,6 +1,6 @@
-import { PropsWithChildren, useEffect } from 'react';
+import { PropsWithChildren } from 'react';
 import styled from '@emotion/styled';
-import { useThemeStore, Themes } from './theme.store';
+import { useThemeStore } from './theme.store';
 
 const Container = styled.div`
   display: contents;
