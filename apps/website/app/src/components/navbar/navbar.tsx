@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
-import TowlSVG from '../../assets/icons/calc.svg?react';
-import { Title } from '@shared/components';
-import { NavLink } from 'react-router-dom';
-import { Path } from '../../models/paths';
-import { UnitSystemChanger } from './unit-system-changer';
+
+import { SystemChanger } from './system-changer';
 import { MobileMenu } from './mobile-menu';
+import { device } from '@shared/hooks';
+import { NavLogo } from './navbar-logo';
 
 const Container = styled.div`
   display: flex;
@@ -13,54 +12,25 @@ const Container = styled.div`
   height: 6rem;
   gap: 0.5rem;
   background-color: var(--color-background-strong);
-`;
 
-const LogoNavLink = styled(NavLink)`
-  display: flex;
-  align-items: center;
-  height: 100%;
-  gap: 1rem;
+  @media ${device.tablet} {
+    padding: 0rem 1rem;
+    height: 5rem;
 
-  :hover {
-    display: flex;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    svg {
-      /* margin-top: -6rem; */
-      width: 4.2rem;
-      height: 4.2rem;
+    .system-changer {
+      display: none;
     }
-  }
-
-  .primary {
-    color: var(--color-primary);
   }
 `;
 
 export const Navbar = () => {
   return (
     <Container>
-      <LogoNavLink to={Path.HOME}>
-        <div className="logo">
-          <TowlSVG />
-        </div>
-        <Title>
-          HowMuchMate<span className="primary">.</span>
-        </Title>
-      </LogoNavLink>
-
-      <div>
-        <UnitSystemChanger />
+      <NavLogo />
+      <div className='system-changer'>
+        <SystemChanger />
       </div>
-
-      <div>
-        <MobileMenu />
-      </div>
+      <MobileMenu />
     </Container>
   );
 };

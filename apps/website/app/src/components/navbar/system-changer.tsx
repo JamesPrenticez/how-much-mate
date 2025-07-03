@@ -3,7 +3,7 @@ import { useCalculatorStore } from '../calculator/calculator.store';
 import { Select } from '@shared/components';
 import { System, SystemType } from "../calculator/calculator.type"
 
-export const UnitSystemChanger = () => {
+export const SystemChanger = () => {
   const { system, setSystem } = useCalculatorStore();
 
   const handleChange = (value: string) => {

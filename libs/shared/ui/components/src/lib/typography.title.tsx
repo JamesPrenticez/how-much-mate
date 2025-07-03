@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from 'react';
 import styled from '@emotion/styled'
+import { device } from '@shared/hooks';
 
 const Container = styled.h1`
   font-family: 'Aronui', monospace;
@@ -7,6 +8,10 @@ const Container = styled.h1`
   font-size: 3.6rem;
   font-weight: 900;
   letter-spacing: -0.1rem;
+
+  @media ${device.tablet} {
+    font-size: 2.4rem;
+  }
 `
 type TitleProps = HTMLAttributes<HTMLHeadingElement>;
 
