@@ -1,29 +1,28 @@
 import React from 'react';
-// import { UnitSystem, UnitSystems, useMeasurementStore } from '@shared/stores';
-// import { Select } from '@shared/components';
+import { useCalculatorStore } from '../calculator/calculator.store';
+import { Select } from '@shared/components';
+import { System, SystemType } from "../calculator/calculator.type"
 
 export const UnitSystemChanger = () => {
-  // const { system, setSystem } = useMeasurementStore();
+  const { system, setSystem } = useCalculatorStore();
 
-  // const handleChange = (value: string) => {
-  //   console.log(value)
-  //   setSystem(value as UnitSystem);
-  // };
+  const handleChange = (value: string) => {
+    setSystem(value as SystemType);
+  };
 
-
-  // const options = Object.values(UnitSystems).map((value) => ({
-  //   label: value,
-  //   value,
-  // }));
+  const options = Object.values(System).map((value) => ({
+    label: value,
+    value,
+  }));
 
   return (
     <div style={{ width: 110 }}>
-      {/* <Select
+      <Select
         value={system}
         options={options}
         onChange={handleChange}
         placeholder="Select a measurement standard"
-      /> */}
+      />
     </div>
   );
 };

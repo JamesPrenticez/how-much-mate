@@ -18,9 +18,9 @@ export const createCalculator = {
       type: CalculatorType.CUBE,
       name,
       inputs: {
-        width: { dim: 1000, unit: 'mm' },
-        height: { dim: 1000, unit: 'mm' },
-        depth: { dim: 1000, unit: 'mm' },
+        width,
+        height,
+        depth,
       },
     });
   },

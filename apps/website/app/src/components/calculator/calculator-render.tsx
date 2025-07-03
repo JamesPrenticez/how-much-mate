@@ -14,7 +14,7 @@ export const CaclculatorRenderer = () => {
           <div key={idx}>
             <label>{key}</label>
             <div>
-              {input.dim} {input.unit}
+              {input.value} {input.unit}
             </div>
           </div>
         ))}

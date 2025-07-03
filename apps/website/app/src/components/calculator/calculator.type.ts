@@ -8,7 +8,7 @@ export type MetricUnit = 'mm' | 'cm' | 'm';
 export type ImperialUnit = 'in' | 'ft';
 
 export type Quantity = {
-  dim: number;
+  value: number;
   unit: MetricUnit | ImperialUnit;
 }
 
@@ -39,3 +39,13 @@ interface LinearCalculatorData extends BaseCalculatorData {
 }
 
 export type CalculatorData = CubeCalculatorData | SquareCalculatorData | LinearCalculatorData;
+
+//===========================================
+//========== System Of Measurement ==========
+//===========================================
+export enum System {
+  METRIC = 'metric',
+  IMPERIAL = 'imperial'
+}
+
+export type SystemType = System.METRIC | System.IMPERIAL;

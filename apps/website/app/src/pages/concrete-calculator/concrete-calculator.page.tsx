@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { KeyLabel } from '@shared/models'
+import type { KeyLabel } from '@shared/models';
 import styled from '@emotion/styled';
 
 import {
@@ -30,31 +30,27 @@ const items: KeyLabel[] = [
 
 const Container = styled.div``;
 
-
-
 export const ConcreteCalculatorPage = () => {
-
-
   const [selectedTabItem, setSelectedTabItem] = useState(items[0].key);
 
-let render = (() => {
-  switch (selectedTabItem) {
-    case TabKeys.SLAB:
-      createCalculator.cube({
-        name: "Slab",
-        width: { dim: 0, unit: "m" },
-        height: { dim: 0, unit: "m" },
-        depth: { dim: 0, unit: "m" },
-      });
-      return <CaclculatorRenderer />;
-    case TabKeys.POST:
-      return <>Posts content here</>;
-    case TabKeys.BLOCK:
-      return <>Block Fill content here</>;
-    default:
-      return null;
-  }
-})();
+  let render = (() => {
+    switch (selectedTabItem) {
+      case TabKeys.SLAB:
+        createCalculator.cube({
+          name: 'Slab',
+          width: { value: 20, unit: 'm' },
+          height: { value: 50, unit: 'm' },
+          depth: { value: 100, unit: 'mm' },
+        });
+        return <CaclculatorRenderer />;
+      case TabKeys.POST:
+        return <>Posts content here</>;
+      case TabKeys.BLOCK:
+        return <>Block Fill content here</>;
+      default:
+        return null;
+    }
+  })();
 
   return (
     <Container>
@@ -67,7 +63,6 @@ let render = (() => {
       />
 
       {render}
- 
     </Container>
   );
 };
