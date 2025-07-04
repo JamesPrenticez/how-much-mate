@@ -1,20 +1,31 @@
 import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import type { KeyLabel } from '@shared/models';
 import styled from '@emotion/styled';
 
 import {
-  Button,
-  ButtonVariants,
-  Input,
-  InputVariants,
   Tabs,
 } from '@shared/components';
-import { SlabForm } from './slab.form';
-import { CaclculatorRenderer } from '../../components/calculator';
-import { createCalculator } from '../../components/calculator/create-calculator';
+import { CalculatorData, CalculatorType } from '../../components/calculator/calculator.type';
+import { CalculatorForm } from '../../components/calculator/calculator.form';
+
+
+const cubeCalculator: CalculatorData = {
+  type: CalculatorType.CUBE,
+  name: 'Slab',
+  inputs: {
+    width: { value: 20, unit: 'm' },
+    height: { value: 50, unit: 'm' },
+    depth: { value: 100, unit: 'mm' },
+  },
+};
+
+const cylinderCalculator = {
+  name: 'Cylinder Volume',
+  initialInputs: {
+    radius: { value: 5, unit: 'cm' },
+    height: { value: 20, unit: 'cm' },
+  },
+};
 
 export enum TabKeys {
   SLAB = 'slab',
@@ -36,15 +47,9 @@ export const ConcreteCalculatorPage = () => {
   let render = (() => {
     switch (selectedTabItem) {
       case TabKeys.SLAB:
-        createCalculator.cube({
-          name: 'Slab',
-          width: { value: 20, unit: 'm' },
-          height: { value: 50, unit: 'm' },
-          depth: { value: 100, unit: 'mm' },
-        });
-        return <CaclculatorRenderer />;
+        return <CalculatorForm data={cubeCalculator}/>;
       case TabKeys.POST:
-        return <>Posts content here</>;
+        return <div>Post</div>;
       case TabKeys.BLOCK:
         return <>Block Fill content here</>;
       default:
@@ -61,7 +66,6 @@ export const ConcreteCalculatorPage = () => {
         selectedKey={selectedTabItem}
         onChange={(key) => setSelectedTabItem(key)}
       />
-
       {render}
     </Container>
   );

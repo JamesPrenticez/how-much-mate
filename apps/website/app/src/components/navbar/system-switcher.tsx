@@ -1,10 +1,9 @@
 import React from 'react';
-import { useCalculatorStore } from '../calculator/calculator.store';
 import { ToggleButtonGroup } from '@shared/components';
-import { System, SystemType } from "../calculator/calculator.type"
+import { System, SystemType, useSystemStore } from "../../stores/system.store"
 
 export const SystemSwitcher = () => {
-  const { system, setSystem } = useCalculatorStore();
+  const { system, setSystem } = useSystemStore();
 
   const handleChange = (value: string) => {
     setSystem(value as SystemType);
