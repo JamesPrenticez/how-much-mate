@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import { device } from '@shared/hooks';
 
-import TowlSVG from '../../assets/icons/calc.svg?react';
+// import LogoSVG from '../../assets/icons/hard-hat.svg?react';
 import { Title } from '@shared/components';
 import { NavLink } from 'react-router-dom';
 import { Path } from '../../models/paths';
+import { ICONS } from '@shared/components';
 
 const LogoNavLink = styled(NavLink)`
   display: flex;
@@ -23,6 +24,7 @@ const LogoNavLink = styled(NavLink)`
     justify-content: center;
     height: 100%;
     svg {
+      transform: scaleX(-1);
       width: 4.2rem;
       height: 4.2rem;
     }
@@ -47,7 +49,7 @@ export const NavLogo = () => {
   return (
     <LogoNavLink to={Path.HOME}>
       <div className="logo">
-        <TowlSVG />
+        {ICONS.Trowl}
       </div>
       <Title>
         HowMuchMate<span className="primary">.</span>
