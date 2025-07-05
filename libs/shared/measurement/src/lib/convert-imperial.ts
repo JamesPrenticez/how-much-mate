@@ -51,13 +51,13 @@ export function convertToImperialDecimal(mm: number, unit: 'in' | 'ft' | 'yd'): 
   }
 }
 
-export function formatImperialEngineering(mm: number, unit: 'in' | 'ft' | 'yd'): string {
+export function formatImperialDecimal(mm: number, unit: 'in' | 'ft' | 'yd'): string {
   const value = convertToImperialDecimal(mm, unit);
   const formatted = value.toFixed(4);
   return `${formatted} ${unit}`;
 }
 
-export function formatImperialConstruction(mm: number, unit: 'in' | 'ft' | 'yd'): string {
+export function formatImperialFraction(mm: number, unit: 'in' | 'ft' | 'yd'): string {
   let totalInches = convertToImperialDecimal(mm, 'in');
 
   if (unit === 'in') {
@@ -170,13 +170,12 @@ export function splitImperialParts(mm: number, unit: 'in' | 'ft' | 'yd'): Imperi
   };
 }
 
-// Example usage / test outputs:
-console.log(formatImperialConstruction(5000, 'in')); // "196 inches and 27⁄32"
-console.log(formatImperialConstruction(5000, 'ft')); // "16 feet 4 inches and 27⁄32"
-console.log(formatImperialConstruction(4902.09, 'yd')); // "5 yards, 2 feet, and 1 1⁄16 inches"
+// Example usage / test outputs:Fraction// console.log(formatImperialFraction(5000, 'in')); // "196 inches and 27⁄32"
+// console.log(formatImperialFraction(5000, 'ft')); // "16 feet 4 inches and 27⁄32"
+// console.log(formatImperialFraction(4902.09, 'yd')); // "5 yards, 2 feet, and 1 1⁄16 inches"
 
-console.log(formatImperialEngineering(5000, 'in')); // e.g., "196.8504 in"
-console.log(formatImperialEngineering(5000, 'ft')); // e.g., "16.4042 ft"
-console.log(formatImperialEngineering(4902.09, 'yd')); // e.g., "5.3610 yd"
+// console.log(formatImperialDecimal(5000, 'in')); // e.g., "196.8504 in"
+// console.log(formatImperialDecimal(5000, 'ft')); // e.g., "16.4042 ft"
+// console.log(formatImperialDecimal(4902.09, 'yd')); // e.g., "5.3610 yd"
 
-// npx ts-node --esm libs/shared/measurement/src/lib/convert-imperial.ts
+// tsx libs/shared/measurement/src/lib/convert-imperial.ts

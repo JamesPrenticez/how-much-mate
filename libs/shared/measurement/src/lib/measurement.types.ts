@@ -5,7 +5,7 @@ export enum MeasurementType {
 }
 
 export type MetricUnit = 'mm' | 'cm' | 'm';
-export type ImperialUnit = 'in' | 'ft';
+export type ImperialUnit = 'in' | 'ft' | 'yd';
 
 export type Quantity = {
   value: number;

@@ -1,44 +1,106 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useSystemStore } from './measurement-system.store';
-import { ImperialUnit, MetricUnit } from './measurement.types';
+import {
+  ImperialUnit,
+  MeasurementData,
+  MeasurementType,
+  MetricUnit,
+} from './measurement.types';
 import { formatMeasurement } from './measurement-formatter.util';
-import { Button } from '@shared/components';
+import { Button, Input } from '@shared/components';
+import { useUnitSystemSyncAll } from './sync-hook';
+
+const initialData: MeasurementData = {
+  type: MeasurementType.CUBE,
+  name: 'Slab',
+  inputs: {
+    width: { value: 20000, unit: 'm' },
+    height: { value: 50000, unit: 'm' },
+    depth: { value: 100, unit: 'mm' },
+  },
+};
 
 export const Simple = () => {
+  const [data, setData] = useState<MeasurementData>(initialData);
+
   const desiredSystem = useSystemStore((s) => s.system);
-  const units = desiredSystem === 'metric' ? ['mm', 'cm', 'm'] : ['in', 'ft', 'yd'];
-  const [activeUnit, setActiveUnit] = useState(units[0]);
 
-  const value = 500;
-
-  const formattedValue = useMemo(() => formatMeasurement(value, activeUnit as MetricUnit | ImperialUnit), [value, activeUnit]);
-
-  useEffect(() => {
-  if (desiredSystem === 'metric') {
-    if (activeUnit === 'in') setActiveUnit('mm');
-    else if (activeUnit === 'ft') setActiveUnit('cm');
-    else if (activeUnit === 'yd') setActiveUnit('m');
-  } else if (desiredSystem === 'imperial') {
-    if (activeUnit === 'mm') setActiveUnit('in');
-    else if (activeUnit === 'cm') setActiveUnit('ft');
-    else if (activeUnit === 'm') setActiveUnit('yd'); // if you support yards
-  }
-}, [activeUnit, desiredSystem]);
+  // when we change desired system
+  // update data units
+  useUnitSystemSyncAll(data, setData, desiredSystem);
 
   return (
-<div>
-  Raw value in mm: {value} <br/>
-  Formatted: {formattedValue}
+    <div>
+      {Object.entries(data.inputs).map(([key, input]) => (
+        <div key={key}>
+          {formatMeasurement(input.value, input.unit)}
+          <UnitToggle inputKey={key} activeUnit={input.unit} setData={setData} />
+        </div>
+      ))}
+    </div>
+  );
+};
 
-  {units.map((unit) => (
-    <Button
-      key={unit}
-      style={{ color: activeUnit === unit ? 'lime' : 'red' }}
-      onClick={() => setActiveUnit(unit)}
-    >
-      {unit}
-    </Button>
-  ))}
-</div>
+interface UnitToggleProps {
+  inputKey: string;
+  activeUnit: MetricUnit | ImperialUnit;
+  setData: React.Dispatch<React.SetStateAction<MeasurementData>>;
+}
+
+const UnitToggle = ({ inputKey, activeUnit, setData }: UnitToggleProps) => {
+  const desiredSystem = useSystemStore((s) => s.system);
+  const units =
+    desiredSystem === 'metric' ? ['mm', 'cm', 'm'] : ['in', 'ft', 'yd'];
+
+  const unitMap: Record<MetricUnit | ImperialUnit, MetricUnit | ImperialUnit> = {
+    in: 'mm',
+    ft: 'cm',
+    yd: 'm',
+    mm: 'in',
+    cm: 'ft',
+    m: 'yd',
+  };
+
+  const handleChangeUnit = (clickedUnit: MetricUnit | ImperialUnit) => {
+    const newUnit = unitMap[clickedUnit] ?? clickedUnit;
+
+    setData((prev) => {
+      switch (prev.type) {
+        case MeasurementType.LINEAR: {
+          // Linear type, inputKey can be an index in string form
+          const updatedInputs = prev.inputs.map((input, idx) =>
+            idx.toString() === inputKey ? { ...input, unit: newUnit } : input
+          );
+          return { ...prev, inputs: updatedInputs } as MeasurementData;
+        }
+        
+        case MeasurementType.SQUARE:
+        case MeasurementType.CUBE: {
+          // Square or Cube: update by key
+          const updatedObjectInputs = {
+            ...prev.inputs,
+            [inputKey]: { ...prev.inputs[inputKey as keyof typeof prev.inputs], unit: newUnit },
+          };
+          return { ...prev, inputs: updatedObjectInputs } as MeasurementData;
+        }
+        
+        default:
+          return prev;
+      }
+    });
+  };
+
+  return (
+    <div>
+      {units.map((unit) => (
+        <Button
+          key={unit}
+          style={{ color: activeUnit === unit ? 'lime' : 'red' }}
+          onClick={() => handleChangeUnit(unit as MetricUnit | ImperialUnit)}
+        >
+          {unit}
+        </Button>
+      ))}
+    </div>
   );
 };
