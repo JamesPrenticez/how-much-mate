@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import {
   Tabs,
 } from '@shared/components';
-import { type MeasurementData, MeasurementType, CalculatorForm } from '@shared/measurement';
+import { Simple, type MeasurementData, MeasurementType, CalculatorForm } from '@shared/measurement';
 
 
 const cubeCalculator: MeasurementData = {
@@ -41,14 +41,15 @@ const items: KeyLabel[] = [
 const Container = styled.div``;
 
 export const ConcreteCalculatorPage = () => {
-  const [selectedTabItem, setSelectedTabItem] = useState(items[0].key);
+  const [selectedTabItem, setSelectedTabItem] = useState(items[1].key);
 
   let render = (() => {
     switch (selectedTabItem) {
       case TabKeys.SLAB:
-        return <CalculatorForm data={cubeCalculator}/>;
+        return null;
+        // return <CalculatorForm data={cubeCalculator}/>;
       case TabKeys.POST:
-        return <div>Post</div>;
+        return <Simple />
       case TabKeys.BLOCK:
         return <>Block Fill content here</>;
       default:
