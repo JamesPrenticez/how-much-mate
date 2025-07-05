@@ -20,7 +20,7 @@ interface Cube extends BaseMeasurementType {
     type: MeasurementType.CUBE;
     inputs: {
       width: Quantity;
-      height: Quantity;
+      length: Quantity;
       depth: Quantity;
     }
 }
@@ -29,7 +29,7 @@ interface Square extends BaseMeasurementType {
     type: MeasurementType.SQUARE;
     inputs: {
       width: Quantity;
-      height: Quantity;
+      length: Quantity;
     }
 }
 

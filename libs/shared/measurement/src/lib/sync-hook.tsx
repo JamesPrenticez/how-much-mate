@@ -10,59 +10,85 @@ export function useUnitSystemSyncAll(
     const metricMap: Record<ImperialUnit, MetricUnit> = { in: 'mm', ft: 'cm', yd: 'm' };
     const imperialMap: Record<MetricUnit, ImperialUnit> = { mm: 'in', cm: 'ft', m: 'yd' };
 
+    // Helper function to check if a unit needs conversion
+    const needsConversion = (unit: string): boolean => {
+      return desiredSystem === 'metric' 
+        ? unit in metricMap 
+        : unit in imperialMap;
+    };
+
+    // Helper function to convert a unit - returns the correct type
+    const convertUnit = (unit: MetricUnit | ImperialUnit): MetricUnit | ImperialUnit => {
+      return desiredSystem === 'metric'
+        ? metricMap[unit as ImperialUnit] ?? unit
+        : imperialMap[unit as MetricUnit] ?? unit;
+    };
+
+    let shouldUpdate = false;
+    let updatedData: MeasurementData = { ...data };
+
     if (data.type === MeasurementType.LINEAR) {
       const updatedInputs = data.inputs.map((input) => {
-        const newUnit =
-          desiredSystem === 'metric'
-            ? metricMap[input.unit as ImperialUnit] ?? input.unit
-            : imperialMap[input.unit as MetricUnit] ?? input.unit;
-        return { ...input, unit: newUnit };
+        if (needsConversion(input.unit)) {
+          shouldUpdate = true;
+          return { ...input, unit: convertUnit(input.unit) };
+        }
+        return input;
       });
 
-      setData({ ...data, inputs: updatedInputs });
+      if (shouldUpdate) {
+        updatedData = { ...data, inputs: updatedInputs };
+      }
     } else if (data.type === MeasurementType.SQUARE) {
-      const updatedInputs = {
-        width: {
-          ...data.inputs.width,
-          unit:
-            desiredSystem === 'metric'
-              ? metricMap[data.inputs.width.unit as ImperialUnit] ?? data.inputs.width.unit
-              : imperialMap[data.inputs.width.unit as MetricUnit] ?? data.inputs.width.unit,
-        },
-        height: {
-          ...data.inputs.height,
-          unit:
-            desiredSystem === 'metric'
-              ? metricMap[data.inputs.height.unit as ImperialUnit] ?? data.inputs.height.unit
-              : imperialMap[data.inputs.height.unit as MetricUnit] ?? data.inputs.height.unit,
-        },
-      };
-      setData({ ...data, inputs: updatedInputs });
+      const widthNeedsConversion = needsConversion(data.inputs.width.unit);
+      const lengthNeedsConversion = needsConversion(data.inputs.length.unit);
+      
+      if (widthNeedsConversion || lengthNeedsConversion) {
+        shouldUpdate = true;
+        updatedData = {
+          ...data,
+          inputs: {
+            width: {
+              ...data.inputs.width,
+              unit: widthNeedsConversion ? convertUnit(data.inputs.width.unit) : data.inputs.width.unit,
+            },
+            length: {
+              ...data.inputs.length,
+              unit: lengthNeedsConversion ? convertUnit(data.inputs.length.unit) : data.inputs.length.unit,
+            },
+          },
+        };
+      }
     } else if (data.type === MeasurementType.CUBE) {
-      const updatedInputs = {
-        width: {
-          ...data.inputs.width,
-          unit:
-            desiredSystem === 'metric'
-              ? metricMap[data.inputs.width.unit as ImperialUnit] ?? data.inputs.width.unit
-              : imperialMap[data.inputs.width.unit as MetricUnit] ?? data.inputs.width.unit,
-        },
-        height: {
-          ...data.inputs.height,
-          unit:
-            desiredSystem === 'metric'
-              ? metricMap[data.inputs.height.unit as ImperialUnit] ?? data.inputs.height.unit
-              : imperialMap[data.inputs.height.unit as MetricUnit] ?? data.inputs.height.unit,
-        },
-        depth: {
-          ...data.inputs.depth,
-          unit:
-            desiredSystem === 'metric'
-              ? metricMap[data.inputs.depth.unit as ImperialUnit] ?? data.inputs.depth.unit
-              : imperialMap[data.inputs.depth.unit as MetricUnit] ?? data.inputs.depth.unit,
-        },
-      };
-      setData({ ...data, inputs: updatedInputs });
+      const widthNeedsConversion = needsConversion(data.inputs.width.unit);
+      const lengthNeedsConversion = needsConversion(data.inputs.length.unit);
+      const depthNeedsConversion = needsConversion(data.inputs.depth.unit);
+      
+      if (widthNeedsConversion || lengthNeedsConversion || depthNeedsConversion) {
+        shouldUpdate = true;
+        updatedData = {
+          ...data,
+          inputs: {
+            width: {
+              ...data.inputs.width,
+              unit: widthNeedsConversion ? convertUnit(data.inputs.width.unit) : data.inputs.width.unit,
+            },
+            length: {
+              ...data.inputs.length,
+              unit: lengthNeedsConversion ? convertUnit(data.inputs.length.unit) : data.inputs.length.unit,
+            },
+            depth: {
+              ...data.inputs.depth,
+              unit: depthNeedsConversion ? convertUnit(data.inputs.depth.unit) : data.inputs.depth.unit,
+            },
+          },
+        };
+      }
     }
-  }, [desiredSystem, data, setData]);
+
+    // Only update if conversion was actually needed
+    if (shouldUpdate) {
+      setData(updatedData);
+    }
+  }, [desiredSystem, data.type, setData]);
 }

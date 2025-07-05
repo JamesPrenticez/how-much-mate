@@ -9,13 +9,14 @@ import {
 import { formatMeasurement } from './measurement-formatter.util';
 import { Button, Input } from '@shared/components';
 import { useUnitSystemSyncAll } from './sync-hook';
+import { DynamicCube } from './shapes/cube';
 
 const initialData: MeasurementData = {
   type: MeasurementType.CUBE,
   name: 'Slab',
   inputs: {
     width: { value: 20000, unit: 'm' },
-    height: { value: 50000, unit: 'm' },
+    length: { value: 50000, unit: 'm' },
     depth: { value: 100, unit: 'mm' },
   },
 };
@@ -34,9 +35,23 @@ export const Simple = () => {
       {Object.entries(data.inputs).map(([key, input]) => (
         <div key={key}>
           {formatMeasurement(input.value, input.unit)}
-          <UnitToggle inputKey={key} activeUnit={input.unit} setData={setData} />
+          <UnitToggle
+            inputKey={key}
+            activeUnit={input.unit}
+            setData={setData}
+          />
         </div>
       ))}
+      {data.type === MeasurementType.CUBE && (
+        <DynamicCube
+          width={20}
+          length={20}
+          depth={0.1}
+          widthUnit='m'
+          lengthUnit='m'
+          depthUnit='mm'
+        />
+      )}
     </div>
   );
 };
@@ -52,17 +67,9 @@ const UnitToggle = ({ inputKey, activeUnit, setData }: UnitToggleProps) => {
   const units =
     desiredSystem === 'metric' ? ['mm', 'cm', 'm'] : ['in', 'ft', 'yd'];
 
-  const unitMap: Record<MetricUnit | ImperialUnit, MetricUnit | ImperialUnit> = {
-    in: 'mm',
-    ft: 'cm',
-    yd: 'm',
-    mm: 'in',
-    cm: 'ft',
-    m: 'yd',
-  };
-
   const handleChangeUnit = (clickedUnit: MetricUnit | ImperialUnit) => {
-    const newUnit = unitMap[clickedUnit] ?? clickedUnit;
+    // const newUnit = unitMap[clickedUnit] ?? clickedUnit;
+    const newUnit = clickedUnit;
 
     setData((prev) => {
       switch (prev.type) {
@@ -73,17 +80,20 @@ const UnitToggle = ({ inputKey, activeUnit, setData }: UnitToggleProps) => {
           );
           return { ...prev, inputs: updatedInputs } as MeasurementData;
         }
-        
+
         case MeasurementType.SQUARE:
         case MeasurementType.CUBE: {
           // Square or Cube: update by key
           const updatedObjectInputs = {
             ...prev.inputs,
-            [inputKey]: { ...prev.inputs[inputKey as keyof typeof prev.inputs], unit: newUnit },
+            [inputKey]: {
+              ...prev.inputs[inputKey as keyof typeof prev.inputs],
+              unit: newUnit,
+            },
           };
           return { ...prev, inputs: updatedObjectInputs } as MeasurementData;
         }
-        
+
         default:
           return prev;
       }
