@@ -1,5 +1,6 @@
 // unitConversion.ts
-import { System, Quantity, CalculatorData, CalculatorType } from './calculator.type';
+import { Quantity, CalculatorData, CalculatorType } from './calculator.type';
+import { System } from './system.store';
 
 export const convertQuantity = (quantity: Quantity, targetSystem: System): Quantity => {
   if (targetSystem === 'metric') {

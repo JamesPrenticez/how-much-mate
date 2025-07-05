@@ -1,5 +1,4 @@
 import { Volume } from '@shared/models'
-import React from 'react'
 
 interface CalculatorResultsProps {
   dimensions: Volume | null;

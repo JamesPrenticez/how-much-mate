@@ -6,15 +6,6 @@ interface BaseLayoutProps extends PropsWithChildren {
   showSwitcher?: boolean;
 }
 
-export const BaseLayout = ({
-  theme = Themes.GOLD,
-  showSwitcher = false,
-  children,
-}: BaseLayoutProps) => {
-
-  return (
-      <ThemeWrapper theme={theme} showSwitcher={showSwitcher}>
-        {children}
-      </ThemeWrapper>
-);
+export const BaseLayout = ({ children }: BaseLayoutProps) => {
+  return <ThemeWrapper>{children}</ThemeWrapper>;
 };

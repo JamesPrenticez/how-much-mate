@@ -39,13 +39,3 @@ interface LinearCalculatorData extends BaseCalculatorData {
 }
 
 export type CalculatorData = CubeCalculatorData | SquareCalculatorData | LinearCalculatorData;
-
-//===========================================
-//========== System Of Measurement ==========
-//===========================================
-export enum System {
-  METRIC = 'metric',
-  IMPERIAL = 'imperial'
-}
-
-export type SystemType = System.METRIC | System.IMPERIAL;
