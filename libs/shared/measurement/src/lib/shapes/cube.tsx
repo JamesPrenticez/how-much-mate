@@ -10,6 +10,8 @@ interface CubeProps {
   stroke?: string;
   strokeWidth?: number;
   fontSize?: number;
+  targetSize?: number;
+  padding?: number;
 }
 
 export const DynamicCube: React.FC<CubeProps> = ({
@@ -21,7 +23,9 @@ export const DynamicCube: React.FC<CubeProps> = ({
   depthUnit,
   stroke = "black",
   strokeWidth = 2,
-  fontSize = 12
+  fontSize = 12,
+  targetSize = 250,
+  padding = 20
 }) => {
   const angle = Math.PI / 6;
   const dx = length * Math.cos(angle);
@@ -48,7 +52,6 @@ export const DynamicCube: React.FC<CubeProps> = ({
   const cubeWidth = maxX - minX;
   const cubeHeight = maxY - minY;
 
-  const targetSize = 250;
   const scale = Math.min(
     (targetSize - strokeWidth * 2) / cubeWidth,
     (targetSize - strokeWidth * 2) / cubeHeight
@@ -77,8 +80,6 @@ export const DynamicCube: React.FC<CubeProps> = ({
   // Include dimension lines in final bounding box
   const allFinalX = [A2.x, B2.x, C2.x, D2.x, E2.x, F2.x, G2.x, H2.x, depthLineP1.x, depthLineP2.x];
   const allFinalY = [A2.y, B2.y, C2.y, D2.y, E2.y, F2.y, G2.y, H2.y, depthLineP1.y, depthLineP2.y];
-
-const padding = 20; 
 
 const finalMinX = Math.min(...allFinalX) - strokeWidth - padding;
 const finalMaxX = Math.max(...allFinalX) + strokeWidth + padding;
@@ -154,16 +155,22 @@ const finalMaxY = Math.max(...allFinalY) + strokeWidth + padding;
         `${width}${widthUnit}`
       )}
       {drawDimLine(
+        { x: A2.x - 20, y: A2.y },
+        { x: D2.x - 20, y: D2.y },
+        `${depth}${depthUnit}`,
+        true
+      )} 
+      {drawDimLine(
         { x: A2.x, y: A2.y - 20 },
         { x: E2.x, y: E2.y - 20 },
         `${length}${lengthUnit}`
       )}
-      {drawDimLine(
+      {/* {drawDimLine(
         depthLineP1,
         depthLineP2,
         `${depth}${depthUnit}`,
         true
-      )}
+      )} */}
     </svg>
   );
 };

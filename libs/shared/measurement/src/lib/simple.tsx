@@ -10,6 +10,7 @@ import { formatMeasurement } from './measurement-formatter.util';
 import { Button, Input } from '@shared/components';
 import { useUnitSystemSyncAll } from './sync-hook';
 import { DynamicCube } from './shapes/cube';
+import { ZoomWrapper } from './shapes/zoom-wrapper';
 
 const initialData: MeasurementData = {
   type: MeasurementType.CUBE,
@@ -43,14 +44,32 @@ export const Simple = () => {
         </div>
       ))}
       {data.type === MeasurementType.CUBE && (
+        <ZoomWrapper
+          targetSize={500}
+        >
         <DynamicCube
-          width={20}
-          length={20}
-          depth={0.1}
-          widthUnit='m'
-          lengthUnit='m'
-          depthUnit='mm'
+          targetSize={500}
+          padding={100}
+          width={50000}
+          length={50000}
+          depth={100}
+          widthUnit={data.inputs.width.unit}
+          lengthUnit={data.inputs.length.unit}
+          depthUnit={data.inputs.depth.unit}
+          stroke='var(--color-text)'
         />
+        {/* <DynamicCube
+          targetSize={500}
+          padding={100}
+          width={data.inputs.width.value}
+          length={data.inputs.length.value}
+          depth={data.inputs.depth.value}
+          widthUnit={data.inputs.width.unit}
+          lengthUnit={data.inputs.length.unit}
+          depthUnit={data.inputs.depth.unit}
+          stroke='var(--color-text)'
+        /> */}
+        </ZoomWrapper>
       )}
     </div>
   );
