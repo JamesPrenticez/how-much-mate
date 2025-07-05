@@ -1,4 +1,4 @@
-export enum CalculatorType {
+export enum MeasurementType {
     CUBE = 'cube',
     SQUARE = 'square',
     LINEAR = 'linear',
@@ -12,12 +12,12 @@ export type Quantity = {
   unit: MetricUnit | ImperialUnit;
 }
 
-interface BaseCalculatorData {
+interface BaseMeasurementType {
     name: string;
 }
 
-interface CubeCalculatorData extends BaseCalculatorData {
-    type: CalculatorType.CUBE;
+interface Cube extends BaseMeasurementType {
+    type: MeasurementType.CUBE;
     inputs: {
       width: Quantity;
       height: Quantity;
@@ -25,17 +25,17 @@ interface CubeCalculatorData extends BaseCalculatorData {
     }
 }
 
-interface SquareCalculatorData extends BaseCalculatorData {
-    type: CalculatorType.SQUARE;
+interface Square extends BaseMeasurementType {
+    type: MeasurementType.SQUARE;
     inputs: {
       width: Quantity;
       height: Quantity;
     }
 }
 
-interface LinearCalculatorData extends BaseCalculatorData {
-    type: CalculatorType.LINEAR;
+interface Linear extends BaseMeasurementType {
+    type: MeasurementType.LINEAR;
     inputs: Quantity[];
 }
 
-export type CalculatorData = CubeCalculatorData | SquareCalculatorData | LinearCalculatorData;
+export type MeasurementData = Cube | Square | Linear;

@@ -5,12 +5,11 @@ import styled from '@emotion/styled';
 import {
   Tabs,
 } from '@shared/components';
-import { CalculatorData, CalculatorType } from '../../components/calculator/calculator.type';
-import { CalculatorForm } from '../../components/calculator/calculator.form';
+import { type MeasurementData, MeasurementType, CalculatorForm } from '@shared/measurement';
 
 
-const cubeCalculator: CalculatorData = {
-  type: CalculatorType.CUBE,
+const cubeCalculator: MeasurementData = {
+  type: MeasurementType.CUBE,
   name: 'Slab',
   inputs: {
     width: { value: 20, unit: 'm' },

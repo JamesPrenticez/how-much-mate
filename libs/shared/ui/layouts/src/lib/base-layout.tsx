@@ -1,11 +1,6 @@
 import { PropsWithChildren } from 'react';
-import { Themes, ThemeWrapper } from '@shared/theme';
+import { ThemeWrapper } from '@shared/theme';
 
-interface BaseLayoutProps extends PropsWithChildren {
-  theme?: Themes;
-  showSwitcher?: boolean;
-}
-
-export const BaseLayout = ({ children }: BaseLayoutProps) => {
+export const BaseLayout = ({ children }: PropsWithChildren) => {
   return <ThemeWrapper>{children}</ThemeWrapper>;
 };

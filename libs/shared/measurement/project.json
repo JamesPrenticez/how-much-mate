@@ -1,7 +1,7 @@
 {
-  "name": "shared-calculator",
+  "name": "shared-measurement",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/shared/calculator/src",
+  "sourceRoot": "libs/shared/measurement/src",
   "projectType": "library",
   "tags": [],
   "targets": {

@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { calculateVolume } from '@shared/utils';
 import { Volume } from '@shared/models';
 import { CalculatorResults } from './calculator-results';
-import { type CalculatorData } from './calculator.type';
+import { type MeasurementData } from './measurement.types';
 
 const Container = styled.div``;
 const FormContainer = styled.div``;
@@ -19,7 +19,7 @@ const ErrorText = styled.p`
 `;
 
 interface CalculatorFormProps {
-  data: CalculatorData;
+  data: MeasurementData;
 }
 
 export const CalculatorForm = ({ data }: CalculatorFormProps) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ToggleButtonGroup } from '@shared/components';
-import { System, SystemType, useSystemStore } from "../../stores/system.store"
+import { System, SystemType, useSystemStore } from "@shared/measurement"
 
 export const SystemSwitcher = () => {
   const { system, setSystem } = useSystemStore();

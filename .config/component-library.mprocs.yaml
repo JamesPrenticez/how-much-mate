@@ -1,3 +1,0 @@
-procs:
-  'component-library:app':
-    shell: 'nx serve component-library-app'
