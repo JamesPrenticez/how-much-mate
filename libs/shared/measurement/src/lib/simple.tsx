@@ -7,7 +7,7 @@ import {
   MetricUnit,
 } from './measurement.types';
 import { formatMeasurement } from './measurement-formatter.util';
-import { Button, Input } from '@shared/components';
+import { Button } from '@shared/components';
 import { useUnitSystemSyncAll } from './sync-hook';
 import { DynamicCube } from './shapes/cube';
 import { ZoomWrapper } from './shapes/zoom-wrapper';

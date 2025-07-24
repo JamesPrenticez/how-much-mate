@@ -28,6 +28,11 @@ npx nx g @nx/react:application component-library --directory=apps/component-libr
 npx nx g @nx/react:application website-app --directory=apps/website/app
 ```
 
+
+```bash
+  npx nx g @nx/node:app scraper --directory=apps/scraper
+```
+
 ### App - BACKEND - Express
 
 ```bash
@@ -74,6 +79,11 @@ To generate a new Node library in the /libs/rgs directory we run:
 
   npx nx g @nx/node:library dice-magic --directory=libs/dice-magic/ui/stores
   npx nx g @nx/node:library dice-magic --directory=libs/dice-magic/ui/contexts
+
+```
+
+```bash
+  npx nx g @nx/js:lib db --directory=libs/db
 ```
 
 Once the 'libs/shared/your-lib-name' file structure has been generated go to the project.json file and update the "tags" property ie "tags": ["scope:shared"]
