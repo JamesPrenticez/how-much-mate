@@ -20,6 +20,7 @@
     "noPropertyAccessFromIndexSignature": false,
     "baseUrl": ".",
     "paths": {
+      "@db": ["libs/db/src/index.ts"],
       "@shared/assets/audio/*": ["libs/shared/assets/audio/*"],
       "@shared/assets/fonts/*": ["libs/shared/assets/fonts/*"],
       "@shared/assets/icons/*": ["libs/shared/assets/icons/*"],
@@ -33,8 +34,7 @@
       "@shared/models": ["libs/shared/models/src/index.ts"],
       "@shared/stores": ["libs/shared/ui/stores/src/index.ts"],
       "@shared/theme": ["libs/shared/ui/theme/src/index.ts"],
-      "@shared/utils": ["libs/shared/utils/src/index.ts"],
-      "@db": ["libs/db/src/index.ts"]
+      "@shared/utils": ["libs/shared/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

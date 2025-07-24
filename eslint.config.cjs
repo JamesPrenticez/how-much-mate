@@ -5,7 +5,11 @@ module.exports = [
   ...nx.configs['flat/typescript'],
   ...nx.configs['flat/javascript'],
   {
-    ignores: ['**/dist'],
+    ignores: [
+      '**/dist',
+      '**/vite.config.*.timestamp*',
+      '**/vitest.config.*.timestamp*',
+    ],
   },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
@@ -23,7 +27,6 @@ module.exports = [
           ],
         },
       ],
-
     },
   },
   {
@@ -37,9 +40,9 @@ module.exports = [
     ],
     // Override or add rules here
     rules: {
-      "react-hooks/exhaustive-deps": "off",
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "prefer-const": "off",
+      'react-hooks/exhaustive-deps': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      'prefer-const': 'off',
     },
   },
 ];

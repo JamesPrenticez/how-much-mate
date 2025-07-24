@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "draw": "mprocs -c ./.config/draw.mprocs.yaml",
     "website": "mprocs -c ./.config/website.mprocs.yaml",
     "components": "mprocs -c ./.config/component-library.mprocs.yaml",
     "swagger": "npx ts-node apps/lobby/backend/src/public/swagger.json"
@@ -34,7 +35,8 @@
     "@swc/cli": "~0.6.0",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
-    "@testing-library/react": "15.0.6",
+    "@testing-library/dom": "10.4.0",
+    "@testing-library/react": "16.1.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
@@ -61,6 +63,7 @@
     "eslint-plugin-react-hooks": "5.0.0",
     "jest": "^29.7.0",
     "jest-environment-node": "^29.7.0",
+    "jiti": "2.4.2",
     "jsdom": "~22.1.0",
     "mprocs": "^0.7.2",
     "nodemon": "^3.1.9",
