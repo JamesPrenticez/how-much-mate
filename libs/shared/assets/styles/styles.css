@@ -6,3 +6,28 @@
 @import url("./theme-default.css");
 @import url("./theme-dark.css");
 @import url("./theme-light.css");
+
+.custom-scrollbar-narrow::-webkit-scrollbar {
+    width: 0.3rem;
+    height: calc(max(0.6rem, 3px));
+    background: var(--color-black-80);
+    border-radius: 1rem;
+}
+
+.custom-scrollbar-narrow::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 0.6rem;
+    background: var(--color-black-80);
+    border-radius: 1rem;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 1rem;
+    cursor: pointer;
+}

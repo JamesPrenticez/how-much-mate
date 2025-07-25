@@ -1,25 +1,19 @@
 import styled from '@emotion/styled';
 import { device } from '@shared/hooks';
-import { EntitesList } from './entities.list';
+import { DimensionGroups } from './dimension-groups';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  padding: 1.6rem 2.2rem;
+  padding: 1rem;
   gap: 1rem;
-  width: 30rem;
+  width: 32rem;
   max-width: 30rem;
 
   background-color: var(--color-background-strong);
 
   user-select: none;
-
-  .title {
-    color: var(--color-primary);
-    line-height: 1rem;
-    font-size: 2rem;
-  }
 
   @media ${device.tablet} {
     display: none;
@@ -29,8 +23,7 @@ const Container = styled.div`
 export const Sidebar = () => {
   return (
     <Container>
-      <div className="title">Dimension Groups</div>
-      <EntitesList />
+      <DimensionGroups />
     </Container>
   );
 };
