@@ -29,7 +29,7 @@ const Container = styled.div`
 export const Sidebar = () => {
   return (
     <Container>
-      <div className="title">Elements</div>
+      <div className="title">Dimension Groups</div>
       <EntitesList />
     </Container>
   );

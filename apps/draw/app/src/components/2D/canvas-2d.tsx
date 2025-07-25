@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 import { Grid, GRID_SIZE } from './grid';
-import { useEntitiesStore, useControlsGridStore } from '@draw/stores';
+import { useEntitiesStore, useControlsGridStore, useControlsDrawingStore } from '@draw/stores';
 import type { LineEntity } from '@draw/models';
 import { GridControls } from './grid-controls';
 
@@ -16,7 +16,7 @@ export const Canvas2D = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const { entities, addEntity } = useEntitiesStore();
   const [tempLine, setTempLine] = useState<LineEntity | null>(null);
-  const [drawing, setDrawing] = useState(false);
+  const { isDrawing, setIsDrawing } = useControlsDrawingStore();
 
   const {
     snapToGrid,
@@ -93,14 +93,14 @@ export const Canvas2D = () => {
     const svgPoint = screenToSvg(e.clientX, e.clientY);
     const { x, y } = snapToGridPoint(svgPoint.x, svgPoint.y);
 
-    if (!drawing) {
+    if (!isDrawing) {
       setTempLine({
         id: 'temp',
         type: 'temp-line',
         start: { x, y },
         end: { x, y },
       });
-      setDrawing(true);
+      setIsDrawing(true);
     } else {
       if (tempLine) {
         addEntity({
@@ -111,7 +111,7 @@ export const Canvas2D = () => {
         });
       }
       setTempLine(null);
-      setDrawing(false);
+      setIsDrawing(false);
     }
   };
 
@@ -129,7 +129,7 @@ export const Canvas2D = () => {
       setLastPanPoint({ x: e.clientX, y: e.clientY });
       return;
     }
-    if (!drawing || !tempLine) return;
+    if (!isDrawing || !tempLine) return;
 
     const svgPoint = screenToSvg(e.clientX, e.clientY);
     const { x, y } = snapToGridPoint(svgPoint.x, svgPoint.y);
