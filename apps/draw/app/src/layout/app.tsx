@@ -4,6 +4,7 @@ import { ThemeWrapper } from '@shared/theme';
 import { Navbar } from '../components/navbar/navbar';
 import { Sidebar } from '../components/sidebar/sidebar';
 import { device } from '@shared/hooks';
+import { Canvas2D } from '../components/2D/canvas-2d';
 
 const Container = styled.div`
   display: flex;
@@ -45,7 +46,7 @@ export const AppLayout = () => {
         <div className="row">
           <Sidebar />
           <main>
-          
+            <Canvas2D />
           </main>
         </div>
       </Container>

@@ -10,14 +10,14 @@ export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../../node_modules/.vite/apps/draw/app',
   server: {
-    port: 4203,
+    port: 4202,
     host: 'localhost',
     fs: { 
       allow: [path.resolve(__dirname, '../../../libs/shared')],
     },
   },
   preview: {
-    port: 4203,
+    port: 4202,
     host: 'localhost',
   },
   plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md']),  svgr()],
