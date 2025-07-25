@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Entity } from '../models/entities.models';
+import { Entity } from '@draw/models';
 
 interface EntitiesState {
   entities: Entity[];

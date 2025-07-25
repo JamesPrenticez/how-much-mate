@@ -5,6 +5,8 @@ export type LineEntity = {
   type: 'line' | 'temp-line';
   start: Vec2D;
   end: Vec2D;
+
+  element?: string;
 };
 
 export type Entity = LineEntity; // Extend later with 'circle', 'text', etc.

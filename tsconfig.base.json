@@ -34,7 +34,9 @@
       "@shared/models": ["libs/shared/models/src/index.ts"],
       "@shared/stores": ["libs/shared/ui/stores/src/index.ts"],
       "@shared/theme": ["libs/shared/ui/theme/src/index.ts"],
-      "@shared/utils": ["libs/shared/utils/src/index.ts"]
+      "@shared/utils": ["libs/shared/utils/src/index.ts"],
+      "@draw/models": ["libs/draw/models/src/index.ts"],
+      "@draw/stores": ["libs/draw/ui/stores/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

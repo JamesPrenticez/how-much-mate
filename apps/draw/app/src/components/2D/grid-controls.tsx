@@ -1,4 +1,4 @@
-import { useControlsGridStore } from '../../stores/controls-grid.store';
+import { useControlsGridStore } from '../../../../../../libs/draw/ui/stores/src/lib/controls-grid.store';
 
 export const GridControls = () => {
   const { snapToGrid, setSnapToGrid, showGrid, setShowGrid, setViewBox } =

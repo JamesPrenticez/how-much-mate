@@ -1,13 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { useEntitiesStore } from '../../stores/entities.store';
-import { LineEntity } from '../../models/entities.models';
 import { v4 as uuidv4 } from 'uuid';
 import { Grid, GRID_SIZE } from './grid';
-import {
-  useControlsGridStore,
-  ViewBox,
-} from '../../stores/controls-grid.store';
+import { useEntitiesStore, useControlsGridStore } from '@draw/stores';
+import type { LineEntity } from '@draw/models';
 import { GridControls } from './grid-controls';
 
 const SvgCanvas = styled.svg`
@@ -120,19 +116,19 @@ export const Canvas2D = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
-  if (isPanning) {
-    const deltaX = e.clientX - lastPanPoint.x;
-    const deltaY = e.clientY - lastPanPoint.y;
-    
-    setViewBox({
-      ...viewBox,
-      x: viewBox.x - deltaX,
-      y: viewBox.y - deltaY,
-    });
-    
-    setLastPanPoint({ x: e.clientX, y: e.clientY });
-    return;
-  }
+    if (isPanning) {
+      const deltaX = e.clientX - lastPanPoint.x;
+      const deltaY = e.clientY - lastPanPoint.y;
+
+      setViewBox({
+        ...viewBox,
+        x: viewBox.x - deltaX,
+        y: viewBox.y - deltaY,
+      });
+
+      setLastPanPoint({ x: e.clientX, y: e.clientY });
+      return;
+    }
     if (!drawing || !tempLine) return;
 
     const svgPoint = screenToSvg(e.clientX, e.clientY);
@@ -142,7 +138,7 @@ export const Canvas2D = () => {
       ...tempLine,
       end: { x, y },
     });
-};
+  };
 
   const handleMouseUp = (e: React.MouseEvent<SVGSVGElement>) => {
     if (isPanning) {
@@ -150,21 +146,21 @@ export const Canvas2D = () => {
     }
   };
 
-const handleWheel = (e: React.WheelEvent<SVGSVGElement>) => {
-  e.preventDefault();
-  const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9;
-  const mousePoint = screenToSvg(e.clientX, e.clientY);
-  
-  const newWidth = viewBox.w * zoomFactor;
-  const newHeight = viewBox.h * zoomFactor;
-  
-  setViewBox({
-    x: mousePoint.x - (mousePoint.x - viewBox.x) * zoomFactor,
-    y: mousePoint.y - (mousePoint.y - viewBox.y) * zoomFactor,
-    w: newWidth,
-    h: newHeight,
-  });
-};
+  const handleWheel = (e: React.WheelEvent<SVGSVGElement>) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9;
+    const mousePoint = screenToSvg(e.clientX, e.clientY);
+
+    const newWidth = viewBox.w * zoomFactor;
+    const newHeight = viewBox.h * zoomFactor;
+
+    setViewBox({
+      x: mousePoint.x - (mousePoint.x - viewBox.x) * zoomFactor,
+      y: mousePoint.y - (mousePoint.y - viewBox.y) * zoomFactor,
+      w: newWidth,
+      h: newHeight,
+    });
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'g') {
@@ -181,8 +177,7 @@ const handleWheel = (e: React.WheelEvent<SVGSVGElement>) => {
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-
-<GridControls />
+      <GridControls />
 
       <SvgCanvas
         ref={svgRef}

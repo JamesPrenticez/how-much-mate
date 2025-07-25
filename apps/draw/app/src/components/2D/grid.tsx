@@ -1,4 +1,4 @@
-import { ViewBox } from "../../stores/controls-grid.store";
+import { ViewBox } from "../../../../../../libs/draw/ui/stores/src/lib/controls-grid.store";
 
 export const GRID_SIZE = 20; // Grid spacing in pixels
 
