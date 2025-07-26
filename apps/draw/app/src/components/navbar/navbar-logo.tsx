@@ -11,7 +11,7 @@ const LogoNavLink = styled(NavLink)`
   align-items: center;
   height: 100%;
   gap: 0.5rem;
-  margin-right: auto;
+  margin-right: 1rem;
 
   :hover {
     display: flex;

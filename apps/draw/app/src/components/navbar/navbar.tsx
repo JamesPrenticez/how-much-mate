@@ -5,6 +5,9 @@ import { MobileMenu } from './mobile-menu';
 import { device } from '@shared/hooks';
 import { NavLogo } from './navbar-logo';
 import { ThemeSwitcher } from '@shared/theme';
+import { Nav_Items } from '../../data/navigation.data';
+import { NavLink } from 'react-router-dom';
+import clsx from 'clsx';
 
 const Container = styled.div`
   display: flex;
@@ -15,6 +18,8 @@ const Container = styled.div`
   background-color: var(--color-background-strong);
 
   .switches {
+    margin-left: auto;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -45,17 +50,46 @@ const Container = styled.div`
   }
 `;
 
+const NavItem = styled(NavLink)`
+  font-size: 2rem;
+  color: var(--color-text-subtle);
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: color ease-in 200ms;
+  cursor: pointer;
+
+  /* :hover,
+    :focus-visible {
+      background-color: var(--color-primary);
+    } */
+
+  &.active {
+    color: var(--color-secondary);
+    background-color: var(--color-primary);
+  }
+`;
+
 export const Navbar = () => {
   return (
     <Container>
       <NavLogo />
 
-      <div className='switches'>
+      {Nav_Items.map((item) => (
+        <NavItem
+          key={item.id}
+          to={item.path}
+          className={({ isActive }) => clsx({ active: isActive })}
+        >
+          {item.title}
+        </NavItem>
+      ))}
+
+      <div className="switches">
         <SystemSwitcher />
         <ThemeSwitcher />
       </div>
 
-      <div className='mobile-only'>
+      <div className="mobile-only">
         <MobileMenu />
       </div>
     </Container>

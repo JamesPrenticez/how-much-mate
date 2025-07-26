@@ -2,9 +2,9 @@ import styled from '@emotion/styled';
 import { ThemeWrapper } from '@shared/theme';
 
 import { Navbar } from '../components/navbar/navbar';
-import { Sidebar } from '../components/sidebar/sidebar';
 import { device } from '@shared/hooks';
-import { Canvas2D } from '../components/2D/canvas-2d';
+import { Route, Routes } from 'react-router-dom';
+import { Nav_Items } from '../data/navigation.data';
 
 const Container = styled.div`
   display: flex;
@@ -43,13 +43,13 @@ export const AppLayout = () => {
       <Container>
         <Navbar />
 
-        <div className="row">
-          <Sidebar />
-          <main>
-            <Canvas2D />
-          </main>
-        </div>
-      </Container>
+
+          <Routes>
+            {Nav_Items.map((item) => (
+              <Route key={item.id} path={item.path} element={item.page} />
+            ))}
+          </Routes>
+    </Container>
     </ThemeWrapper>
   );
 };

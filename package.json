@@ -98,6 +98,7 @@
     "axios": "^1.10.0",
     "better-sqlite3": "^12.2.0",
     "cheerio": "^1.1.0",
+    "dexie": "^4.0.11",
     "immer": "^10.1.1",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.474.0",
@@ -110,7 +111,7 @@
     "react-tooltip": "^5.28.1",
     "uuid": "^11.1.0",
     "vite-plugin-svgr": "^4.3.0",
-    "zod": "^3.24.1",
+    "zod": "^3.25.76",
     "zustand": "^5.0.4"
   }
 }
