@@ -1,2 +1,2 @@
-export * from './lib/group.models';
+export * from './lib/items';
 export * from './lib/entities.models';
