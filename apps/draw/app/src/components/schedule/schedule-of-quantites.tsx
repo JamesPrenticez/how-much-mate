@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { addMaterial, getMaterials } from '@draw/db';
+import { getEntities } from '@draw/db';
+import { Entity } from '@draw/models';
 
 const Container = styled.div`
   border: solid 0.2rem var(--color-border);
@@ -27,8 +28,8 @@ export const SOQ = () => {
 
   useEffect(() => {
     const load = async () => {
-      // const entities = await getEntities();
-      // setEntities(entities);
+      const e = await getEntities();
+      setEntities(e);
     };
 
     load();
@@ -40,9 +41,9 @@ console.log(entities)
     <Container>
       <h1>SCHEDULE OF QUANTITES</h1>
 
-      {entities.map((m) => (
-        <div key={`${m.id}`}>
-          {m.code} - {m.name} — ${m.cost}
+      {entities.map((entity: Entity) => (
+        <div key={`${entity.id}`}>
+          {entity.id} - {entity.type} — {entity.element} - {entity.start.x}
         </div>
       ))}
     </Container>

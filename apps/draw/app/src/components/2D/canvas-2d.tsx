@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 import { Grid, GRID_SIZE } from './grid';
 import { useEntitiesStore, useControlsGridStore, useControlsDrawingStore } from '@draw/stores';
-import type { LineEntity } from '@draw/models';
+import { Element, EntityTypes, type LineEntity } from '@draw/models';
 import { GridControls } from './grid-controls';
 
 const SvgCanvas = styled.svg`
@@ -96,7 +96,8 @@ export const Canvas2D = () => {
     if (!isDrawing) {
       setTempLine({
         id: 'temp',
-        type: 'temp-line',
+        type: EntityTypes.TEMP_LINE,
+        element: Element.TIMBER_WALL_FRAMING,
         start: { x, y },
         end: { x, y },
       });
@@ -106,7 +107,7 @@ export const Canvas2D = () => {
         addEntity({
           ...tempLine,
           id: uuidv4(),
-          type: 'line',
+          type: EntityTypes.LINE,
           end: { x, y },
         });
       }

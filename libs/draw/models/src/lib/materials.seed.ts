@@ -1,5 +1,5 @@
-import { db } from '../db';
-import { Material, MaterialCodes, MaterialSchema } from '../models';
+import { db } from '../../../db/src/lib/db';
+import { Material, MaterialCodes, MaterialSchema } from '../../../db/src/lib/models';
 import { v4 as uuidv4 } from 'uuid';
 
 const seedData: Material[] = [
@@ -90,7 +90,6 @@ const seedData: Material[] = [
 ];
 
 export const seedMaterials = async () => {
-  console.log(seedData)
   const validated = seedData.map((item) => MaterialSchema.parse(item));
   await db.materials.bulkAdd(validated);
 }
