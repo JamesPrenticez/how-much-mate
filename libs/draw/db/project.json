@@ -1,0 +1,8 @@
+{
+  "name": "draw-db",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/draw/db/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}

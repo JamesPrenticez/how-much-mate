@@ -1,6 +1,7 @@
 import { BrowserRouter } from 'react-router-dom';
 import * as ReactDOM from 'react-dom/client';
 import { AppLayout } from './layout/app';
+import { DbProvider } from '@draw/contexts';
 
 // Local
 import './styles/styles.css';
@@ -12,7 +13,9 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-    <BrowserRouter>
+  <BrowserRouter>
+    <DbProvider>
       <AppLayout />
-    </BrowserRouter>
+    </DbProvider>
+  </BrowserRouter>
 );

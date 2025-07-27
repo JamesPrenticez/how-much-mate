@@ -1,11 +1,7 @@
-import { IMaterial, TIMBER } from "@draw/models";
+import { Material } from "@draw/models"
 
-export const TimberMaterials: IMaterial = {
-   TIMBER["90_X_45_H1.2_RAD"]: {
-    id: "1",
-    title: TIMBER["90_X_45_H1.2_RAD"],
-    cost: 4.20,
-    unit: "lm",
-    dimensions: { width: 90, thickness: 45, length: 1000 }
-  }
-}
+export const seedMaterials: Material[] = [
+  { id: '001', name: '90x45 Timber', cost_per_unit: 6.5 },
+  { id: '002', name: 'R3.2 Insulation', cost_per_unit: 8 },
+  { id: '003', name: 'Plasterboard', cost_per_unit: 4.2 },
+];

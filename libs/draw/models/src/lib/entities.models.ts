@@ -29,8 +29,8 @@ export const LineEntitySchema = z.object({
   start: Vec2DSchema,
   end: Vec2DSchema,
   measureToolType: MeasureToolTypeSchema,
-  quantity: MeasureToolTypeSchema,
-  unit: QuantityUnitSchema
+  // quantity: MeasureToolTypeSchema,
+  // unit: QuantityUnitSchema
 });
 
 export const EntitySchema = LineEntitySchema; // add more

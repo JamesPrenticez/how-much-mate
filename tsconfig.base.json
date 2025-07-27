@@ -21,6 +21,7 @@
     "baseUrl": ".",
     "paths": {
       "@db": ["libs/db/src/index.ts"],
+      "@draw/db": ["libs/draw/db/src/index.ts"],
       "@draw/hooks": ["libs/draw/ui/hooks/src/index.ts"],
       "@draw/models": ["libs/draw/models/src/index.ts"],
       "@draw/stores": ["libs/draw/ui/stores/src/index.ts"],
@@ -39,8 +40,8 @@
       "@shared/stores": ["libs/shared/ui/stores/src/index.ts"],
       "@shared/theme": ["libs/shared/ui/theme/src/index.ts"],
       "@shared/utils": ["libs/shared/utils/src/index.ts"],
-      "data": ["libs/draw/data/src/index.ts"],
-      "@draw/db": ["libs/draw/db/src/index.ts"]
+      "@draw/contexts": ["libs/draw/ui/contexts/src/index.ts"],
+      "@draw/data": ["libs/draw/data/src/index.ts"],
     }
   },
   "exclude": ["node_modules", "tmp"]
