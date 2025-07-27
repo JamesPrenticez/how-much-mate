@@ -1,4 +1,6 @@
-import styled from "@emotion/styled"
+import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
+import { addMaterial, getMaterials } from '@draw/db';
 
 const Container = styled.div`
   border: solid 0.2rem var(--color-border);
@@ -16,15 +18,46 @@ const Container = styled.div`
   h1 {
     font-size: 3rem;
     font-weight: 600;
-    font-family: "Quicksand", sans-serif;
-
+    font-family: 'Quicksand', sans-serif;
   }
-`
+`;
 
 export const PriceList = () => {
+  const [materials, setMaterials] = useState<any[]>([]); // Ideally use Material[] if typed
+
+  useEffect(() => {
+    const load = async () => {
+      // await addMaterial({
+      //   _id: 'mat-001',
+      //   name: '90 x 45 H1.2 Radiata Pine',
+      //   cost: 6, // per metre or unit
+      //   dimensions: {
+      //     width: 90,
+      //     depth: 45,
+      //     length: 1000,
+      //   },
+      //   createdAt: new Date(),
+      //   updatedAt: new Date(),
+      //   tags: ['timber', 'framing', 'treated'],
+      // });
+      const m = await getMaterials();
+      setMaterials(m);
+    };
+
+    load();
+  }, []);
+
+console.log(materials)
+
   return (
     <Container>
-      <h1>Materials - Price List</h1>
+      <h1>MATERIALS</h1>
+
+      {materials.map((m) => (
+        <div key={`${m._id}`}>
+          {m._id} - {m.name} — ${m.cost} 
+        </div>
+      ))}
     </Container>
-  )
-}
+  );
+};
