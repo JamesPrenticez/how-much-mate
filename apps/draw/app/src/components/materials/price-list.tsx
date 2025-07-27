@@ -27,19 +27,6 @@ export const PriceList = () => {
 
   useEffect(() => {
     const load = async () => {
-      // await addMaterial({
-      //   _id: 'mat-001',
-      //   name: '90 x 45 H1.2 Radiata Pine',
-      //   cost: 6, // per metre or unit
-      //   dimensions: {
-      //     width: 90,
-      //     depth: 45,
-      //     length: 1000,
-      //   },
-      //   createdAt: new Date(),
-      //   updatedAt: new Date(),
-      //   tags: ['timber', 'framing', 'treated'],
-      // });
       const m = await getMaterials();
       setMaterials(m);
     };
@@ -51,11 +38,11 @@ console.log(materials)
 
   return (
     <Container>
-      <h1>MATERIALS</h1>
+      <h1>MATERIALS - PRICE LIST</h1>
 
       {materials.map((m) => (
-        <div key={`${m._id}`}>
-          {m._id} - {m.name} — ${m.cost} 
+        <div key={`${m.id}`}>
+          {m.code} - {m.name} — ${m.cost}
         </div>
       ))}
     </Container>
