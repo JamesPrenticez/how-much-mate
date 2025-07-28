@@ -1,25 +1,33 @@
 // libs/db/src/lib/sqlite.ts
 import initSqlJs, { Database } from 'sql.js';
+import { loadDbBuffer, saveDbBuffer } from './db.storage';
+import { seedDb } from './seed/seed';
+import { markAsSeeded } from './seed/seed.controllers';
 
 let db: Database;
 
-export async function initDb(): Promise<Database> {
-  if (db) return db;
+export const initDb = async (): Promise<Database> => {
+  const SQL = await initSqlJs();
+  const existing = await loadDbBuffer();
 
-  const SQL = await initSqlJs({
-    locateFile: file => `/sql-wasm.wasm`, // adjust this if needed
-  });
+  db = existing ? new SQL.Database(existing) : new SQL.Database();
 
-  db = new SQL.Database();
-
-  // Optionally create tables here
-  db.run(`
-    CREATE TABLE IF NOT EXISTS materials (
-      id TEXT PRIMARY KEY,
-      name TEXT,
-      cost_per_unit REAL
-    );
-  `);
+  // Only seed if DB was not found
+  if (!existing) {
+    console.log("Seed DB")
+    seedDb(db); 
+    markAsSeeded();
+    persistDb();
+  }
 
   return db;
+}
+
+export const getDb = (): Database => {
+  return db;
+}
+
+export const persistDb = () => {
+  const data = db.export();
+  saveDbBuffer(data);
 }
