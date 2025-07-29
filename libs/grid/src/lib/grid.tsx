@@ -38,45 +38,53 @@ interface GridProps {
   data: any[];
 }
 
-const initialColWidths = {
-  code: 100,
-  name: 330,
-  description: 430,
+const initialColWidths: Record<string, string> = {
+  code: '100px',
+  name: '330px',
+  description: '1fr',
 };
 
 const filteredItems = ['id', 'createdAt', 'updatedAt', 'supplier'];
-const manualColumnOrder = ['code', 'name', 'description', 'unitCost', '', 'properties'];
+const manualColumnOrder = [
+  'code',
+  'name',
+  'description',
+  'unitCost',
+  'unit',
+  'properties',
+];
 
 export const Grid = ({ data }: GridProps) => {
-  const [columnWidths, setColumnWidths] =
-    useState<Record<string, number>>(initialColWidths);
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
-
-  const toggleRow = (index: number) => {
-    setExpandedRows((prev) => ({ ...prev, [index]: !prev[index] }));
-  };
-
-// Ensure objects dont get displayed
-const columnOrder = useMemo(() => {
-  if (data.length === 0) return [];
-
-  const dataKeys = Object.keys(data[0]);
-
-  return manualColumnOrder.filter(
-    (key) =>
-      dataKeys.includes(key) &&
-      !filteredItems.includes(key) &&
-      typeof data[0][key] !== 'object'
-  );
-}, [data]);
+  const [columnWidths, setColumnWidths] =
+    useState<Record<string, string>>(initialColWidths);
 
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: 'asc' | 'desc';
   } | null>(null);
 
+  const columnOrder = useMemo(() => {
+    if (data.length === 0) return [];
 
-  // Sorted data based on sortConfig
+    const dataKeys = Object.keys(data[0]);
+
+    return manualColumnOrder.filter(
+      (key) =>
+        dataKeys.includes(key) &&
+        !filteredItems.includes(key) &&
+        typeof data[0][key] !== 'object'
+    );
+  }, [data]);
+
+  const gridTemplate = columnOrder
+    .map((col) => columnWidths[col] ?? '120px')
+    .join(' ');
+
+  const toggleRow = (index: number) => {
+    setExpandedRows((prev) => ({ ...prev, [index]: !prev[index] }));
+  };
+
   const sortedData = useMemo(() => {
     if (!sortConfig) return data;
     return [...data].sort((a, b) => {
@@ -100,14 +108,8 @@ const columnOrder = useMemo(() => {
     });
   }, [data, sortConfig]);
 
-
-
-  const gridTemplate = columnOrder
-    .map((col) => `${columnWidths[col] ?? 120}px`)
-    .join(' ');
   const rows = sortedData;
 
-  // Pull all nested objects (non-null) from a row
   const extractNestedObjects = (row: Record<string, any>) =>
     Object.entries(row).filter(
       ([_, value]) => typeof value === 'object' && value !== null
@@ -146,26 +148,35 @@ const columnOrder = useMemo(() => {
               <Header title={colKey.toUpperCase() + sortArrow} />
 
               <ResizeHandle
-                onMouseDown={(e) => {
-                  const startX = e.clientX;
-                  const startWidth = columnWidths[colKey] ?? 120;
+onMouseDown={(e) => {
+  e.preventDefault();
 
-                  const onMouseMove = (moveEvent: MouseEvent) => {
-                    const delta = moveEvent.clientX - startX;
-                    setColumnWidths((prev) => ({
-                      ...prev,
-                      [colKey]: Math.max(60, startWidth + delta),
-                    }));
-                  };
+  const startX = e.clientX;
 
-                  const onMouseUp = () => {
-                    window.removeEventListener('mousemove', onMouseMove);
-                    window.removeEventListener('mouseup', onMouseUp);
-                  };
+  // Get the actual current width of the column
+  const columnElement = e.currentTarget.parentElement;
+  if (!columnElement) return;
 
-                  window.addEventListener('mousemove', onMouseMove);
-                  window.addEventListener('mouseup', onMouseUp);
-                }}
+  const startWidth = columnElement.getBoundingClientRect().width;
+
+  const onMouseMove = (moveEvent: MouseEvent) => {
+    const delta = moveEvent.clientX - startX;
+    const newWidth = Math.max(60, startWidth + delta);
+
+    setColumnWidths((prev) => ({
+      ...prev,
+      [colKey]: `${newWidth}px`, // overwrite fr with px on resize
+    }));
+  };
+
+  const onMouseUp = () => {
+    window.removeEventListener('mousemove', onMouseMove);
+    window.removeEventListener('mouseup', onMouseUp);
+  };
+
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseup', onMouseUp);
+}}
               />
             </div>
           );
