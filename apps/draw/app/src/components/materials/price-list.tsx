@@ -46,14 +46,7 @@ const { materials, createMaterial } = useMaterialStore()
 
       <Grid
         data={materials}
-      >
-      </Grid>
-
-      {materials.map((m) => (
-        <div key={`${m.id}`}>
-          {m.id} - {m.code} - {m.name} - {m.unitCost}
-        </div>
-      ))}
+      />
 
       <Button
         variant={ButtonVariants.OUTLINED}

@@ -1,6 +1,8 @@
+import React from 'react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Header } from './header';
+import { SubGrid } from './sub-grid';
 
 const GridContainer = styled.div`
   border: 1px solid var(--color-primary);
@@ -11,32 +13,192 @@ const GridContainer = styled.div`
 
 const HeaderContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  /* grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); */
   background-color: var(--color-primary);
   color: var(--color-text-on-primary);
   width: 100%;
+`;
+
+const BodyContainer = styled.div`
+  display: grid;
+  width: 100%;
+`;
+
+const ResizeHandle = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 1;
 `;
 
 interface GridProps {
   data: any[];
 }
 
-export const Grid = ({ data }: GridProps) => {
+const initialColWidths = {
+  code: 100,
+  name: 330,
+  description: 430,
+};
 
-  const columns = data.length > 0 ? Object.keys(data[0]) : [];
+const filteredItems = ['id', 'createdAt', 'updatedAt', 'supplier'];
+const manualColumnOrder = ['code', 'name', 'description', 'unitCost', '', 'properties'];
+
+export const Grid = ({ data }: GridProps) => {
+  const [columnWidths, setColumnWidths] =
+    useState<Record<string, number>>(initialColWidths);
+  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
+
+  const toggleRow = (index: number) => {
+    setExpandedRows((prev) => ({ ...prev, [index]: !prev[index] }));
+  };
+
+// Ensure objects dont get displayed
+const columnOrder = useMemo(() => {
+  if (data.length === 0) return [];
+
+  const dataKeys = Object.keys(data[0]);
+
+  return manualColumnOrder.filter(
+    (key) =>
+      dataKeys.includes(key) &&
+      !filteredItems.includes(key) &&
+      typeof data[0][key] !== 'object'
+  );
+}, [data]);
+
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: 'asc' | 'desc';
+  } | null>(null);
+
+
+  // Sorted data based on sortConfig
+  const sortedData = useMemo(() => {
+    if (!sortConfig) return data;
+    return [...data].sort((a, b) => {
+      const aVal = a[sortConfig.key];
+      const bVal = b[sortConfig.key];
+
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+
+      if (typeof aVal === 'string' && typeof bVal === 'string') {
+        return sortConfig.direction === 'asc'
+          ? aVal.localeCompare(bVal)
+          : bVal.localeCompare(aVal);
+      }
+
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
+      }
+
+      return 0;
+    });
+  }, [data, sortConfig]);
+
+
+
+  const gridTemplate = columnOrder
+    .map((col) => `${columnWidths[col] ?? 120}px`)
+    .join(' ');
+  const rows = sortedData;
+
+  // Pull all nested objects (non-null) from a row
+  const extractNestedObjects = (row: Record<string, any>) =>
+    Object.entries(row).filter(
+      ([_, value]) => typeof value === 'object' && value !== null
+    );
 
   return (
     <GridContainer>
-      <HeaderContainer>
-        {columns.map((colKey) => (
-          <Header
-            key={`header-${colKey}`}
-            title={colKey.toUpperCase()}  
-          />
-        ))}
+      <HeaderContainer style={{ gridTemplateColumns: gridTemplate }}>
+        {columnOrder.map((colKey) => {
+          const isSorted = sortConfig?.key === colKey;
+          const sortArrow = isSorted
+            ? sortConfig!.direction === 'asc'
+              ? ' ▲'
+              : ' ▼'
+            : '';
+
+          return (
+            <div
+              key={`header-${colKey}`}
+              style={{
+                position: 'relative',
+                paddingRight: '5px',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                let direction: 'asc' | 'desc' = 'asc';
+                if (
+                  sortConfig?.key === colKey &&
+                  sortConfig.direction === 'asc'
+                ) {
+                  direction = 'desc';
+                }
+                setSortConfig({ key: colKey, direction });
+              }}
+            >
+              <Header title={colKey.toUpperCase() + sortArrow} />
+
+              <ResizeHandle
+                onMouseDown={(e) => {
+                  const startX = e.clientX;
+                  const startWidth = columnWidths[colKey] ?? 120;
+
+                  const onMouseMove = (moveEvent: MouseEvent) => {
+                    const delta = moveEvent.clientX - startX;
+                    setColumnWidths((prev) => ({
+                      ...prev,
+                      [colKey]: Math.max(60, startWidth + delta),
+                    }));
+                  };
+
+                  const onMouseUp = () => {
+                    window.removeEventListener('mousemove', onMouseMove);
+                    window.removeEventListener('mouseup', onMouseUp);
+                  };
+
+                  window.addEventListener('mousemove', onMouseMove);
+                  window.addEventListener('mouseup', onMouseUp);
+                }}
+              />
+            </div>
+          );
+        })}
       </HeaderContainer>
 
+      <BodyContainer style={{ gridTemplateColumns: gridTemplate }}>
+        {rows.map((row, rowIndex) => {
+          const nestedEntries = extractNestedObjects(row);
 
+          return (
+            <React.Fragment key={rowIndex}>
+              {columnOrder.map((colKey) => (
+                <div
+                  key={`cell-${rowIndex}-${colKey}`}
+                  onClick={() => toggleRow(rowIndex)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {String(row[colKey] ?? '')}
+                </div>
+              ))}
+
+              {expandedRows[rowIndex] && nestedEntries.length > 0 && (
+                <div style={{ gridColumn: '1 / -1' }}>
+                  {nestedEntries.map(([key, value]) => (
+                    <SubGrid key={key} data={value} />
+                  ))}
+                </div>
+              )}
+            </React.Fragment>
+          );
+        })}
+      </BodyContainer>
     </GridContainer>
   );
 };
