@@ -1,5 +1,5 @@
-import { useEntitiesStore } from '@draw/stores';
-import { useGetEntitiesByGroup } from '@draw/hooks';
+// import { useEntitiesStore } from '@draw/stores';
+// import { useGetEntitiesByGroup } from '@draw/hooks';
 import styled from '@emotion/styled';
 import { DimGroup } from './dim-group';
 
@@ -20,15 +20,15 @@ const Container = styled.div`
 `;
 
 export const DimensionGroups = () => {
-  const { entities } = useEntitiesStore();
+  // const { entities } = useEntitiesStore();
 
-  const groupedEntities = useGetEntitiesByGroup(entities);
+  // const groupedEntities = useGetEntitiesByGroup(entities);
 
   return (
     <Container>
       <h1 className="title">Dimension Groups</h1>
 
-      <div className="scroll-container custom-scrollbar-narrow">
+      {/* <div className="scroll-container custom-scrollbar-narrow">
         {groupedEntities.map((group) => (
           <DimGroup key={group.name} title={group.name}>
             {group.entities.map((entity) => (
@@ -36,7 +36,7 @@ export const DimensionGroups = () => {
             ))}
           </DimGroup>
         ))}
-      </div>
+      </div> */}
     </Container>
   );
 };

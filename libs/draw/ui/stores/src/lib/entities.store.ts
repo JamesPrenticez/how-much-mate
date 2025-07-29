@@ -1,14 +1,14 @@
-import { create } from 'zustand';
-import { Entity } from '@draw/models';
+// import { create } from 'zustand';
+// import { Entity } from '@draw/models';
 
-interface EntitiesState {
-  entities: Entity[];
-  addEntity: (entity: Entity) => void;
-  clear: () => void;
-}
+// interface EntitiesState {
+//   entities: Entity[];
+//   addEntity: (entity: Entity) => void;
+//   clear: () => void;
+// }
 
-export const useEntitiesStore = create<EntitiesState>((set) => ({
-  entities: [],
-  addEntity: (entity) => set((state) => ({ entities: [...state.entities, entity] })),
-  clear: () => set({ entities: [] }),
-}));
+// export const useEntitiesStore = create<EntitiesState>((set) => ({
+//   entities: [],
+//   addEntity: (entity) => set((state) => ({ entities: [...state.entities, entity] })),
+//   clear: () => set({ entities: [] }),
+// }));

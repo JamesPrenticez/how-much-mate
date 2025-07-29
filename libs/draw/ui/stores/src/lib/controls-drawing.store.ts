@@ -1,20 +1,19 @@
-import { Group } from '@draw/models';
 import { produce } from 'immer';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
 interface ControlsDrawingStore {
   isDrawing: boolean;
-  activeDimensionGroup: Group;
+  activeDimensionGroup: string;
   setIsDrawing: (value: boolean) => void;
-  setActiveDimentionGroup: (value: Group) => void;
+  setActiveDimentionGroup: (value: string) => void;
 }
 
 export const useControlsDrawingStore = create<ControlsDrawingStore>()(
   subscribeWithSelector((set, get) => ({
     // Initial State
     isDrawing: false,
-    activeDimensionGroup: Group.OTHER,
+    activeDimensionGroup: "",
 
     // Actions
     setIsDrawing: (isDrawing) =>

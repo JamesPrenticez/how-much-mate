@@ -1,6 +1,9 @@
+import { MaterialCategory, UnitType } from '@draw/models';
+import { useMaterialStore } from '@draw/stores';
 import styled from '@emotion/styled';
+import { Button, ButtonVariants } from '@shared/components';
 import { useEffect, useState } from 'react';
-import { addMaterial, getMaterials } from '@draw/db';
+// import { addMaterial, getMaterials } from '@draw/db';
 
 const Container = styled.div`
   border: solid 0.2rem var(--color-border);
@@ -23,18 +26,18 @@ const Container = styled.div`
 `;
 
 export const PriceList = () => {
-  const [materials, setMaterials] = useState<any[]>([]); // Ideally use Material[] if typed
+const { materials, createMaterial } = useMaterialStore()
 
-  useEffect(() => {
-    const load = async () => {
-      const m = await getMaterials();
-      setMaterials(m);
-    };
-
-    load();
-  }, []);
-
-console.log(materials)
+  const handleSubmit = async () => {
+    await createMaterial({
+      name: 'New Material',
+      code: 'NEW123',
+      unitCost: 50,
+      unit:  UnitType.COUNT,
+      category: MaterialCategory.TIMBER,
+      description: 'User-defined material',
+    });
+  };
 
   return (
     <Container>
@@ -42,9 +45,16 @@ console.log(materials)
 
       {materials.map((m) => (
         <div key={`${m.id}`}>
-          {m.code} - {m.name} — ${m.cost}
+          {m.id} - {m.code} - {m.name} - {m.unitCost}
         </div>
       ))}
+
+      <Button
+        variant={ButtonVariants.OUTLINED}
+        onClick={handleSubmit}
+      >
+        NEW
+      </Button>
     </Container>
   );
 };

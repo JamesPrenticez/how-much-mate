@@ -1,2 +1,2 @@
 export * from './lib/db';
-export * from './lib/controllers';
+export * from './lib/services';
