@@ -14,6 +14,7 @@
   --color-text-opacity: 248, 248, 255;              /* #F8F8FF */
   --color-text-subtle-opacity: 170, 170, 170;       /* #aaaaaa */
   --color-text-accent-opacity: 255, 214, 10;        /* #ffd60a */
+  --color-text-on-primary-opacity: 33, 33, 33;      /* #212121 */
 
   --color-background-opacity: 33, 33, 33;           /* #212121 */
   --color-background-subtle-opacity: 60, 60, 60;    /* #3c3c3c */
@@ -40,6 +41,7 @@
   --color-text: rgb(var(--color-text-opacity));
   --color-text-subtle: rgb(var(--color-text-subtle-opacity));
   --color-text-accent: rgb(var(--color-text-accent-opacity));
+  --color-text-on-primary: rgb(var(--color-text-on-primary-opacity));
 
   --color-background: rgb(var(--color-background-opacity));
   --color-background-weak: rgb(var(--color-background-weak-opacity));

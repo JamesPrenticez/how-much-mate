@@ -2,8 +2,7 @@ import { MaterialCategory, UnitType } from '@draw/models';
 import { useMaterialStore } from '@draw/stores';
 import styled from '@emotion/styled';
 import { Button, ButtonVariants } from '@shared/components';
-import { useEffect, useState } from 'react';
-// import { addMaterial, getMaterials } from '@draw/db';
+import { Grid } from "@grid"
 
 const Container = styled.div`
   border: solid 0.2rem var(--color-border);
@@ -39,9 +38,16 @@ const { materials, createMaterial } = useMaterialStore()
     });
   };
 
+  console.log(materials)
   return (
     <Container>
       <h1>MATERIALS - PRICE LIST</h1>
+
+
+      <Grid
+        data={materials}
+      >
+      </Grid>
 
       {materials.map((m) => (
         <div key={`${m.id}`}>
