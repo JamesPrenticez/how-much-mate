@@ -2,7 +2,7 @@ import { MaterialCategory, UnitType } from '@draw/models';
 import { useMaterialStore } from '@draw/stores';
 import styled from '@emotion/styled';
 import { Button, ButtonVariants } from '@shared/components';
-import { Grid } from "@grid"
+import { Grid } from '@grid';
 
 const Container = styled.div`
   border: solid 0.2rem var(--color-border);
@@ -25,33 +25,42 @@ const Container = styled.div`
 `;
 
 export const PriceList = () => {
-const { materials, createMaterial } = useMaterialStore()
+  const { materials, createMaterial } = useMaterialStore();
 
   const handleSubmit = async () => {
     await createMaterial({
       name: 'New Material',
       code: 'NEW123',
       unitCost: 50,
-      unit:  UnitType.COUNT,
+      unit: UnitType.COUNT,
       category: MaterialCategory.TIMBER,
       description: 'User-defined material',
     });
   };
 
-  console.log(materials)
+  console.log(materials);
   return (
     <Container>
       <h1>MATERIALS - PRICE LIST</h1>
 
-
       <Grid
         data={materials}
+        columnOrder={[
+          'code',
+          'name',
+          'description',
+          'unitCost',
+          'unit',
+          'properties',
+        ]}
+        initialColumnWidths={{
+          code: '100px',
+          name: '330px',
+          description: '1fr',
+        }}
       />
 
-      <Button
-        variant={ButtonVariants.OUTLINED}
-        onClick={handleSubmit}
-      >
+      <Button variant={ButtonVariants.OUTLINED} onClick={handleSubmit}>
         NEW
       </Button>
     </Container>

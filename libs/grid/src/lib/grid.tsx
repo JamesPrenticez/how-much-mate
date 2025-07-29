@@ -36,48 +36,41 @@ const ResizeHandle = styled.div`
 
 interface GridProps {
   data: any[];
+  columnOrder: string[];
+  initialColumnWidths: Record<string, string>;
+
 }
 
-const initialColWidths: Record<string, string> = {
-  code: '100px',
-  name: '330px',
-  description: '1fr',
-};
 
-const filteredItems = ['id', 'createdAt', 'updatedAt', 'supplier'];
-const manualColumnOrder = [
-  'code',
-  'name',
-  'description',
-  'unitCost',
-  'unit',
-  'properties',
-];
 
-export const Grid = ({ data }: GridProps) => {
+export const Grid = ({ 
+  data,
+  columnOrder,
+  initialColumnWidths,
+
+}: GridProps) => {
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
   const [columnWidths, setColumnWidths] =
-    useState<Record<string, string>>(initialColWidths);
+    useState<Record<string, string>>(initialColumnWidths);
 
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: 'asc' | 'desc';
   } | null>(null);
 
-  const columnOrder = useMemo(() => {
+  const columns = useMemo(() => {
     if (data.length === 0) return [];
 
     const dataKeys = Object.keys(data[0]);
 
-    return manualColumnOrder.filter(
+    return columnOrder.filter(
       (key) =>
         dataKeys.includes(key) &&
-        !filteredItems.includes(key) &&
         typeof data[0][key] !== 'object'
     );
   }, [data]);
 
-  const gridTemplate = columnOrder
+  const gridTemplate = columns
     .map((col) => columnWidths[col] ?? '120px')
     .join(' ');
 
@@ -118,7 +111,7 @@ export const Grid = ({ data }: GridProps) => {
   return (
     <GridContainer>
       <HeaderContainer style={{ gridTemplateColumns: gridTemplate }}>
-        {columnOrder.map((colKey) => {
+        {columns.map((colKey) => {
           const isSorted = sortConfig?.key === colKey;
           const sortArrow = isSorted
             ? sortConfig!.direction === 'asc'
@@ -148,35 +141,36 @@ export const Grid = ({ data }: GridProps) => {
               <Header title={colKey.toUpperCase() + sortArrow} />
 
               <ResizeHandle
-onMouseDown={(e) => {
-  e.preventDefault();
+                onMouseDown={(e) => {
+                  e.preventDefault();
 
-  const startX = e.clientX;
+                  const startX = e.clientX;
 
-  // Get the actual current width of the column
-  const columnElement = e.currentTarget.parentElement;
-  if (!columnElement) return;
+                  // Get the actual current width of the column
+                  const columnElement = e.currentTarget.parentElement;
+                  if (!columnElement) return;
 
-  const startWidth = columnElement.getBoundingClientRect().width;
+                  const startWidth =
+                    columnElement.getBoundingClientRect().width;
 
-  const onMouseMove = (moveEvent: MouseEvent) => {
-    const delta = moveEvent.clientX - startX;
-    const newWidth = Math.max(60, startWidth + delta);
+                  const onMouseMove = (moveEvent: MouseEvent) => {
+                    const delta = moveEvent.clientX - startX;
+                    const newWidth = Math.max(60, startWidth + delta);
 
-    setColumnWidths((prev) => ({
-      ...prev,
-      [colKey]: `${newWidth}px`, // overwrite fr with px on resize
-    }));
-  };
+                    setColumnWidths((prev) => ({
+                      ...prev,
+                      [colKey]: `${newWidth}px`, // overwrite fr with px on resize
+                    }));
+                  };
 
-  const onMouseUp = () => {
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('mouseup', onMouseUp);
-  };
+                  const onMouseUp = () => {
+                    window.removeEventListener('mousemove', onMouseMove);
+                    window.removeEventListener('mouseup', onMouseUp);
+                  };
 
-  window.addEventListener('mousemove', onMouseMove);
-  window.addEventListener('mouseup', onMouseUp);
-}}
+                  window.addEventListener('mousemove', onMouseMove);
+                  window.addEventListener('mouseup', onMouseUp);
+                }}
               />
             </div>
           );
@@ -189,7 +183,7 @@ onMouseDown={(e) => {
 
           return (
             <React.Fragment key={rowIndex}>
-              {columnOrder.map((colKey) => (
+              {columns.map((colKey) => (
                 <div
                   key={`cell-${rowIndex}-${colKey}`}
                   onClick={() => toggleRow(rowIndex)}
