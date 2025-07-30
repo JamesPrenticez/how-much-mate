@@ -8,6 +8,8 @@ import { ThemeSwitcher } from '@shared/theme';
 import { Nav_Items } from '../../data/navigation.data';
 import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
+import { Button, ButtonVariants } from '@shared/components';
+import { adminService } from '@draw/db';
 
 const Container = styled.div`
   display: flex;
@@ -18,8 +20,6 @@ const Container = styled.div`
   background-color: var(--color-background-strong);
 
   .switches {
-    margin-left: auto;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -69,6 +69,29 @@ const NavItem = styled(NavLink)`
   }
 `;
 
+const DatabaseButton = styled(Button)`
+  && {
+    font-size: 2rem;
+    line-height: 3.08rem; // dumb shit
+
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: color ease-in 200ms;
+    cursor: pointer;
+
+    &.seed {
+      margin-left: auto;
+      color: darkgreen;
+      background-color: var(--color-rag-green);
+    }
+
+    &.delete {
+      color: darkred;
+      background-color: var(--color-rag-red);
+    }
+  }
+`;
+
 export const Navbar = () => {
   return (
     <Container>
@@ -84,6 +107,27 @@ export const Navbar = () => {
         </NavItem>
       ))}
 
+
+      <DatabaseButton
+        className="seed"
+        variant={ButtonVariants.SKELETON}
+        onClick={() => {
+          adminService.reSeed();
+          window.location.reload();
+        }}
+      >
+        Seed DB
+      </DatabaseButton>
+      <DatabaseButton
+        className="delete"
+        variant={ButtonVariants.SKELETON}
+        onClick={() => {
+          adminService.clearDatabase();
+          window.location.reload();
+        }}
+      >
+        Delete DB
+      </DatabaseButton>
       <div className="switches">
         <SystemSwitcher />
         <ThemeSwitcher />

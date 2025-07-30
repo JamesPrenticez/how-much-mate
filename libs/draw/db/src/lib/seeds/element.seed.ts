@@ -1,6 +1,8 @@
-import { ElementGroup } from "@draw/models";
+import { ElementGroup, ElementValidator } from "@draw/models";
+import { v4 as uuidv4 } from 'uuid';
+import { db } from '../db';
 
-export const SEED_ELEMENT_GROUPS: Omit<ElementGroup, 'id' | 'createdAt' | 'updatedAt'>[] = [
+export const SEED_ELEMENT: Omit<ElementGroup, 'id' | 'createdAt' | 'updatedAt'>[] = [
   {
     name: 'Structural Elements',
     description: 'Load-bearing structural components',
@@ -27,3 +29,23 @@ export const SEED_ELEMENT_GROUPS: Omit<ElementGroup, 'id' | 'createdAt' | 'updat
     isCustom: false
   }
 ];
+
+export const seedElements = async () => {
+  const element = SEED_ELEMENT.map((ele) => {
+
+    console.log("here")
+    const errors = ElementValidator.validate(ele);
+    if (errors.length) {
+      throw new Error(`Validation failed for element ${ele.name}: ${errors.join(', ')}`);
+    }
+
+    return {
+      ...ele,
+      id: uuidv4(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  });
+
+  await db.elementGroups.bulkAdd(element);
+}

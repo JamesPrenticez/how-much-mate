@@ -1,5 +1,5 @@
 import { Material, MaterialCategory } from "@draw/models";
-import { BaseRepository } from "./base-repository";
+import { BaseRepository } from "./base.repository";
 import Dexie, { Table } from "dexie";
 
 export class MaterialRepository extends BaseRepository<Material> {

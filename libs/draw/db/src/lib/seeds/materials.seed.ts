@@ -76,8 +76,7 @@ export const SEED_MATERIALS: Omit<Material, 'id' | 'createdAt' | 'updatedAt'>[] 
   },
 ]
 
-
-export async function seedMaterials() {
+export const seedMaterials = async () => {
   const materials = SEED_MATERIALS.map((mat) => {
     const errors = MaterialValidator.validate(mat);
     if (errors.length) {
@@ -92,5 +91,5 @@ export async function seedMaterials() {
     };
   });
 
-  await db.materials.bulkAdd(materials); // This is a stupid probelm
+  await db.materials.bulkAdd(materials); // This is a stupid probelm, can't use repos while seeding
 }

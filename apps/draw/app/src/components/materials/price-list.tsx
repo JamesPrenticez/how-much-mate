@@ -38,7 +38,6 @@ export const PriceList = () => {
     });
   };
 
-  console.log(materials);
   return (
     <Container>
       <h1>MATERIALS - PRICE LIST</h1>
