@@ -24,20 +24,34 @@ const Container = styled.div`
 
 
 export const ElementsPage = () => {
-  const { elements } = useElementStore();
+  const { elements, subs } = useElementStore();
 
-  console.log(elements)
+console.log(subs)
 
   return (
     <Container>
           <Grid
               data={elements}
               columnOrder={[
+                'code',
                 'name',
                 'description',
               ]}
               initialColumnWidths={{
-                name: '330px',
+                name: '400px',
+                description: '1fr',
+              }}
+            />
+
+          <Grid
+              data={subs}
+              columnOrder={[
+                'subCode',
+                'name',
+                'description',
+              ]}
+              initialColumnWidths={{
+                name: '400px',
                 description: '1fr',
               }}
             />

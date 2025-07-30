@@ -8,5 +8,4 @@ export class ElementRepository extends BaseRepository<ElementGroup> {
   constructor(db: Dexie) {
     super(db);
   }
-
 }

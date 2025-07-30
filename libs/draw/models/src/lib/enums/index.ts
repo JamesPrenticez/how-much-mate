@@ -1,3 +1,4 @@
+export * from "./element.enum"
 export * from "./element-type.enum"
 export * from "./material-category.enum"
 export * from "./sync-status.enum"

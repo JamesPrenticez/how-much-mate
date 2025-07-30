@@ -1,9 +1,10 @@
 import { create } from 'zustand';
-import { ElementGroup } from '@draw/models';
+import { ElementGroup, ElementSubgroup } from '@draw/models';
 import { elementService } from '@draw/db';
 
 interface ElementsState {
   elements: ElementGroup[];
+  subs: ElementSubgroup[];
   loading: boolean;
   error: string | null;
   // createMaterial: (material: Omit<Material, 'id' | 'createdAt' | 'updatedAt' | 'isCustom'>) => Promise<void>;
@@ -15,8 +16,13 @@ export const useElementStore = create<ElementsState>((set) => {
     .then((elements) => set({ elements, loading: false }))
     .catch((err) => set({ error: err.message, loading: false }));
 
+  elementService.getAllSub()
+    .then((subs) => set({ subs, loading: false }))
+    .catch((err) => set({ error: err.message, loading: false }));
+
   return {
     elements: [],
+    subs: [],
     loading: true,
     error: null,
     // createMaterial: async (materialData) => {

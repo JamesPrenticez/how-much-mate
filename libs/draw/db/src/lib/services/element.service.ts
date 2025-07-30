@@ -1,11 +1,15 @@
 import { db } from '../db';
-import { ElementGroup } from '@draw/models';
-import { ElementRepository } from '../repositories';
+import { ElementGroup, ElementSubgroup } from '@draw/models';
+import { ElementRepository, ElementSubGroupRepository } from '../repositories';
 
-const repo = new ElementRepository(db);
+const repo1 = new ElementRepository(db);
+const repo2 = new ElementSubGroupRepository(db);
 
 export const elementService = {
   async getAll(): Promise<ElementGroup[]> {
-    return repo.findAll();
+    return repo1.findAll();
+  },
+  async getAllSub(): Promise<ElementSubgroup[]> {
+    return repo2.findAll();
   },
 }

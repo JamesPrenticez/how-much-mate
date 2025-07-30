@@ -9,6 +9,10 @@ const GridContainer = styled.div`
   border-radius: 0.5rem;
   background-color: var(--color-secondary);
   height: 500px;
+
+  .cell {
+    text-transform: capitalize;
+  }
 `;
 
 const HeaderContainer = styled.div`
@@ -38,17 +42,9 @@ interface GridProps {
   data: any[];
   columnOrder: string[];
   initialColumnWidths: Record<string, string>;
-
 }
 
-
-
-export const Grid = ({ 
-  data,
-  columnOrder,
-  initialColumnWidths,
-
-}: GridProps) => {
+export const Grid = ({ data, columnOrder, initialColumnWidths }: GridProps) => {
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
   const [columnWidths, setColumnWidths] =
     useState<Record<string, string>>(initialColumnWidths);
@@ -64,11 +60,9 @@ export const Grid = ({
     const dataKeys = Object.keys(data[0]);
 
     return columnOrder.filter(
-      (key) =>
-        dataKeys.includes(key) &&
-        typeof data[0][key] !== 'object'
+      (key) => dataKeys.includes(key) && typeof data[0][key] !== 'object'
     );
-  }, [data]);
+  }, [data, columnOrder]);
 
   const gridTemplate = columns
     .map((col) => columnWidths[col] ?? '120px')
@@ -188,6 +182,7 @@ export const Grid = ({
                   key={`cell-${rowIndex}-${colKey}`}
                   onClick={() => toggleRow(rowIndex)}
                   style={{ cursor: 'pointer' }}
+                  className="cell"
                 >
                   {String(row[colKey] ?? '')}
                 </div>

@@ -1,65 +1,58 @@
-import { ElementSubgroup, UnitType } from "@draw/models";
+import { ElementCode, ElementSubCode, ElementSubgroup, ElementSubgroupValidator } from "@draw/models";
+import { v4 as uuidv4 } from 'uuid';
+import { db } from '../db';
 
-export const SEED_ELEMENT_SUBGROUPS: Omit<ElementSubgroup, 'id' | 'createdAt' | 'updatedAt'>[] = [
-  // Structural Elements subgroups
-  {
-    groupId: '', // Will be set during seeding
-    name: 'Concrete Beams',
-    description: 'Reinforced concrete structural beams',
-    unit: UnitType.LINEAR_METER
-  },
-  {
-    groupId: '', // Will be set during seeding
-    name: 'Steel Columns',
-    description: 'Structural steel columns',
-    unit: UnitType.LINEAR_METER
-  },
-  {
-    groupId: '', // Will be set during seeding
-    name: 'Timber Beams',
-    description: 'Engineered timber beams',
-    unit: UnitType.LINEAR_METER
-  },
+// This is where things get a little tricky.. only when seeding.
+// We dont know the elementGroupId before its created
+// so we make a "pre-seed" copy and then match code with code to get the id
 
-  // Wall Systems subgroups
-  {
-    groupId: '', // Will be set during seeding
-    name: 'Timber Frame Wall',
-    description: 'Standard timber framed wall with insulation and lining',
-    unit: UnitType.SQUARE_METER
-  },
-  {
-    groupId: '', // Will be set during seeding
-    name: 'Concrete Block Wall',
-    description: 'Concrete masonry wall system',
-    unit: UnitType.SQUARE_METER
-  },
+interface PreSeedElementSubgroup extends Omit<ElementSubgroup, 'id' | 'createdAt' | 'updatedAt' | 'elementGroupId'> {
+  code: ElementCode;
+}
 
-  // Floor Systems subgroups
+export const SEED_ELEMENT_SUBGROUPS: PreSeedElementSubgroup[] = [
   {
-    groupId: '', // Will be set during seeding
-    name: 'Timber Floor System',
-    description: 'Suspended timber floor with bearers and joists',
-    unit: UnitType.SQUARE_METER
+    code: ElementCode.E7,
+    subCode: ElementSubCode.E701,
+    name: 'Timber Wall Framing',
   },
   {
-    groupId: '', // Will be set during seeding
-    name: 'Concrete Slab',
-    description: 'Reinforced concrete slab on ground',
-    unit: UnitType.SQUARE_METER
+    code: ElementCode.E8,
+    name: 'Double Glazed Alumnium Joinery',
+    subCode: ElementSubCode.E801,
   },
-
-  // Foundation Systems subgroups
-  {
-    groupId: '', // Will be set during seeding
-    name: 'Strip Foundation',
-    description: 'Concrete strip foundation',
-    unit: UnitType.LINEAR_METER
-  },
-  {
-    groupId: '', // Will be set during seeding
-    name: 'Pile Foundation',
-    description: 'Driven pile foundation system',
-    unit: UnitType.COUNT
-  }
 ];
+
+export const seedElementSubgroups = async () => {
+  const elementGroups = await db.elementGroups.toArray();
+
+  const codeToIdMap = Object.fromEntries(
+    elementGroups.map((group) => [group.code, group.id])
+  );
+
+  const subgroups: ElementSubgroup[] = SEED_ELEMENT_SUBGROUPS.map(({ code, ...rest }) => {
+    const elementGroupId = codeToIdMap[code];
+    if (!elementGroupId) {
+      throw new Error(`No ElementGroup found for code ${code}`);
+    }
+
+    const completeSub: ElementSubgroup = {
+      ...rest,
+      id: uuidv4(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      elementGroupId,
+    };
+
+    const errors = ElementSubgroupValidator.validate(completeSub);
+    if (errors.length) {
+      throw new Error(
+        `Validation failed for subgroup ${rest.subCode}: ${errors.join(', ')}`
+      );
+    }
+
+    return completeSub;
+  });
+
+  await db.elementSubgroups.bulkAdd(subgroups);
+};

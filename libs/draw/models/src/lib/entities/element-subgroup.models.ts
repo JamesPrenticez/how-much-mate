@@ -1,11 +1,8 @@
-import { UnitType } from '../enums';
-
 export interface ElementSubgroup {
   id: string;
-  groupId: string;
+  subCode: string;
+  elementGroupId: string;
   name: string;
-  description?: string;
-  unit: UnitType;
   createdAt: string;
   updatedAt?: string;
 }
