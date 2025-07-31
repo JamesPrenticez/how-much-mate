@@ -1,4 +1,5 @@
-import { seedAll } from '../seeds/seed';
+import { seedCompanyTree } from '../seeds/seed';
+import { SEED_TREE } from '../seeds/seed.data';
 import { BaseRepository } from './base.repository';
 import { Dexie } from 'dexie';
 
@@ -22,7 +23,7 @@ export class AdminRepository extends BaseRepository<Admin> {
   }
 
   async reSeed(): Promise<void> {
-    seedAll(); 
+    seedCompanyTree(SEED_TREE); 
   }
 
   // You dont really wanna do this

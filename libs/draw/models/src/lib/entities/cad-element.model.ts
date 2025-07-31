@@ -1,4 +1,4 @@
-import { ElementType, SyncStatus } from '../enums';
+import { GeometryType, SyncStatus } from '../enums';
 import { Geometry, MaterialQuantity } from '../interfaces';
 
 export interface CadElementProperties {
@@ -12,8 +12,8 @@ export interface CadElementProperties {
 export interface CadElement {
   id: string;
   projectId: string;
-  subgroupId?: string;
-  elementType: ElementType;
+  elementSubgroupId?: string;
+  geometryType: GeometryType;
   layerName?: string;
   geometry: Geometry;
   properties?: CadElementProperties;
@@ -28,7 +28,7 @@ export interface CadElement {
   
   // Sync and audit
   createdAt?: string;
-  lastModified?: string;
+  updatedAt?: string;
   syncStatus?: SyncStatus;
   syncVersion?: string;
   isDeleted?: boolean;

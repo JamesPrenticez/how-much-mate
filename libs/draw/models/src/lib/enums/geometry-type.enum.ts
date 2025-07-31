@@ -1,4 +1,4 @@
-export enum ElementType {
+export enum GeometryType {
   LINE = 'line',
   // TEMP_LINE = 'temp-line',
   POLYLINE = 'polyline',

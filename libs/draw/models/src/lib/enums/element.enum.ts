@@ -16,3 +16,8 @@
     E802 = "E8.02",
     E803 = "E8.03",
   }
+
+  export enum ElementSubName {
+    TIMBER_WALL_FRMAING = "timber wall framing",
+    CLADDING = "cladding"
+  }

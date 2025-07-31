@@ -2,6 +2,8 @@ import { SyncStatus } from '../enums';
 
 export interface Project {
   id: string;
+  code: string;
+  companyId: string;
   name: string;
   description?: string;
   createdAt: string;

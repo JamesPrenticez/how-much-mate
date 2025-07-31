@@ -1,5 +1,5 @@
 import { CreateCadElementDto } from '../dto';
-import { ElementType } from '../enums';
+import { GeometryType } from '../enums';
 
 export class CadElementValidator {
   static validateCreate(dto: CreateCadElementDto): string[] {
@@ -9,8 +9,8 @@ export class CadElementValidator {
       errors.push('Project ID is required');
     }
     
-    if (!Object.values(ElementType).includes(dto.elementType)) {
-      errors.push('Invalid element type');
+    if (!Object.values(GeometryType).includes(dto.geometryType)) {
+      errors.push('Invalid geometry type');
     }
     
     if (!dto.geometry) {
@@ -18,29 +18,29 @@ export class CadElementValidator {
     }
     
     // Validate geometry based on element type
-    if (dto.geometry && dto.elementType) {
-      const geometryErrors = this.validateGeometry(dto.elementType, dto.geometry);
+    if (dto.geometry && dto.geometryType) {
+      const geometryErrors = this.validateGeometry(dto.geometryType, dto.geometry);
       errors.push(...geometryErrors);
     }
     
     return errors;
   }
   
-  private static validateGeometry(elementType: ElementType, geometry: any): string[] {
+  private static validateGeometry(geometryType: GeometryType, geometry: any): string[] {
     const errors: string[] = [];
     
-    switch (elementType) {
-      case ElementType.LINE:
+    switch (geometryType) {
+      case GeometryType.LINE:
         if (!geometry.start || !geometry.end) {
           errors.push('Line geometry requires start and end points');
         }
         break;
-      case ElementType.POLYLINE:
+      case GeometryType.POLYLINE:
         if (!Array.isArray(geometry.coordinates) || geometry.coordinates.length < 2) {
           errors.push('Polyline geometry requires at least 2 coordinates');
         }
         break;
-      case ElementType.CIRCLE:
+      case GeometryType.CIRCLE:
         if (!geometry.center || typeof geometry.radius !== 'number' || geometry.radius <= 0) {
           errors.push('Circle geometry requires center point and positive radius');
         }

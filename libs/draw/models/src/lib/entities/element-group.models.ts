@@ -2,6 +2,7 @@ import { ElementCode, ElementName } from "../enums";
 
 export interface ElementGroup {
   id: string;
+  projectId: string;
   code: ElementCode | string;
   name: ElementName | string;
   description?: string;

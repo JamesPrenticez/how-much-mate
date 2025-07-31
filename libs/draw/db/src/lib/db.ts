@@ -10,18 +10,21 @@ import {
   SubgroupMaterial,
   CadElement,
   SyncLog,
+  Company,
   // Metadata,
   // Conflict
 } from "@draw/models"
-import { seedAll } from './seeds/seed';
+import { seedCompanyTree } from './seeds/seed';
+import { SEED_TREE } from './seeds/seed.data';
 
 // TODO
 interface Metadata { id: string; [key: string]: any; }
 interface Conflict { id: string; entityType: string; entityId: string; resolved: boolean; }
 
 export class LocalDB extends Dexie {
-  projects!: Table<Project>;
   materials!: Table<Material>;
+  companies!: Table<Company>;
+  projects!: Table<Project>;
   elementGroups!: Table<ElementGroup>;
   elementSubgroups!: Table<ElementSubgroup>;
   subgroupMaterials!: Table<SubgroupMaterial>;
@@ -34,6 +37,7 @@ export class LocalDB extends Dexie {
     super(DB_NAME);
 
     this.version(DB_VERSION).stores({
+      companies: 'id, name, createdAt, syncStatus',
       projects: 'id, name, createdAt, syncStatus',
       materials: 'id, code, name, category, isCustom',
       elementGroups: 'id, name, isCustom',
@@ -46,8 +50,7 @@ export class LocalDB extends Dexie {
     });
 
      this.on('populate', () => {
-      console.log("Seeding the db")
-      seedAll();
+      seedCompanyTree(SEED_TREE);
     });
   }
 }

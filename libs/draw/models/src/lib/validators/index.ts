@@ -1,4 +1,5 @@
 export * from "./cad-element.validator"
 export * from "./material.validator"
 export * from "./project.validator"
+export * from "./company.validator"
 export * from "./element.validator"
