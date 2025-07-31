@@ -38,12 +38,12 @@ export class LocalDB extends Dexie {
 
     this.version(DB_VERSION).stores({
       companies: 'id, name, createdAt, syncStatus',
-      projects: 'id, name, createdAt, syncStatus',
+      projects: 'id, companyId, name, createdAt, syncStatus',
       materials: 'id, code, name, category, isCustom',
-      elementGroups: 'id, name, isCustom',
-      elementSubgroups: 'id, groupId, name',
+      elementGroups: 'id, projectId, name, isCustom',
+      elementSubgroups: 'id, elementGroupId, groupId, name',
       subgroupMaterials: 'id, [subgroupId+materialId], subgroupId, materialId',
-      cadElements: 'id, projectId, subgroupId, elementType, layerName, lastModified, syncStatus',
+      cadElements: 'id, projectId, elementSubgroupId, elementType, layerName, lastModified, syncStatus',
       syncLog: 'id, entityType, entityId, action, timestamp, synced',
       metadata: 'id',
       conflicts: 'id, entityType, entityId, resolved',

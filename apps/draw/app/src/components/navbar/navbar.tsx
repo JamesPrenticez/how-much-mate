@@ -10,6 +10,7 @@ import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
 import { Button, ButtonVariants } from '@shared/components';
 import { adminService } from '@draw/db';
+import { useElementStore } from '@draw/stores';
 
 const Container = styled.div`
   display: flex;
@@ -93,6 +94,8 @@ const DatabaseButton = styled(Button)`
 `;
 
 export const Navbar = () => {
+  const { fetchElements } = useElementStore();
+
   return (
     <Container>
       <NavLogo />
@@ -111,9 +114,9 @@ export const Navbar = () => {
       <DatabaseButton
         className="seed"
         variant={ButtonVariants.SKELETON}
-        onClick={() => {
-          adminService.reSeed();
-          // window.location.reload();
+        onClick={async () => {
+          await adminService.reSeed();
+          await useElementStore.getState().fetchElements();
         }}
       >
         Seed DB
@@ -121,9 +124,9 @@ export const Navbar = () => {
       <DatabaseButton
         className="delete"
         variant={ButtonVariants.SKELETON}
-        onClick={() => {
-          adminService.clearDatabase();
-          window.location.reload();
+        onClick={async () => {
+          await adminService.clearDatabase();
+          await useElementStore.getState().fetchElements();
         }}
       >
         Delete DB

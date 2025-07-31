@@ -20,7 +20,6 @@ export async function seedCompanyTree(tree: CompanyTree[]) {
   const elementSubgroups: ElementSubgroup[] = [];
   const cadElements: CadElement[] = [];
 
-  
   for (const companyNode of tree) {
     const companyId = uuidv4();
     companies.push({

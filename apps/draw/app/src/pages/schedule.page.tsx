@@ -28,14 +28,14 @@ const Container = styled.div`
 `;
 
 export const SchedulePage = () => {
-  const { elements, subs } = useElementStore();
+  const { all } = useElementStore();
 
   return (
     <Container>
       <h1>Schedule of Quantities</h1>
 
       <div className="scroll-container custom-scrollbar-narrow">
-        <pre>{JSON.stringify(elements, null, 2)}</pre>
+        <pre>{JSON.stringify(all, null, 2)}</pre>
       </div>
     </Container>
   )
