@@ -1,5 +1,5 @@
 // seed-tree.ts
-import { ElementCode, ElementSubCode, ElementName, Company, Project, ElementGroup, ElementSubgroup, CadElement, ElementSubName, GeometryType, SyncStatus } from '@draw/models';
+import { ElementCode, ElementSubCode, ElementName, Company, Project, ElementGroup, ElementSubgroup, CadElement, ElementSubName, SyncStatus, GeometryType } from '@draw/models';
 
 
 export type CadElementTree = Omit<CadElement, "id" | "createdAt" | "updatedAt" | "projectId" | "elementSubgroupId">
@@ -39,9 +39,8 @@ export const SEED_TREE: CompanyTree[] = [
                   name: ElementSubName.TIMBER_WALL_FRMAING,
                   cadElements: [
                     { 
-                        geometryType: GeometryType.LINE,
                         geometry: {
-                          type: "line",
+                          type: GeometryType.LINE,
                           start: { 
                             x: 50,
                             y: 50,
@@ -53,6 +52,7 @@ export const SEED_TREE: CompanyTree[] = [
                             z: 0
                           }
                         },
+                        syncStatus: SyncStatus.LOCAL
                     }
                   ]
                },

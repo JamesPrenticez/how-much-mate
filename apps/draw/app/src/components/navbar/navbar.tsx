@@ -113,7 +113,7 @@ export const Navbar = () => {
         variant={ButtonVariants.SKELETON}
         onClick={() => {
           adminService.reSeed();
-          window.location.reload();
+          // window.location.reload();
         }}
       >
         Seed DB

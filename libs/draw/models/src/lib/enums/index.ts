@@ -1,5 +1,5 @@
 export * from "./element.enum"
-export * from "./geometry-type.enum"
+export * from "./geometry.enum"
 export * from "./material-category.enum"
 export * from "./sync-status.enum"
 export * from "./unit-type.enum"

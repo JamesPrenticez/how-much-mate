@@ -1,6 +1,8 @@
+import z from "zod";
+
 export enum GeometryType {
   LINE = 'line',
-  // TEMP_LINE = 'temp-line',
+  TEMP_LINE = 'temp-line',
   POLYLINE = 'polyline',
   CIRCLE = 'circle',
   ARC = 'arc',
@@ -11,3 +13,5 @@ export enum GeometryType {
   DIMENSION = 'dimension',
   HATCH = 'hatch'
 }
+
+export const GeometryTypeSchema = z.nativeEnum(GeometryType);

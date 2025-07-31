@@ -6,6 +6,7 @@ import {
   ElementGroup,
   ElementSubgroup,
   CadElement,
+  ElementGroupSchema,
 } from '@draw/models';
 
 import { CompanyTree } from './seed.data';
@@ -19,6 +20,7 @@ export async function seedCompanyTree(tree: CompanyTree[]) {
   const elementSubgroups: ElementSubgroup[] = [];
   const cadElements: CadElement[] = [];
 
+  
   for (const companyNode of tree) {
     const companyId = uuidv4();
     companies.push({
@@ -44,14 +46,14 @@ export async function seedCompanyTree(tree: CompanyTree[]) {
         // Strip nested elementSubGroups
         const { elementSubGroups: elementSubGroupsNode, ...groupRest } = groupNode;
         const groupId = uuidv4();
-        elementGroups.push({
+        elementGroups.push(ElementGroupSchema.parse({
           ...groupRest,
           id: groupId,
           projectId,
           createdAt: now,
           updatedAt: now,
-          isCustom: false,
-        });
+          isCustom: true,
+        }));
 
         for (const subgroupNode of elementSubGroupsNode) {
           // Strip nested cadElements
