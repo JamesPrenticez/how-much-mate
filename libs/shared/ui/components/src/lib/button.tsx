@@ -9,7 +9,6 @@ const ButtonContainer = styled.button`
   line-height: 4.44rem;
   font-weight: 400;
 
-  outline: none;
   border-radius: 0.8rem;
   border: var(--color-border) solid 0.2rem;
   box-sizing: border-box;
@@ -17,7 +16,6 @@ const ButtonContainer = styled.button`
   padding: 0.5rem 1.5rem;
   margin: 0rem;
 
-  transition: all 300ms ease;
   cursor: pointer;
 
   &.mobile {
@@ -29,10 +27,6 @@ const ButtonContainer = styled.button`
     color: var(--color-text);
     background-color: var(--color-background);
     border-color: var(--color-border);
-
-    :focus-visible {
-      border: 50px var(--color-primary) solid;
-    }
 
     :hover {
       color: var(--color-primary);

@@ -4,6 +4,8 @@ import { useClickAway } from '@shared/hooks';
 import { Button, ButtonVariants } from '@shared/components';
 import { useElementStore } from '@draw/stores';
 import { adminService } from '@draw/db';
+import { SystemSwitcher } from '../system-switcher';
+import { ThemeSwitcher } from '@shared/theme';
 
 const Container = styled.div`
     position: absolute;
@@ -20,19 +22,17 @@ const Container = styled.div`
 
     transition-property: width, height;
     transition-duration: 200ms;
-
+    
+    border-top: rgba(var(--color-action-opacity), 0.5) 0.2rem solid;
     border-radius: 0.8rem;
+
     background: rgba(
-        var(--color-secondary-opacity),
-        0.5
+        var(--color-background-strong-opacity),
+        0.8
     );
 
-    color: var(--color-white-100);
-
     backdrop-filter: var(--filter-blur-primary);
-
     pointer-events: auto;
-
 `;
 
 
@@ -100,6 +100,12 @@ export const MenuModal = ({ isMenuOpen, setIsMenuOpen }: MenuModalProps) => {
       >
         Delete DB
       </DatabaseButton>
+
+            <div className="switches">
+              <SystemSwitcher />
+              <ThemeSwitcher />
+            </div>
+      
 
       {/* {menuItems.map((item) => (
         <NavLink key={item.key} to={item.key}>

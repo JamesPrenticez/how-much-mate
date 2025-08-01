@@ -1,27 +1,39 @@
 import styled from '@emotion/styled';
 import { Avatar } from './avatar';
 import { MenuModal } from './menu-modal';
-import { useRef, useState } from 'react';
-import { useClickAway } from '@shared/hooks';
+import { useState } from 'react';
+import { Button, ButtonVariants } from '@shared/components';
 
-const Container = styled.div`
-  background-color: rgba(var(--color-secondary-opacity), 0.6);
-  padding: 1rem 1.5rem;
-  border-radius: 8rem;
+const AccountButton = styled(Button)`
+&& {
+  border: transparent 0.1rem solid;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  border-radius: 2rem;
   cursor: pointer;
+
+  transition: border-color 100ms ease-in-out;
+
+  &:hover {
+    border-color: rgba(var(--color-action-hover-opacity), 0.7);
+  }
+}
 `;
+
+
 
 export const Account = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <>
-      <Container
+      <AccountButton
+        variant={ButtonVariants.SKELETON}
         data-ignore-click-away
         onClick={() => setIsMenuOpen((prev) => !prev)}
+        tabIndex={0}
       >
         <Avatar />
-      </Container>
+      </AccountButton>
       <MenuModal isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
     </>
   );

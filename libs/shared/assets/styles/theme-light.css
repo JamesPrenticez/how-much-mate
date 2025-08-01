@@ -19,6 +19,17 @@
   --color-background-weak-opacity: 245, 245, 245;   /* #f5f5f5 */
   --color-background-medium-opacity: 243, 243, 243; /* #f3f3f3 */
   --color-background-strong-opacity: 235, 235, 235; /* #ebebeb */
+
+  --color-contrast-opacity: 50, 255, 126;              /*#00bfff; */
+
+  /*
+   #c084fc 
+   #ffd93d
+   #00ffff
+   #32ff7e
+   #00bfff
+  
+  */
 }
 
 .theme-light {
@@ -42,4 +53,6 @@
   --color-background-weak: rgb(var(--color-background-weak-opacity));
   --color-background-medium: rgb(var(--color-background-medium-opacity));
   --color-background-strong: rgb(var(--color-background-strong-opacity));
+
+  --color-contrast: rgb(var(--color-contrast-opacity));
 }

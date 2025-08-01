@@ -24,8 +24,9 @@
   --color-theme-white-opacity: var(--color-base-black);
   --color-theme-black-opacity: var(--color-base-black);
 
-  --theme-background-opacity: 1;
-  --theme-border-opacity: 1;
+  --color-contrast-opacity: rgb(var(--color-gold-100));
+
+  /* === */
 
   --color-dark-black: rgb(var(--color-base-black));
   --color-light-black: rgb(var(--color-base-black));
@@ -49,4 +50,6 @@
 
   --color-theme-white: rgb(var(--color-theme-white-opacity));
   --color-theme-black: rgb(var(--color-theme-black-opacity));
+
+  --color-contrast: rgb(var(--color-gold-100));
 }

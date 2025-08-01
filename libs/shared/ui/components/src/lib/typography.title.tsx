@@ -9,6 +9,10 @@ const Container = styled.h1`
   font-weight: 900;
   letter-spacing: -0.1rem;
 
+  :hover {
+    color: var(--color-grey-20);
+  }
+
   @media ${device.tablet} {
     font-size: 2.4rem;
   }

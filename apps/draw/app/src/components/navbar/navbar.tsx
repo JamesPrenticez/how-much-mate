@@ -1,107 +1,33 @@
 import styled from '@emotion/styled';
-
-import { SystemSwitcher } from './system-switcher';
-import { MobileMenu } from './account-menu/xxx.mobile-menu';
 import { device } from '@shared/hooks';
 import { NavLogo } from './navbar-logo';
-import { ThemeSwitcher } from '@shared/theme';
-import { Nav_Items } from '../../data/navigation.data';
-import { NavLink } from 'react-router-dom';
-import clsx from 'clsx';
 import { Account } from './account-menu/account';
 
 const Container = styled.div`
   display: flex;
   align-items: center;
-  padding: 0rem 2rem;
+  padding: 0rem 2rem 0rem 0rem;
   height: 6rem;
   gap: 0.5rem;
   background-color: var(--color-background-strong);
-
-  .switches {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.2rem;
-    width: 19rem;
-    height: 5rem;
-
-    & button {
-      height: 2rem;
-    }
-  }
 
   .right {
     margin-left: auto;
   }
 
-  .mobile-only {
-    display: none;
-  }
-
   @media ${device.tablet} {
     padding: 0rem 1rem;
     height: 5rem;
-
-    .mobile-only {
-      display: block;
-    }
-
-    .switches {
-      display: none;
-    }
   }
 `;
-
-const NavItem = styled(NavLink)`
-  font-size: 2rem;
-  color: var(--color-text-subtle);
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: color ease-in 200ms;
-  cursor: pointer;
-
-  /* :hover,
-    :focus-visible {
-      background-color: var(--color-primary);
-    } */
-
-  &.active {
-    color: var(--color-secondary);
-    background-color: var(--color-primary);
-  }
-`;
-
 
 export const Navbar = () => {
   return (
     <Container>
       <NavLogo />
 
-      {Nav_Items.map((item) => (
-        <NavItem
-          key={item.id}
-          to={item.path}
-          className={({ isActive }) => clsx({ active: isActive })}
-        >
-          {item.title}
-        </NavItem>
-      ))}
-
-
-
-
-      <div className="switches">
-        <SystemSwitcher />
-        <ThemeSwitcher />
-      </div>
-
-<div className='right'>
-  <Account />
-</div>
-
-      <div className="mobile-only">
-        <MobileMenu />
+      <div className="right">
+        <Account />
       </div>
 
     </Container>

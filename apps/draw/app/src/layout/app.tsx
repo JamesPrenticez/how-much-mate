@@ -5,6 +5,9 @@ import { Navbar } from '../components/navbar/navbar';
 import { device } from '@shared/hooks';
 import { Route, Routes } from 'react-router-dom';
 import { Nav_Items } from '../data/navigation.data';
+import { SubNavbar } from '../components/sub-navbar/sub-navbar';
+import { Sidebar } from '../components/sidebar/sidebar';
+import { PageContainer } from './page-container';
 
 const Container = styled.div`
   display: flex;
@@ -25,9 +28,6 @@ const Container = styled.div`
     overflow-y: auto;
     background-color: var(--color-background-medium);
 
-    /* margin: 1rem; */
-    padding: 1rem;
-
     color: var(--color-text);
     font-size: 1.8rem;
 
@@ -42,14 +42,23 @@ export const AppLayout = () => {
     <ThemeWrapper>
       <Container>
         <Navbar />
+        <div className="row">
+          <Sidebar />
 
+          <main>
+            <SubNavbar />
+            
+            <PageContainer>
+              <Routes>
+                {Nav_Items.map((item) => (
+                  <Route key={item.id} path={item.path} element={item.page} />
+                ))}
+              </Routes>
+            </PageContainer>
 
-          <Routes>
-            {Nav_Items.map((item) => (
-              <Route key={item.id} path={item.path} element={item.page} />
-            ))}
-          </Routes>
-    </Container>
+          </main>
+        </div>
+      </Container>
     </ThemeWrapper>
   );
 };

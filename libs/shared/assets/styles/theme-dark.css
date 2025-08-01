@@ -23,6 +23,8 @@
   --color-background-weak-opacity: 44, 44, 44;     /* #2c2c2c */
   --color-background-medium-opacity: 60, 60, 60;   /* #3c3c3c */
   --color-background-strong-opacity: 33, 33, 33;   /* #212121 */
+
+  --color-contrast-opacity: 0, 191, 255;             /*#00bfff; */
 }
 
 .theme-dark {
@@ -47,4 +49,6 @@
   --color-background-weak: rgb(var(--color-background-weak-opacity));
   --color-background-medium: rgb(var(--color-background-medium-opacity));
   --color-background-strong: rgb(var(--color-background-strong-opacity));
+
+  --color-contrast: rgb(var(--color-contrast-opacity));
 }

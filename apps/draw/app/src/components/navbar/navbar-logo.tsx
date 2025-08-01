@@ -12,10 +12,7 @@ const LogoNavLink = styled(NavLink)`
   height: 100%;
   gap: 0.5rem;
   margin-right: 1rem;
-
-  :hover {
-    display: flex;
-  }
+  padding: 0rem 2rem;
 
   .logo {
     display: flex;
@@ -46,7 +43,7 @@ const LogoNavLink = styled(NavLink)`
 
 export const NavLogo = () => {
   return (
-    <LogoNavLink to={"/"}>
+    <LogoNavLink to="/">
       <div className="logo">
         {ICONS.Cube}
       </div>
