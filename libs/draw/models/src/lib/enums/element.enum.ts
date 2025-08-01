@@ -3,18 +3,17 @@ import z, { ZodLiteral } from 'zod';
 export const ELEMENTS = {
   E7: {
     code: 'E7',
-    name: 'exterior walls and exterior finishes',
+    name: 'walls',
     subgroups: {
       E701: { code: 'E705', name: 'timber wall framing' },
-      E702: { code: 'E709', name: 'cladding' },
     },
   },
   E8: {
     code: 'E8',
     name: 'windows and exterior doors',
     subgroups: {
-      E801: 'window framing',
-      E802: 'window flashing',
+      E801: { code: 'E801', name: 'exterior windows' },
+      E802: { code: 'E802', name: 'exterior doors' },
     },
   },
 } as const;

@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { Title } from '@shared/components';
 import { ThemeSwitcher } from '@shared/theme';
-import { SystemSwitcher } from './system-switcher';
-import { useAppLayoutStore } from '@shared/stores';
+import { SystemSwitcher } from '../system-switcher';
 import clsx from 'clsx';
+import { forwardRef } from 'react';
 
 const Container = styled.div`
   position: fixed;
@@ -53,27 +53,32 @@ const Container = styled.div`
   }
 `;
 
+interface MobileMenuModalProps extends HTMLDivElement {
+  isMenuOpen: boolean;
+}
 
-export const MobileMenuModal = () => {
-  const isOpenMobileMenu = useAppLayoutStore((s) => s.isOpenMobileMenu);
-  const setIsOpenMobileMenu = useAppLayoutStore(s => s.setIsOpenMobileMenu)
+export const MobileMenuModal = forwardRef<HTMLDivElement, MobileMenuModalProps>(
+  ({ isMenuOpen }, ref) => {
+    return (
+      <Container
+        ref={ref}
+        className={clsx({
+          isOpen: isMenuOpen,
+        })}
+      >
+        <Title>Menu</Title>
+        <div className="menu-container">
+          <div className="title">General</div>
+        </div>
 
-  return (
-    <Container
-      className={clsx({
-        isOpen: isOpenMobileMenu,
-      })}
-    >
-      <Title>Menu</Title>
-      <div className="menu-container">
-        <div className="title">General</div>
-      </div>
+        <div className="settings-container">
+          <Title>Settings</Title>
+          <ThemeSwitcher />
+          <SystemSwitcher />
+        </div>
+      </Container>
+    );
+  }
+);
 
-      <div className="settings-container">
-        <Title>Settings</Title>
-        <ThemeSwitcher />
-        <SystemSwitcher />
-      </div>
-    </Container>
-  );
-};
+MobileMenuModal.displayName = 'MobileMenuModal';

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { device } from '@shared/hooks';
-import { DimensionGroups } from './dimension-groups';
+import { ElementGroups } from './element-groups';
 
 const Container = styled.div`
   display: flex;
@@ -23,7 +23,7 @@ const Container = styled.div`
 export const Sidebar = () => {
   return (
     <Container>
-      <DimensionGroups />
+      <ElementGroups />
     </Container>
   );
 };

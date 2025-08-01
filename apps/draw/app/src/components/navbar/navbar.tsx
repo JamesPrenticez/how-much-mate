@@ -1,16 +1,14 @@
 import styled from '@emotion/styled';
 
 import { SystemSwitcher } from './system-switcher';
-import { MobileMenu } from './mobile-menu';
+import { MobileMenu } from './account-menu/xxx.mobile-menu';
 import { device } from '@shared/hooks';
 import { NavLogo } from './navbar-logo';
 import { ThemeSwitcher } from '@shared/theme';
 import { Nav_Items } from '../../data/navigation.data';
 import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
-import { Button, ButtonVariants } from '@shared/components';
-import { adminService } from '@draw/db';
-import { useElementStore } from '@draw/stores';
+import { Account } from './account-menu/account';
 
 const Container = styled.div`
   display: flex;
@@ -31,6 +29,10 @@ const Container = styled.div`
     & button {
       height: 2rem;
     }
+  }
+
+  .right {
+    margin-left: auto;
   }
 
   .mobile-only {
@@ -70,32 +72,8 @@ const NavItem = styled(NavLink)`
   }
 `;
 
-const DatabaseButton = styled(Button)`
-  && {
-    font-size: 2rem;
-    line-height: 3.08rem; // dumb shit
-
-    padding: 0.5rem 1.5rem;
-    border-radius: 0.5rem;
-    transition: color ease-in 200ms;
-    cursor: pointer;
-
-    &.seed {
-      margin-left: auto;
-      color: darkgreen;
-      background-color: var(--color-rag-green);
-    }
-
-    &.delete {
-      color: darkred;
-      background-color: var(--color-rag-red);
-    }
-  }
-`;
 
 export const Navbar = () => {
-  const { fetchCompanyTree } = useElementStore();
-
   return (
     <Container>
       <NavLogo />
@@ -111,34 +89,21 @@ export const Navbar = () => {
       ))}
 
 
-      <DatabaseButton
-        className="seed"
-        variant={ButtonVariants.SKELETON}
-        onClick={async () => {
-          await adminService.reSeed();
-          await fetchCompanyTree();
-        }}
-      >
-        Seed DB
-      </DatabaseButton>
-      <DatabaseButton
-        className="delete"
-        variant={ButtonVariants.SKELETON}
-        onClick={async () => {
-          await adminService.clearDatabase();
-          await fetchCompanyTree();
-        }}
-      >
-        Delete DB
-      </DatabaseButton>
+
+
       <div className="switches">
         <SystemSwitcher />
         <ThemeSwitcher />
       </div>
 
+<div className='right'>
+  <Account />
+</div>
+
       <div className="mobile-only">
         <MobileMenu />
       </div>
+
     </Container>
   );
 };

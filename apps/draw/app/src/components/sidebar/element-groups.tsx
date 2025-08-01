@@ -19,14 +19,14 @@ const Container = styled.div`
   }
 `;
 
-export const DimensionGroups = () => {
+export const ElementGroups = () => {
   // const { entities } = useEntitiesStore();
 
   // const groupedEntities = useGetEntitiesByGroup(entities);
 
   return (
     <Container>
-      <h1 className="title">Dimension Groups</h1>
+      <h1 className="title">Element Groups</h1>
 
       {/* <div className="scroll-container custom-scrollbar-narrow">
         {groupedEntities.map((group) => (
