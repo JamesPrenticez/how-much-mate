@@ -82,6 +82,8 @@ export async function seedCompanyTree(tree: CompanyTree[]) {
     }
   }
 
+  // TODO seed materials
+
   await db.transaction(
     'rw',
     [

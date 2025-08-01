@@ -1,23 +1,52 @@
-  export enum ElementName {
-    EXTERIOR_WALLS_AND_EXTERIOR_FINISHES =  'exterior walls and exterior finishes',
-    WINDOWS_AND_EXTERIOR_DOORS = 'windows and exterior doors'
+import z, { ZodLiteral } from 'zod';
+
+export const ELEMENTS = {
+  E7: {
+    code: 'E7',
+    name: 'exterior walls and exterior finishes',
+    subgroups: {
+      E701: { code: 'E701', name: 'timber wall framing' },
+      E702: { code: 'E702', name: 'cladding' },
+    },
+  },
+  E8: {
+    code: 'E8',
+    name: 'windows and exterior doors',
+    subgroups: {
+      E801: 'window framing',
+      E802: 'window flashing',
+    },
+  },
+} as const;
+
+export type ElementCode = keyof typeof ELEMENTS;
+export type ElementName = (typeof ELEMENTS)[ElementCode]['name'];
+// export type AllElementNames = (typeof ELEMENTS)[keyof typeof ELEMENTS]['name'];
+
+// Helper Function
+export function literalUnionFromArray<T extends readonly string[]>(values: T) {
+  const literals: ZodLiteral<T[number]>[] = values.map((value) =>
+    z.literal(value)
+  );
+
+  if (literals.length === 1) {
+    return literals[0];
   }
 
-  export enum ElementCode {
-    E7 = "E7",
-    E8 = "E8"
-  }
+  return z.union(
+    literals as [
+      ZodLiteral<T[number]>,
+      ZodLiteral<T[number]>,
+      ...ZodLiteral<T[number]>[]
+    ]
+  );
+}
 
-  export enum ElementSubCode {
-    E701 = "E7.01",
-    E702 = "E7.02",
-    E703 = "E7.03",
-    E801 = "E8.01",
-    E802 = "E8.02",
-    E803 = "E8.03",
-  }
+const elementCodes = Object.keys(ELEMENTS) as [string, ...string[]];
+const elementNames = Object.values(ELEMENTS).map((e) => e.name) as [
+  string,
+  ...string[]
+];
 
-  export enum ElementSubName {
-    TIMBER_WALL_FRMAING = "timber wall framing",
-    CLADDING = "cladding"
-  }
+export const elementCodeLiterals = literalUnionFromArray(elementCodes);
+export const elementNameLiterals = literalUnionFromArray(elementNames);

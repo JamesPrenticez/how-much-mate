@@ -1,11 +1,11 @@
 import z from "zod";
-import { ElementCode, ElementName } from "../enums";
+import { elementCodeLiterals, elementNameLiterals } from "../enums";
 
 export const ElementGroupSchema = z.object({
   id: z.string(),
   projectId: z.string(),
-  code: z.union([z.nativeEnum(ElementCode), z.string()]),
-  name: z.union([z.nativeEnum(ElementName), z.string()]),
+  code: z.union([elementCodeLiterals, z.string()]),
+  name: z.union([elementNameLiterals, z.string()]),
   description: z.string().optional(),
   isCustom: z.boolean(),
   createdAt: z.string(),

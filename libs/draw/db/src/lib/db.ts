@@ -2,6 +2,7 @@ import Dexie, { Table } from 'dexie';
 
 const DB_NAME = 'AutoCADWebApp';
 const DB_VERSION = 1;
+
 import {
   Project,
   Material,

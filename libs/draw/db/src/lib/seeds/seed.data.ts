@@ -1,11 +1,11 @@
 // seed-tree.ts
-import { ElementCode, ElementSubCode, ElementName, Company, Project, ElementGroup, ElementSubgroup, CadElement, ElementSubName, SyncStatus, GeometryType } from '@draw/models';
+import { Company, Project, ElementGroup, ElementSubgroup, CadElement, SyncStatus, GeometryType, ELEMENTS } from '@draw/models';
 
 
 export type CadElementTree = Omit<CadElement, "id" | "createdAt" | "updatedAt" | "projectId" | "elementSubgroupId">
 
 export interface ElementSubgroupTree extends Omit<ElementSubgroup, "id" | "createdAt" | "updatedAt" | "projectId" | "elementGroupId"> {
-  cadElements: CadElementTree[];
+  cadElements: CadElementTree[] | null;
 }
 
 export interface ElementTree extends Omit<ElementGroup, "id" | "createdAt" | "updatedAt" | "isCustom" | "projectId">  {
@@ -31,12 +31,12 @@ export const SEED_TREE: CompanyTree[] = [
         isDeleted: false,
         elementGroups: [
           {
-            code: ElementCode.E7,
-            name: ElementName.EXTERIOR_WALLS_AND_EXTERIOR_FINISHES,
+            code: ELEMENTS.E7.code,
+            name: ELEMENTS.E7.name,
             elementSubGroups: [
               { 
-                  subCode: ElementSubCode.E701,
-                  name: ElementSubName.TIMBER_WALL_FRMAING,
+                  subCode: ELEMENTS.E7.subgroups.E701.code,
+                  name: ELEMENTS.E7.subgroups.E701.name,
                   cadElements: [
                     { 
                         geometry: {
