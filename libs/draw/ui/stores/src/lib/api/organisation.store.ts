@@ -17,6 +17,7 @@ export const useOrganisationStore = create<OrganisationState>((set) => {
       const organisations = await organisationService.getOrganisations();
 
       if (!organisations || organisations.length === 0) {
+        set({ all: null, loading: false });
         throw new Error('No organisations found');
       }
 
@@ -24,12 +25,15 @@ export const useOrganisationStore = create<OrganisationState>((set) => {
       const all = await organisationService.getAll(orgId);
 
       if (!all) {
+        set({ all: null, loading: false });
         throw new Error('No organisation data found');
       }
 
       set({ all, loading: false });
+
     } catch (err: any) {
       set({ error: err?.message ?? 'Unknown error', loading: false });
+      throw new Error(err);
     }
   };
 
