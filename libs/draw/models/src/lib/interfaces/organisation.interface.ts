@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const OrganisationSchema = z.object({
   id: z.string(),
   name: z.string(),
+  profilePicture: z.string().optional(),
   createdAt: z.string(),
   updatedAt: z.string().optional(),
   metadata: z.record(z.any()).optional(),

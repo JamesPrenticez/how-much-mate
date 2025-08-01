@@ -1,5 +1,5 @@
 export * from "./cad-element.interface"
-export * from "./company.interface"
+export * from "./organisation.interface"
 export * from "./geometry.interface"
 export * from "./material.interface"
 export * from "./build-up-item.interface"

@@ -6,6 +6,7 @@ import { useOrganisationStore } from '@draw/stores';
 import { adminService } from '@draw/db';
 import { SystemSwitcher } from '../system-switcher';
 import { ThemeSwitcher } from '@shared/theme';
+import { UserAvatar } from './user-avatar';
 
 const Container = styled.div`
     position: absolute;
@@ -77,6 +78,9 @@ export const MenuModal = ({ isMenuOpen, setIsMenuOpen }: MenuModalProps) => {
     <Container
       ref={modalRef}
     >
+
+      <UserAvatar />
+
       <DatabaseButton
         className="seed"
         variant={ButtonVariants.SKELETON}

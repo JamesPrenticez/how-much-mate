@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { device } from '@shared/hooks';
 import { NavLogo } from './navbar-logo';
-import { Account } from './account-menu/account';
+import { OranisationPanel } from './account-menu/oranisation-panel';
 
 const Container = styled.div`
   display: flex;
@@ -27,10 +27,8 @@ export const Navbar = () => {
       <NavLogo />
 
       <div className="right">
-        <Account />
+        <OranisationPanel />
       </div>
-
-      
 
     </Container>
   );

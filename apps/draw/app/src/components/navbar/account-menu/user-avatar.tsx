@@ -37,23 +37,19 @@ const Container = styled.div`
   }
 `;
 
-export const Avatar = () => {
-  const user = {
-    displayName: 'James Prentice',
-    email: 'james.prentice@matica.com',
-    profilePicture: '',
-  };
+const user = {
+  id: "asd4fa46sd",
+  displayName: 'James Prentice',
+  email: 'james.prentice@matica.com',
+  profilePicture: '',
+};
 
+export const UserAvatar = () => {
   const [imageError, setImageError] = useState(false);
 
   const base64Avatar = useMemo(() => {
-    const seed = Math.random().toString(36).substring(2);
-    return `data:image/svg+xml;base64,${btoa(multiavatar(seed))}`;
+    return `data:image/svg+xml;base64,${btoa(multiavatar(user?.id ?? ''))}`;
   }, []);
-
-  // const base64Avatar = `data:image/svg+xml;base64,${btoa(
-  //   multiavatar(user?.email ?? '')
-  // )}`;
 
   return (
     <Container>

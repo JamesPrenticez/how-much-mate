@@ -1,25 +1,26 @@
 import React, { useState, useEffect, useRef, type ReactNode } from 'react'
 import styled from '@emotion/styled'
 
-
-
-// Styled components
 const Container = styled.div<{ isOpen: boolean }>`
   position: relative;
   display: flex;
   width: 100%;
-  height: 40px;
-  margin: 0.25rem 0;
-  padding: 0.5rem 0;
+  height: 4rem;
   cursor: pointer;
-  border-radius: 0.25rem;
-  outline: none;
-  /* ring: 1px solid blue; */
-  ${({ isOpen }) => isOpen && `ring-color: blue;`}
+  border: var(--color-border) 0.1rem solid;
+  border-radius: 0.5rem;
+  color: var(--color-text);
+  
+  outline: ${({ isOpen }) => (isOpen ? '0.2rem solid var(--color-primary)' : 'none')};
+
+  :focus-visible {
+    outline: var(--color-primary) solid 0.2rem;
+  }
 `
 
 const IconWrapper = styled.div`
   width: 2rem;
+  margin-left: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,14 +32,16 @@ const Input = styled.input`
   inset: 0;
   width: 100%;
   height: 100%;
-  padding: 0 12px;
+  padding: 0 3rem;
   outline: none;
   background: transparent;
   color: var(--color-text);
   z-index: 50;
 
+  font-size: 2rem;
+
   &::placeholder {
-    color: var(--color-secondary);
+    color: var(--color-grey-40);
   }
 `
 
@@ -56,16 +59,21 @@ const Caret = styled.div`
 const Dropdown = styled.div<{ isOpen: boolean }>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   position: absolute;
-  top: 2.5rem;
+  top: 5rem;
   left: 0;
   right: 0;
   background: var(--color-background);
   color: var(--color-text);
-  border: 1px solid blue;
-  border-radius: 0.25rem;
+  /* border: 0.1rem solid var(--color-border); */
+  border-radius: 0.5rem;
   max-height: 20rem;
   overflow-y: auto;
   z-index: 50;
+  /* outline: ${({ isOpen }) => (isOpen ? '0.2rem solid var(--color-primary)' : 'none')}; */
+
+  :focus-visible {
+    outline: 0.2rem solid var(--color-primary);
+  }
 `
 
 const OptionItem = styled.div<{ active: boolean }>`
@@ -73,13 +81,14 @@ const OptionItem = styled.div<{ active: boolean }>`
   align-items: center;
   width: 100%;
   padding: 0.5rem 1rem;
+  font-size: 1.8rem;
   cursor: pointer;
-  background-color: ${({ active }) => (active ? 'blue' : 'transparent')};
-  color: ${({ active }) => (active ? 'white' : 'black')};
+  background-color: ${({ active }) => (active ? 'var(--color-action-hover)' : 'transparent')};
+  color: ${({ active }) => (active ? 'var(--color-text)' : 'var(--color-text-subtle)')};
+  
 
   &:hover {
-    background-color: blue;
-    color: white;
+    background-color: var(--color-action-hover);
   }
 `
 interface AutoCompleteProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
@@ -90,7 +99,7 @@ interface AutoCompleteProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   renderIcon?: ReactNode
 }
 
-export const Autocomplete = ({
+export const AutoComplete = ({
   value,
   options,
   onChange,
@@ -169,7 +178,12 @@ export const Autocomplete = ({
   }
 
   return (
-    <Container isOpen={isOpen} ref={containerRef}>
+    <Container 
+      isOpen={isOpen}
+      ref={containerRef}
+      tabIndex={0}
+      // TODO fire open on enter key role="button"
+    >
       {renderIcon && <IconWrapper>{renderIcon}</IconWrapper>}
 
       <Input
@@ -206,7 +220,10 @@ export const Autocomplete = ({
         </svg>
       </Caret>
 
-      <Dropdown isOpen={isOpen}>
+      <Dropdown 
+        isOpen={isOpen}
+        className='custom-scrollbar-narrow'
+      >
         {filteredOptions.length > 0 ? (
           filteredOptions.map((item, index) => (
             <OptionItem

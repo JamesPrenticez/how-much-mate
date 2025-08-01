@@ -6,3 +6,4 @@ export * from './lib/tabs';
 export * from './lib/toggle';
 export * from './lib/typography.title';
 export * from './lib/typography.subtitle';
+export * from './lib/auto-complete';

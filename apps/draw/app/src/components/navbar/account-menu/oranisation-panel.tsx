@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import { Avatar } from './avatar';
 import { MenuModal } from './menu-modal';
 import { useState } from 'react';
 import { Button, ButtonVariants } from '@shared/components';
+import { OrgAvatar } from './org-avatar';
 
-const AccountButton = styled(Button)`
+const OranisationPanelButton = styled(Button)`
 && {
   border: transparent 0.1rem solid;
   padding: 0.5rem 0.5rem 0.5rem 1rem;
@@ -21,19 +21,19 @@ const AccountButton = styled(Button)`
 
 
 
-export const Account = () => {
+export const OranisationPanel = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <>
-      <AccountButton
+      <OranisationPanelButton
         variant={ButtonVariants.SKELETON}
         data-ignore-click-away
         onClick={() => setIsMenuOpen((prev) => !prev)}
         tabIndex={0}
       >
-        <Avatar />
-      </AccountButton>
+        <OrgAvatar />
+      </OranisationPanelButton>
       <MenuModal isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
     </>
   );
