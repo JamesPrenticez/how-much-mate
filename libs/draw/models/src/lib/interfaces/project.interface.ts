@@ -4,7 +4,7 @@ import { SyncStatus } from '../enums';
 export const ProjectSchema = z.object({
   id: z.string(),
   code: z.string(),
-  companyId: z.string(),
+  organisationId: z.string(),
   name: z.string(),
   description: z.string().optional(),
   createdAt: z.string(),

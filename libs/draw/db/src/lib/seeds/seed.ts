@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../db';
 import {
-  Company,
+  Organisation,
   Project,
   ElementGroup,
   ElementSubgroup,
@@ -9,34 +9,34 @@ import {
   ElementGroupSchema,
 } from '@draw/models';
 
-import { CompanyTree } from './seed.data';
+import { OrganisationTree } from './seed.data';
 
-export async function seedCompanyTree(tree: CompanyTree[]) {
+export async function seedCompanyTree(tree: OrganisationTree[]) {
   const now = new Date().toISOString();
 
-  const companies: Company[] = [];
+  const organisations: Organisation[] = [];
   const projects: Project[] = [];
   const elementGroups: ElementGroup[] = [];
   const elementSubgroups: ElementSubgroup[] = [];
   const cadElements: CadElement[] = [];
 
-  for (const companyNode of tree) {
-    const companyId = uuidv4();
-    companies.push({
-      id: companyId,
-      name: companyNode.name,
+  for (const organisationNode of tree) {
+    const organisationId = uuidv4();
+    organisations.push({
+      id: organisationId,
+      name: organisationNode.name,
       createdAt: now,
       updatedAt: now,
-      metadata: companyNode.metadata,
+      metadata: organisationNode.metadata,
     });
 
-    for (const projectNode of companyNode.projects) {
+    for (const projectNode of organisationNode.projects) {
       const { elementGroups: elementGroupsNode, ...projectRest } = projectNode;
       const projectId = uuidv4();
       projects.push({
         ...projectRest,
         id: projectId,
-        companyId,
+        organisationId,
         createdAt: now,
         updatedAt: now,
       });
@@ -87,14 +87,14 @@ export async function seedCompanyTree(tree: CompanyTree[]) {
   await db.transaction(
     'rw',
     [
-      db.companies,
+      db.organisation,
       db.projects,
       db.elementGroups,
       db.elementSubgroups,
       db.cadElements,
     ],
     async () => {
-      await db.companies.bulkAdd(companies);
+      await db.organisation.bulkAdd(organisations);
       await db.projects.bulkAdd(projects);
       await db.elementGroups.bulkAdd(elementGroups);
       await db.elementSubgroups.bulkAdd(elementSubgroups);

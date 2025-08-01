@@ -4,6 +4,7 @@ const DB_NAME = 'AutoCADWebApp';
 const DB_VERSION = 1;
 
 import {
+  Organisation,
   Project,
   Material,
   ElementGroup,
@@ -11,7 +12,6 @@ import {
   SubgroupMaterial,
   CadElement,
   SyncLog,
-  Company,
   // Metadata,
   // Conflict
 } from "@draw/models"
@@ -23,13 +23,13 @@ interface Metadata { id: string; [key: string]: any; }
 interface Conflict { id: string; entityType: string; entityId: string; resolved: boolean; }
 
 export class LocalDB extends Dexie {
-  materials!: Table<Material>;
-  companies!: Table<Company>;
+  organisation!: Table<Organisation>;
   projects!: Table<Project>;
   elementGroups!: Table<ElementGroup>;
   elementSubgroups!: Table<ElementSubgroup>;
   subgroupMaterials!: Table<SubgroupMaterial>;
   cadElements!: Table<CadElement>;
+  materials!: Table<Material>;
   syncLog!: Table<SyncLog>;
   metadata!: Table<Metadata>;
   conflicts!: Table<Conflict>;
@@ -38,13 +38,13 @@ export class LocalDB extends Dexie {
     super(DB_NAME);
 
     this.version(DB_VERSION).stores({
-      companies: 'id, name, createdAt, syncStatus',
-      projects: 'id, companyId, name, createdAt, syncStatus',
-      materials: 'id, code, name, category, isCustom',
+      organisation: 'id, name, createdAt, syncStatus',
+      projects: 'id, organisationId, name, createdAt, syncStatus',
       elementGroups: 'id, projectId, name, isCustom',
       elementSubgroups: 'id, elementGroupId, groupId, name',
       subgroupMaterials: 'id, [subgroupId+materialId], subgroupId, materialId',
       cadElements: 'id, projectId, elementSubgroupId, elementType, layerName, lastModified, syncStatus',
+      materials: 'id, code, name, category, isCustom',
       syncLog: 'id, entityType, entityId, action, timestamp, synced',
       metadata: 'id',
       conflicts: 'id, entityType, entityId, resolved',

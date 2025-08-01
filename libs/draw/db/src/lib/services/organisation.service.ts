@@ -1,5 +1,5 @@
 import { db } from '../db';
-import { Organisation, ElementGroup, ElementSubgroup } from '@draw/models';
+import { Organisation } from '@draw/models';
 import {
   CadElementTree,
   OrganisationTree,
@@ -8,21 +8,14 @@ import {
   ProjectTree,
 } from '../seeds/seed.data';
 
-export const elementService = {
-  getAll(): Promise<ElementGroup[]> {
-    return db.elementGroups.toArray();
-  },
-  getAllSub(): Promise<ElementSubgroup[]> {
-    return db.elementSubgroups.toArray();
-  },
-
-  getCompany(): Promise<Organisation[]> {
+export const organisationService = {
+  getOrganisations(): Promise<Organisation[]> {
     return db.organisation.toArray();
   },
 
-  async getOrgTree(organisationId: string): Promise<OrganisationTree | null> {
-    const company = await db.organisation.get(organisationId);
-    if (!company) return null;
+  async getAll(organisationId: string): Promise<OrganisationTree | null> {
+    const organisation = await db.organisation.get(organisationId);
+    if (!organisation) return null;
 
     // Get all projects for company
     const projects = await db.projects.where({ organisationId }).toArray();
@@ -100,7 +93,7 @@ export const elementService = {
       };
     });
 
-    const { id, createdAt, updatedAt, ...companyRest } = company;
+    const { id, createdAt, updatedAt, ...companyRest } = organisation;
     return {
       ...companyRest,
       projects: projectsTree,

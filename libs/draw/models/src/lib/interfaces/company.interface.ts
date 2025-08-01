@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const CompanySchema = z.object({
+export const OrganisationSchema = z.object({
   id: z.string(),
   name: z.string(),
   createdAt: z.string(),
@@ -8,4 +8,4 @@ export const CompanySchema = z.object({
   metadata: z.record(z.any()).optional(),
 });
 
-export type Company = z.infer<typeof CompanySchema>;
+export type Organisation = z.infer<typeof OrganisationSchema>;

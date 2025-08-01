@@ -23,5 +23,5 @@
     "vitest.config.ts",
     "vitest.config.mts"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "../../../libs/draw/ui/stores/src/lib/controls-grid.store.ts"]
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "../../../libs/draw/ui/stores/src/lib/draw/controls-grid.store.ts"]
 }

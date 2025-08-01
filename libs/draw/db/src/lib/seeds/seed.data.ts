@@ -1,5 +1,5 @@
 // seed-tree.ts
-import { Company, Project, ElementGroup, ElementSubgroup, CadElement, SyncStatus, GeometryType, ELEMENTS } from '@draw/models';
+import { Organisation, Project, ElementGroup, ElementSubgroup, CadElement, SyncStatus, GeometryType, ELEMENTS } from '@draw/models';
 
 export type CadElementTree = Omit<CadElement, "id" | "createdAt" | "updatedAt" | "projectId" | "elementSubgroupId">
 
@@ -11,11 +11,11 @@ export interface ElementTree extends Omit<ElementGroup, "id" | "createdAt" | "up
   elementSubGroups: ElementSubgroupTree[];
 }
 
-export interface ProjectTree extends Omit<Project, "id" | "createdAt" | "updatedAt" | "companyId"> {
+export interface ProjectTree extends Omit<Project, "id" | "createdAt" | "updatedAt" | "organisationId"> {
   elementGroups: ElementTree[];
 }
 
-export interface CompanyTree extends Omit<Company, "id" | "createdAt" | "updatedAt"> {
+export interface OrganisationTree extends Omit<Organisation, "id" | "createdAt" | "updatedAt"> {
   projects: ProjectTree[];
 }
 
@@ -40,7 +40,7 @@ const cadElementsForSeed: Record<string, CadElementTree[]> = {
   ],
 };
 
-export const SEED_TREE: CompanyTree[] = [
+export const SEED_TREE: OrganisationTree[] = [
   {
     name: 'Demo Company',
     projects: [

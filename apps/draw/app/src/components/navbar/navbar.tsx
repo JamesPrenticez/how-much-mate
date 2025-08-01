@@ -30,6 +30,8 @@ export const Navbar = () => {
         <Account />
       </div>
 
+      
+
     </Container>
   );
 };

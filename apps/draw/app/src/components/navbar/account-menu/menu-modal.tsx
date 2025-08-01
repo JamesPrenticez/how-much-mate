@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useRef } from 'react';
 import { useClickAway } from '@shared/hooks';
 import { Button, ButtonVariants } from '@shared/components';
-import { useElementStore } from '@draw/stores';
+import { useOrganisationStore } from '@draw/stores';
 import { adminService } from '@draw/db';
 import { SystemSwitcher } from '../system-switcher';
 import { ThemeSwitcher } from '@shared/theme';
@@ -35,7 +35,6 @@ const Container = styled.div`
     pointer-events: auto;
 `;
 
-
 const DatabaseButton = styled(Button)`
   && {
     width: 100%;
@@ -66,7 +65,7 @@ interface MenuModalProps {
 
 export const MenuModal = ({ isMenuOpen, setIsMenuOpen }: MenuModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const { fetchCompanyTree } = useElementStore();
+  const { fetchAll } = useOrganisationStore();
 
   useClickAway(modalRef, () => {
     setIsMenuOpen(false);
@@ -78,14 +77,12 @@ export const MenuModal = ({ isMenuOpen, setIsMenuOpen }: MenuModalProps) => {
     <Container
       ref={modalRef}
     >
-
-
       <DatabaseButton
         className="seed"
         variant={ButtonVariants.SKELETON}
         onClick={async () => {
           await adminService.reSeed();
-          await fetchCompanyTree();
+          await fetchAll();
         }}
       >
         Seed DB
@@ -95,7 +92,7 @@ export const MenuModal = ({ isMenuOpen, setIsMenuOpen }: MenuModalProps) => {
         variant={ButtonVariants.SKELETON}
         onClick={async () => {
           await adminService.clearDatabase();
-          await fetchCompanyTree();
+          await fetchAll();
         }}
       >
         Delete DB
