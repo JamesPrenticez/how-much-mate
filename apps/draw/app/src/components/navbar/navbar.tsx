@@ -94,7 +94,7 @@ const DatabaseButton = styled(Button)`
 `;
 
 export const Navbar = () => {
-  const { fetchElements } = useElementStore();
+  const { fetchCompanyTree } = useElementStore();
 
   return (
     <Container>
@@ -116,7 +116,7 @@ export const Navbar = () => {
         variant={ButtonVariants.SKELETON}
         onClick={async () => {
           await adminService.reSeed();
-          await useElementStore.getState().fetchElements();
+          await fetchCompanyTree();
         }}
       >
         Seed DB
@@ -126,7 +126,7 @@ export const Navbar = () => {
         variant={ButtonVariants.SKELETON}
         onClick={async () => {
           await adminService.clearDatabase();
-          await useElementStore.getState().fetchElements();
+          await fetchCompanyTree();
         }}
       >
         Delete DB

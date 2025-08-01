@@ -5,8 +5,8 @@ export const ELEMENTS = {
     code: 'E7',
     name: 'exterior walls and exterior finishes',
     subgroups: {
-      E701: { code: 'E701', name: 'timber wall framing' },
-      E702: { code: 'E702', name: 'cladding' },
+      E701: { code: 'E705', name: 'timber wall framing' },
+      E702: { code: 'E709', name: 'cladding' },
     },
   },
   E8: {

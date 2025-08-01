@@ -20,6 +20,27 @@ export interface CompanyTree extends Omit<Company, "id" | "createdAt" | "updated
   projects: ProjectTree[];
 }
 
+const cadElementsForSeed: Record<string, CadElementTree[]> = {
+  E705: [
+    {
+      geometry: {
+        type: GeometryType.LINE,
+        start: { x: 50, y: 50, z: 0 },
+        end: { x: 100, y: 100, z: 0 },
+      },
+      syncStatus: SyncStatus.LOCAL,
+    },
+    {
+      geometry: {
+        type: GeometryType.LINE,
+        start: { x: 90, y: 90, z: 0 },
+        end: { x: 100, y: 100, z: 0 },
+      },
+      syncStatus: SyncStatus.LOCAL,
+    },
+  ],
+};
+
 export const SEED_TREE: CompanyTree[] = [
   {
     name: 'Demo Company',
@@ -29,37 +50,29 @@ export const SEED_TREE: CompanyTree[] = [
         name: 'Demo Project A',
         syncStatus: SyncStatus.LOCAL,
         isDeleted: false,
-        elementGroups: [
-          {
-            code: ELEMENTS.E7.code,
-            name: ELEMENTS.E7.name,
-            elementSubGroups: [
-              { 
-                  subCode: ELEMENTS.E7.subgroups.E701.code,
-                  name: ELEMENTS.E7.subgroups.E701.name,
-                  cadElements: [
-                    { 
-                        geometry: {
-                          type: GeometryType.LINE,
-                          start: { 
-                            x: 50,
-                            y: 50,
-                            z: 0
-                          },
-                          end: {
-                            x: 100,
-                            y: 100,
-                            z: 0
-                          }
-                        },
-                        syncStatus: SyncStatus.LOCAL
-                    }
-                  ]
-               },
-            ],
-          },
-        ],
+        elementGroups: createSeedElementGroups(ELEMENTS, cadElementsForSeed),
       },
     ],
   },
 ];
+
+function createSeedElementGroups (
+  elements: typeof ELEMENTS,
+  cadElementsMap: Record<string, CadElementTree[]> = {}
+) {
+  return Object.values(elements).map(group => ({
+    code: group.code,
+    name: group.name,
+    elementSubGroups: Object.entries(group.subgroups).map(([subCode, sub]) => {
+      // Handle subgroup either as string or object with code + name
+      const code = typeof sub === 'string' ? subCode : sub.code;
+      const name = typeof sub === 'string' ? sub : sub.name;
+
+      return {
+        subCode: code,
+        name,
+        cadElements: cadElementsMap[code] || [],
+      };
+    }),
+  }));
+}

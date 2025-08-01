@@ -24,18 +24,16 @@ export const useElementStore = create<ElementsState>((set) => {
     }
   };
 
-  const fetchCompanyTree = async () => {
-    set({ loading: true });
-    try {
-      const company = await elementService.getCompany()
-      const all = await elementService.getCompanyTree(company[0].id);
-      if(all){
-        set({ all, loading: false });
-      }
-    } catch (err: any) {
-      set({ error: err.message, loading: false });
-    }
-  };
+const fetchCompanyTree = async () => {
+  set({ loading: true });
+  try {
+    const company = await elementService.getCompany();
+    const all = company.length > 0 ? await elementService.getCompanyTree(company[0].id) : null;
+    set({ all, loading: false });
+  } catch (err: any) {
+    set({ error: err.message, loading: false });
+  }
+};
 
   // call on initial load
   fetchElements();

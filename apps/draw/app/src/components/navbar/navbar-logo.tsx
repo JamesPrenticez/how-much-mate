@@ -51,7 +51,7 @@ export const NavLogo = () => {
         {ICONS.Cube}
       </div>
       <Title>
-        Draw<span className="primary">.</span>
+        Matic<span className="primary">.</span>Design
       </Title>
     </LogoNavLink>
   );
