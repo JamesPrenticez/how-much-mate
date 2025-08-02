@@ -1,10 +1,10 @@
-import { useOrganisationStore } from "@draw/stores";
+import { useOrgStore } from "@draw/stores";
 import styled from "@emotion/styled";
 
 const Container = styled.div``;
 
 export const SchedulePage = () => {
-  const { all } = useOrganisationStore();
+  const { all } = useOrgStore();
 
   return (
     <Container>

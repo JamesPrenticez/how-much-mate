@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useRef } from 'react';
 import { useClickAway } from '@shared/hooks';
 import { Button, ButtonVariants } from '@shared/components';
-import { useOrganisationStore } from '@draw/stores';
+import { useOrgStore } from '@draw/stores';
 import { adminService } from '@draw/db';
 import { SystemSwitcher } from '../system-switcher';
 import { ThemeSwitcher } from '@shared/theme';
@@ -66,7 +66,7 @@ interface MenuModalProps {
 
 export const MenuModal = ({ isMenuOpen, setIsMenuOpen }: MenuModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const { fetchAll } = useOrganisationStore();
+  const { fetchAll } = useOrgStore();
 
   useClickAway(modalRef, () => {
     setIsMenuOpen(false);

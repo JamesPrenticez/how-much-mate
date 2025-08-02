@@ -14,7 +14,7 @@ interface OrganisationState {
   fetchAll: () => Promise<void>;
 }
 
-export const useOrganisationStore = create<OrganisationState>((set) => {
+export const useOrgStore = create<OrganisationState>((set) => {
   const fetchOrg = async () => {
     try {
       const organisations = await organisationService.getOrganisations();

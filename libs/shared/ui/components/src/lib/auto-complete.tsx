@@ -25,6 +25,7 @@ const IconWrapper = styled.div`
   align-items: center;
   justify-content: center;
   pointer-events: none;
+    color: var(--color-grey-60);
 `
 
 const Input = styled.input`
@@ -54,6 +55,7 @@ const Caret = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--color-grey-60);
 `
 
 const Dropdown = styled.div<{ isOpen: boolean }>`
@@ -69,7 +71,7 @@ const Dropdown = styled.div<{ isOpen: boolean }>`
   max-height: 20rem;
   overflow-y: auto;
   z-index: 50;
-  /* outline: ${({ isOpen }) => (isOpen ? '0.2rem solid var(--color-primary)' : 'none')}; */
+  outline: ${({ isOpen }) => (isOpen ? '0.2rem solid var(--color-primary)' : 'none')};
 
   :focus-visible {
     outline: 0.2rem solid var(--color-primary);

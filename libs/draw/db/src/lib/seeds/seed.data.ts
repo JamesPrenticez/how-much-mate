@@ -46,7 +46,28 @@ export const SEED_TREE: OrganisationTree[] = [
     projects: [
       {
         code: 'PROJ-001',
-        name: 'Demo Project A',
+        name: '333 Blue Spur Road',
+        syncStatus: SyncStatus.LOCAL,
+        isDeleted: false,
+        elementGroups: createSeedElementGroups(ELEMENTS, cadElementsForSeed),
+      },
+      {
+        code: 'PROJ-002',
+        name: '338 Berryfield Architectural Showhome',
+        syncStatus: SyncStatus.LOCAL,
+        isDeleted: false,
+        elementGroups: createSeedElementGroups(ELEMENTS, cadElementsForSeed),
+      },
+      {
+        code: 'PROJ-003',
+        name: '65a Leask Stree, Omakau',
+        syncStatus: SyncStatus.LOCAL,
+        isDeleted: false,
+        elementGroups: createSeedElementGroups(ELEMENTS, cadElementsForSeed),
+      },
+      {
+        code: 'PROJ-004',
+        name: '17a Westburn Terrace, Christchurch',
         syncStatus: SyncStatus.LOCAL,
         isDeleted: false,
         elementGroups: createSeedElementGroups(ELEMENTS, cadElementsForSeed),

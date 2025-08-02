@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { device } from '@shared/hooks';
 import { ElementGroups } from './element-groups';
-import { ProjectPanel } from './project-panel';
 
 const Container = styled.div`
   display: flex;
@@ -28,7 +27,6 @@ const Container = styled.div`
 export const Sidebar = () => {
   return (
     <Container>
-      <ProjectPanel />
       <ElementGroups />
     </Container>
   );

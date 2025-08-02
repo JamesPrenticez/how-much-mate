@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import multiavatar from '@multiavatar/multiavatar';
-import { useOrganisationStore } from '@draw/stores';
+import { useOrgStore } from '@draw/stores';
 
 const Container = styled.div`
   margin-left: auto;
@@ -39,7 +39,7 @@ const Container = styled.div`
 `;
 
 export const OrgAvatar = () => {
-  const { org } = useOrganisationStore();
+  const { org } = useOrgStore();
 
   const [imageError, setImageError] = useState(false);
 
