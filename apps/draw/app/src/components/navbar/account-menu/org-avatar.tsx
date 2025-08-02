@@ -11,13 +11,11 @@ const Container = styled.div`
     margin-left: auto;
     display: flex;
     align-items: center;
-    font-family: 'Quicksand', sans-serif;
     text-align: right;
 
     h1 {
       font-size: 1.2rem;
       line-height: 1.2rem;
-      letter-spacing: 0.05rem;
 
       font-weight: 700;
       color: var(--color-text);

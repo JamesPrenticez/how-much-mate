@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../db';
 import {
-  Organisation,
+  Org,
+  OrgTree,
   Project,
   ElementGroup,
   ElementSubgroup,
@@ -9,12 +10,10 @@ import {
   ElementGroupSchema,
 } from '@draw/models';
 
-import { OrganisationTree } from './seed.data';
-
-export async function seedCompanyTree(tree: OrganisationTree[]) {
+export async function seedCompanyTree(tree: OrgTree[]) {
   const now = new Date().toISOString();
 
-  const organisations: Organisation[] = [];
+  const organisations: Org[] = [];
   const projects: Project[] = [];
   const elementGroups: ElementGroup[] = [];
   const elementSubgroups: ElementSubgroup[] = [];
@@ -67,7 +66,7 @@ export async function seedCompanyTree(tree: OrganisationTree[]) {
             updatedAt: now,
           });
 
-          for (const cadElementNode of cadElementsNode) {
+          for (const cadElementNode of cadElementsNode ?? []) {
             cadElements.push({
               ...cadElementNode,
               id: uuidv4(),

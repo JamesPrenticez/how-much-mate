@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { device } from '@shared/hooks';
-import { ElementGroups } from './element-groups';
+import { PlanPanel } from './plan-panel.tsx/plan-panel';
+import { ElementPanel } from './element-panel/element-panel';
+import { InfoPanel } from './info-panel/info-panel';
 
 const Container = styled.div`
   display: flex;
@@ -10,6 +12,7 @@ const Container = styled.div`
   gap: 1rem;
   width: 32rem;
   max-width: 30rem;
+  margin-bottom: 1rem;
 
   background-color: var(--color-background-strong);
 
@@ -27,7 +30,9 @@ const Container = styled.div`
 export const Sidebar = () => {
   return (
     <Container>
-      <ElementGroups />
+      <PlanPanel />
+      <ElementPanel />
+      <InfoPanel />
     </Container>
   );
 };

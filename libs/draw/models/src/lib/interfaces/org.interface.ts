@@ -1,6 +1,7 @@
 import { z } from 'zod';
+import { ProjectTree } from './project.interface';
 
-export const OrganisationSchema = z.object({
+export const OrgSchema = z.object({
   id: z.string(),
   name: z.string(),
   profilePicture: z.string().optional(),
@@ -9,4 +10,8 @@ export const OrganisationSchema = z.object({
   metadata: z.record(z.any()).optional(),
 });
 
-export type Organisation = z.infer<typeof OrganisationSchema>;
+export type Org = z.infer<typeof OrgSchema>;
+
+export interface OrgTree extends Org {
+  projects: ProjectTree[];
+}

@@ -6,18 +6,29 @@ import { projectService } from '@draw/db';
 import { useOrgStore } from './org.store';
 
 interface ProjectStore {
+  activeProject: Project | null;
   projects: Project[];
   error: string | null;
   isLoading: boolean;
+  setActiveProject: (project: Project | null) => void;
   fetchProjects: (orgId: string) => Promise<void>;
   clearProjects: () => void;
 }
 
 export const useProjectStore = create<ProjectStore>()(
   subscribeWithSelector((set, get) => ({
+    activeProject: null,
     projects: [],
     error: null,
     isLoading: false,
+
+    setActiveProject: (project: Project | null) => {
+      set(
+        produce<ProjectStore>((state) => {
+          state.activeProject = project;
+        })
+      );
+    },
 
     fetchProjects: async (orgId: string) => {
       set(
@@ -34,6 +45,10 @@ export const useProjectStore = create<ProjectStore>()(
             state.projects = projects;
             state.error = null;
             state.isLoading = false;
+
+            if (projects.length > 0) {
+              state.activeProject = projects[0];
+            }
           })
         );
       } catch (err: any) {

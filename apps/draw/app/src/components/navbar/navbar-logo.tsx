@@ -48,7 +48,7 @@ export const NavLogo = () => {
         {ICONS.Cube}
       </div>
       <Title>
-        Matica<span className="primary">.</span>Design
+        Draw<span className="primary">.</span>
       </Title>
     </LogoNavLink>
   );

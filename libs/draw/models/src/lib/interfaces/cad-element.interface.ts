@@ -24,3 +24,5 @@ export const CadElementSchema = z.object({
 });
 
 export type CadElement = z.infer<typeof CadElementSchema>;
+
+export type CadElementTree = CadElement; // TODO extend with buildUp

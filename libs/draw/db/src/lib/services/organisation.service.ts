@@ -1,19 +1,19 @@
 import { db } from '../db';
-import { Organisation } from '@draw/models';
+import { Org, OrgTree } from '@draw/models';
 import {
-  CadElementTree,
-  OrganisationTree,
-  ElementSubgroupTree,
-  ElementTree,
-  ProjectTree,
+  CadElementTreeSeed,
+  OrgTreeSeed,
+  ElementSubgroupTreeSeed,
+  ElementGroupTreeSeed,
+  ProjectTreeSeed,
 } from '../seeds/seed.data';
 
 export const organisationService = {
-  getOrganisations(): Promise<Organisation[]> {
+  getOrganisations(): Promise<Org[]> {
     return db.organisation.toArray();
   },
 
-  async getAll(organisationId: string): Promise<OrganisationTree | null> {
+  async getAll(organisationId: string): Promise<OrgTree | null> {
     const organisation = await db.organisation.get(organisationId);
     if (!organisation) return null;
 
@@ -43,7 +43,7 @@ export const organisationService = {
 
     // Helper maps for fast nesting
     const cadElementsBySubgroupId = cadElements.reduce<
-      Record<string, CadElementTree[]>
+      Record<string, CadElementTreeSeed[]>
     >((acc, el) => {
       if (!acc[el.elementSubgroupId]) acc[el.elementSubgroupId] = [];
       // Omit id and timestamps to match Tree type
@@ -60,7 +60,7 @@ export const organisationService = {
     }, {});
 
     const elementSubgroupsByGroupId = elementSubgroups.reduce<
-      Record<string, ElementSubgroupTree[]>
+      Record<string, ElementSubgroupTreeSeed[]>
     >((acc, sg) => {
       if (!acc[sg.elementGroupId]) acc[sg.elementGroupId] = [];
       const { id, createdAt, updatedAt, projectId, elementGroupId, ...rest } =
@@ -73,7 +73,7 @@ export const organisationService = {
     }, {});
 
     const elementGroupsByProjectId = elementGroups.reduce<
-      Record<string, ElementTree[]>
+      Record<string, ElementGroupTreeSeed[]>
     >((acc, group) => {
       if (!acc[group.projectId]) acc[group.projectId] = [];
       const { id, createdAt, updatedAt, isCustom, projectId, ...rest } = group;
@@ -85,7 +85,7 @@ export const organisationService = {
     }, {});
 
     // Build full tree
-    const projectsTree: ProjectTree[] = projects.map((proj) => {
+    const projectsTree: ProjectTreeSeed[] = projects.map((proj) => {
       const { id, createdAt, updatedAt, organisationId, ...rest } = proj;
       return {
         ...rest,

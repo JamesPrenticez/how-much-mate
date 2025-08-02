@@ -1,25 +1,24 @@
-// seed-tree.ts
-import { Organisation, Project, ElementGroup, ElementSubgroup, CadElement, SyncStatus, GeometryType, ELEMENTS } from '@draw/models';
+import { Org, Project, ElementGroup, ElementSubgroup, CadElement, SyncStatus, GeometryType, ELEMENTS } from '@draw/models';
 
-export type CadElementTree = Omit<CadElement, "id" | "createdAt" | "updatedAt" | "projectId" | "elementSubgroupId">
+export type CadElementTreeSeed = Omit<CadElement, "id" | "createdAt" | "updatedAt" | "projectId" | "elementSubgroupId">;
 
-export interface ElementSubgroupTree extends Omit<ElementSubgroup, "id" | "createdAt" | "updatedAt" | "projectId" | "elementGroupId"> {
-  cadElements: CadElementTree[] | null;
+export interface ElementSubgroupTreeSeed extends Omit<ElementSubgroup, "id" | "createdAt" | "updatedAt" | "projectId" | "elementGroupId"> {
+  cadElements: CadElementTreeSeed[] | null;
 }
 
-export interface ElementTree extends Omit<ElementGroup, "id" | "createdAt" | "updatedAt" | "isCustom" | "projectId">  {
-  elementSubGroups: ElementSubgroupTree[];
+export interface ElementGroupTreeSeed extends Omit<ElementGroup, "id" | "createdAt" | "updatedAt" | "isCustom" | "projectId"> {
+  elementSubGroups: ElementSubgroupTreeSeed[];
 }
 
-export interface ProjectTree extends Omit<Project, "id" | "createdAt" | "updatedAt" | "organisationId"> {
-  elementGroups: ElementTree[];
+export interface ProjectTreeSeed extends Omit<Project, "id" | "createdAt" | "updatedAt" | "organisationId"> {
+  elementGroups: ElementGroupTreeSeed[];
 }
 
-export interface OrganisationTree extends Omit<Organisation, "id" | "createdAt" | "updatedAt"> {
-  projects: ProjectTree[];
+export interface OrgTreeSeed extends Omit<Org, "id" | "createdAt" | "updatedAt"> {
+  projects: ProjectTreeSeed[];
 }
 
-const cadElementsForSeed: Record<string, CadElementTree[]> = {
+const cadElementsForSeed: Record<string, CadElementTreeSeed[]> = {
   E705: [
     {
       geometry: {
@@ -40,7 +39,7 @@ const cadElementsForSeed: Record<string, CadElementTree[]> = {
   ],
 };
 
-export const SEED_TREE: OrganisationTree[] = [
+export const SEED_TREE: OrgTreeSeed[] = [
   {
     name: 'Demo Company',
     projects: [
@@ -78,7 +77,7 @@ export const SEED_TREE: OrganisationTree[] = [
 
 function createSeedElementGroups (
   elements: typeof ELEMENTS,
-  cadElementsMap: Record<string, CadElementTree[]> = {}
+  cadElementsMap: Record<string, CadElementTreeSeed[]> = {}
 ) {
   return Object.values(elements).map(group => ({
     code: group.code,

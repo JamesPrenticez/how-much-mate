@@ -1,4 +1,5 @@
 import z from "zod";
+import { CadElementTree } from "./cad-element.interface";
 
 export const ElementSubgroupSchema = z.object({
   id: z.string(),
@@ -11,3 +12,7 @@ export const ElementSubgroupSchema = z.object({
 });
 
 export type ElementSubgroup = z.infer<typeof ElementSubgroupSchema>;
+
+export interface ElementSubgroupTree extends ElementSubgroup {
+  cadElements: CadElementTree[] | null;
+}

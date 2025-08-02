@@ -1,5 +1,6 @@
 import z from 'zod';
 import { SyncStatus } from '../enums';
+import { ElementGroupTree } from './element-group.interface';
 
 export const ProjectSchema = z.object({
   id: z.string(),
@@ -16,3 +17,7 @@ export const ProjectSchema = z.object({
 });
 
 export type Project = z.infer<typeof ProjectSchema>;
+
+export interface ProjectTree extends Project {
+  elementGroups: ElementGroupTree[];
+}

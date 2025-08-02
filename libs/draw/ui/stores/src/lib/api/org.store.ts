@@ -1,11 +1,11 @@
 import { create } from 'zustand';
-import { organisationService, OrganisationTree } from '@draw/db';
-import { Organisation } from '@draw/models';
+import { organisationService,  } from '@draw/db';
+import { Org, OrgTree } from '@draw/models';
 
 interface OrganisationState {
-  all: OrganisationTree | null;
+  all: OrgTree | null;
   
-  org: Organisation | null;
+  org: Org | null;
 
   loading: boolean;
   error: string | null;

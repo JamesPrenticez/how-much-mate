@@ -1,37 +1,12 @@
+import { CadElementTree, ElementGroupTree, ElementSubgroupTree } from '@draw/models';
 import { db } from '../db';
-import { Organisation, ElementGroup, ElementSubgroup } from '@draw/models';
-import {
-  CadElementTree,
-  OrganisationTree,
-  ElementSubgroupTree,
-  ElementTree,
-  ProjectTree,
-} from '../seeds/seed.data';
 
 export const elementService = {
-  getAll(): Promise<ElementGroup[]> {
-    return db.elementGroups.toArray();
-  },
-  getAllSub(): Promise<ElementSubgroup[]> {
-    return db.elementSubgroups.toArray();
-  },
-
-  getCompany(): Promise<Organisation[]> {
-    return db.organisation.toArray();
-  },
-
-  async getOrgTree(organisationId: string): Promise<OrganisationTree | null> {
-    const company = await db.organisation.get(organisationId);
-    if (!company) return null;
-
-    // Get all projects for company
-    const projects = await db.projects.where({ organisationId }).toArray();
-    const projectIds = projects.map((p) => p.id);
-
-    // Get all elementGroups for these projects
+  async getElements(projectId: string): Promise<ElementGroupTree[] | null> {
+    // Get all elementGroups for this project
     const elementGroups = await db.elementGroups
       .where('projectId')
-      .anyOf(projectIds)
+      .equals(projectId)
       .toArray();
 
     // Get all elementSubgroups for those groups
@@ -53,16 +28,7 @@ export const elementService = {
       Record<string, CadElementTree[]>
     >((acc, el) => {
       if (!acc[el.elementSubgroupId]) acc[el.elementSubgroupId] = [];
-      // Omit id and timestamps to match Tree type
-      const {
-        id,
-        createdAt,
-        updatedAt,
-        projectId,
-        elementSubgroupId,
-        ...treeProps
-      } = el;
-      acc[el.elementSubgroupId].push(treeProps);
+      acc[el.elementSubgroupId].push(el);
       return acc;
     }, {});
 
@@ -70,40 +36,22 @@ export const elementService = {
       Record<string, ElementSubgroupTree[]>
     >((acc, sg) => {
       if (!acc[sg.elementGroupId]) acc[sg.elementGroupId] = [];
-      const { id, createdAt, updatedAt, projectId, elementGroupId, ...rest } =
-        sg;
+
       acc[sg.elementGroupId].push({
-        ...rest,
+        ...sg,
         cadElements: cadElementsBySubgroupId[sg.id] || [],
       });
       return acc;
     }, {});
 
-    const elementGroupsByProjectId = elementGroups.reduce<
-      Record<string, ElementTree[]>
-    >((acc, group) => {
-      if (!acc[group.projectId]) acc[group.projectId] = [];
-      const { id, createdAt, updatedAt, isCustom, projectId, ...rest } = group;
-      acc[group.projectId].push({
-        ...rest,
-        elementSubGroups: elementSubgroupsByGroupId[group.id] || [],
-      });
-      return acc;
-    }, {});
-
-    // Build full tree
-    const projectsTree: ProjectTree[] = projects.map((proj) => {
-      const { id, createdAt, updatedAt, organisationId, ...rest } = proj;
+    // Build the final tree structure directly as an array
+    const elementGroupTrees: ElementGroupTree[] = elementGroups.map((group) => {
       return {
-        ...rest,
-        elementGroups: elementGroupsByProjectId[proj.id] || [],
+        ...group,
+        elementSubGroups: elementSubgroupsByGroupId[group.id] || [],
       };
     });
 
-    const { id, createdAt, updatedAt, ...companyRest } = company;
-    return {
-      ...companyRest,
-      projects: projectsTree,
-    };
+    return elementGroupTrees;
   },
 };

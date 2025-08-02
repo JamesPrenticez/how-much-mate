@@ -4,16 +4,16 @@ import { Search } from 'lucide-react';
 import { useProjectStore } from '@draw/stores';
 
 export const ProjectPanel = () => {
-  const { projects } = useProjectStore();
+  const { projects, activeProject } = useProjectStore();
   const [selectedProject, setSelectedProject] = useState('');
 
   useEffect(
     function setLastProjectUserWorkedOn() {
-      if (projects && projects.length > 0) {
-        setSelectedProject(`${projects[0].code} - ${projects[0].name}`);
+      if (activeProject) {
+        setSelectedProject(`${activeProject.code} - ${activeProject.name}`);
       }
     },
-    [projects]
+    [activeProject]
   );
 
   const options = projects.map((project) => ({

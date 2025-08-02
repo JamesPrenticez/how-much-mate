@@ -1,5 +1,6 @@
 import z from "zod";
 import { elementCodeLiterals, elementNameLiterals } from "../enums";
+import { ElementSubgroupTree } from "./element-subgroup.interface";
 
 export const ElementGroupSchema = z.object({
   id: z.string(),
@@ -13,3 +14,7 @@ export const ElementGroupSchema = z.object({
 }).strict();
 
 export type ElementGroup = z.infer<typeof ElementGroupSchema>;
+
+export interface ElementGroupTree extends ElementGroup {
+  elementSubGroups: ElementSubgroupTree[];
+}
