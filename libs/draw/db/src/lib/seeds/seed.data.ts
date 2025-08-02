@@ -24,15 +24,15 @@ const cadElementsForSeed: Record<string, CadElementTreeSeed[]> = {
       geometry: {
         type: GeometryType.LINE,
         start: { x: 50, y: 50, z: 0 },
-        end: { x: 100, y: 100, z: 0 },
+        end: { x: 200, y: 200, z: 0 },
       },
       syncStatus: SyncStatus.LOCAL,
     },
     {
       geometry: {
         type: GeometryType.LINE,
-        start: { x: 90, y: 90, z: 0 },
-        end: { x: 100, y: 100, z: 0 },
+        start: { x: 700, y: 300, z: 0 },
+        end: { x: 500, y: 500, z: 0 },
       },
       syncStatus: SyncStatus.LOCAL,
     },

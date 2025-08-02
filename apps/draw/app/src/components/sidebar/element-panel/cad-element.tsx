@@ -1,4 +1,4 @@
-import { CadElement as ICadElement } from '@draw/models';
+import { GeometryType, CadElement as ICadElement } from '@draw/models';
 import styled from '@emotion/styled';
 
 const Container = styled.div`
@@ -13,12 +13,23 @@ interface CadElementProps {
 }
 
 export const CadElement = ({ cadElement }: CadElementProps) => {
+  let render;
 
-  // TODO switch on the different types
-
-  return (
-    <Container>
-      {cadElement.geometry.type} - {cadElement?.length}
-    </Container>
-  )
-}
+  switch (cadElement.geometry.type) {
+    case GeometryType.LINE:
+      render = (
+        <div>
+          {cadElement.geometry.type} - start: x:{cadElement.geometry.start.x},
+          y: {cadElement.geometry.start.y} &nbsp; end: x:
+          {cadElement.geometry.end.x}, y: {cadElement.geometry.end.y}
+        </div>
+      );
+      break;
+    case GeometryType.POLYLINE:
+    case GeometryType.RECTANGLE:
+      break;
+    default:
+      console.log(`Unsupported Geometry Type.`);
+  }
+  return <Container>{render}</Container>;
+};

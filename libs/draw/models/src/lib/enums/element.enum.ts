@@ -5,17 +5,20 @@ export const ELEMENTS = {
     code: 'E7',
     name: 'walls',
     subgroups: {
-      E701: { code: 'E705', name: 'timber wall framing' },
+      E701: { code: 'E705', name: '100mm timber wall framing @ 2.4m' },
+      E702: { code: 'E705', name: '100mm timber wall framing @ 2.7m' },
+      E703: { code: 'E705', name: '150mm timber wall framing @ 2.4m' },
+      E704: { code: 'E705', name: '150mm timber wall framing @ 2.7m' },
     },
   },
-  E8: {
-    code: 'E8',
-    name: 'windows and exterior doors',
-    subgroups: {
-      E801: { code: 'E801', name: 'exterior windows' },
-      E802: { code: 'E802', name: 'exterior doors' },
-    },
-  },
+  // E8: {
+  //   code: 'E8',
+  //   name: 'windows and exterior doors',
+  //   subgroups: {
+  //     E801: { code: 'E801', name: 'exterior windows' },
+  //     E802: { code: 'E802', name: 'exterior doors' },
+  //   },
+  // },
 } as const;
 
 export type ElementCode = keyof typeof ELEMENTS;

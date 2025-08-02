@@ -34,6 +34,8 @@ const Container = styled.div`
 
     backdrop-filter: var(--filter-blur-primary);
     pointer-events: auto;
+
+    z-index: 100;
 `;
 
 const DatabaseButton = styled(Button)`
