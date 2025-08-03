@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { CanvasLayerProps } from './layer.types';
+import { CanvasLayerProps } from './types';
 import { CadElement, GeometryType } from '@draw/models';
 import type { CanvasKit as CanvasKitType } from 'canvaskit-wasm';
+import { useViewport } from './viewport-provider';
 
 interface BackgroundLayerProps extends CanvasLayerProps {
   CanvasKit: CanvasKitType | null;
@@ -22,6 +23,7 @@ export const BackgroundLayer = ({
   strokeWidth = 2
 }: BackgroundLayerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { viewport } = useViewport();
 
   useEffect(() => {
     if (!CanvasKit || !canvasRef.current) return;
@@ -30,12 +32,17 @@ export const BackgroundLayer = ({
     if (!surface) return;
 
     const canvas = surface.getCanvas();
-    canvas.clear(CanvasKit.Color(...backgroundColor));
+    // canvas.clear(CanvasKit.Color(...backgroundColor));
+
+    // Apply viewport transformation
+    canvas.save();
+    canvas.translate(viewport.offsetX, viewport.offsetY);
+    canvas.scale(viewport.scale, viewport.scale);
 
     const paint = new CanvasKit.Paint();
     paint.setStyle(CanvasKit.PaintStyle.Stroke);
     paint.setColor(CanvasKit.Color(...strokeColor));
-    paint.setStrokeWidth(strokeWidth);
+    paint.setStrokeWidth(strokeWidth / viewport.scale); // Keep stroke width consistent
 
     if (cadElements) {
       for (const el of cadElements) {
@@ -51,7 +58,7 @@ export const BackgroundLayer = ({
 
     surface.flush();
     paint.delete();
-  }, [CanvasKit, cadElements, backgroundColor, strokeColor, strokeWidth]);
+  }, [CanvasKit, cadElements, backgroundColor, strokeColor, strokeWidth, viewport]);
 
   return (
     <canvas

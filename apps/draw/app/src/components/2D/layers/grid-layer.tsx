@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { CanvasLayerProps } from './layer.types';
+import { CanvasLayerProps } from './types';
+import { useViewport } from './viewport-provider';
 
 interface GridLayerProps extends CanvasLayerProps {
   gridSize?: number;
@@ -14,6 +15,7 @@ export const GridLayer = ({
   gridColor = '#eee'
 }: GridLayerProps ) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { viewport } = useViewport();
 
   useEffect(() => {
     const dpr = window.devicePixelRatio || 1;
@@ -29,25 +31,37 @@ export const GridLayer = ({
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, width, height);
 
+    // Apply viewport transformation  
+    ctx.save();
+    ctx.translate(viewport.offsetX, viewport.offsetY);
+    ctx.scale(viewport.scale, viewport.scale);
+
     ctx.strokeStyle = gridColor;
     ctx.lineWidth = 1;
 
+    const scaledGridSize = gridSize;
+    const startX = Math.floor(-viewport.offsetX / viewport.scale / scaledGridSize) * scaledGridSize;
+    const endX = Math.ceil((width - viewport.offsetX) / viewport.scale / scaledGridSize) * scaledGridSize;
+    const startY = Math.floor(-viewport.offsetY / viewport.scale / scaledGridSize) * scaledGridSize;
+    const endY = Math.ceil((height - viewport.offsetY) / viewport.scale / scaledGridSize) * scaledGridSize;
+
     // Vertical lines
-    for (let x = 0; x < width; x += gridSize) {
+    for (let x = startX; x <= endX; x += scaledGridSize) {
       ctx.beginPath();
-      ctx.moveTo(x + 0.5, 0);
-      ctx.lineTo(x + 0.5, height);
+      ctx.moveTo(x + 0.5 / viewport.scale, startY);
+      ctx.lineTo(x + 0.5 / viewport.scale, endY);
       ctx.stroke();
     }
 
     // Horizontal lines
-    for (let y = 0; y < height; y += gridSize) {
+    for (let y = startY; y <= endY; y += scaledGridSize) {
       ctx.beginPath();
-      ctx.moveTo(0, y + 0.5);
-      ctx.lineTo(width, y + 0.5);
+      ctx.moveTo(startX, y + 0.5 / viewport.scale);
+      ctx.lineTo(endX, y + 0.5 / viewport.scale);
       ctx.stroke();
     }
-  }, [width, height, gridSize, gridColor]);
+
+  }, [width, height, gridSize, gridColor, viewport]);
 
   return (
     <canvas

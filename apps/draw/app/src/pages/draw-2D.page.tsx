@@ -8,14 +8,10 @@ export const Draw2DPage = () => {
 const cadElements: CadElement[] | null = elements?.[0]?.elementSubGroups?.[0]?.cadElements ?? null;
 
   return (
-    <>
-    { cadElements ? (
+    cadElements ? (
       <Canvas2D cadElements={cadElements}/>
     ) : (
-      <div>asdf</div>
+      <div>No data (loading...)</div>
     )
-    }
-    <div>asdf</div>
-    </>
   );
 };

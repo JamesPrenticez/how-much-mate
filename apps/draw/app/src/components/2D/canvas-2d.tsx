@@ -3,6 +3,9 @@ import { loadCanvasKit } from './canvas-kit-loader';
 import { CadElement } from '@draw/models';
 import type { CanvasKit as CanvasKitType } from 'canvaskit-wasm';
 import { BackgroundLayer, GridLayer, InteractionLayer } from './layers';
+import { ViewportLimits } from './layers/types';
+import { ViewportProvider } from './layers/viewport-provider';
+import { ViewportControls } from './layers/viewport-controls';
 
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 800;
@@ -11,12 +14,18 @@ interface Canvas2DProps {
   cadElements: CadElement[];
   width?: number;
   height?: number;
+  initialZoom?: number;
+  zoomLimits?: Partial<ViewportLimits>;
+  showControls?: boolean;
 }
 
 export const Canvas2D: React.FC<Canvas2DProps> = ({
   cadElements,
   width = CANVAS_WIDTH,
-  height = CANVAS_HEIGHT
+  height = CANVAS_HEIGHT,
+  initialZoom = 1,
+  zoomLimits,
+  showControls = true
 }) => {
   const [CanvasKit, setCanvasKit] = useState<CanvasKitType | null>(null);
 
@@ -26,7 +35,7 @@ export const Canvas2D: React.FC<Canvas2DProps> = ({
   }, []);
 
   const handleMouseDown = (x: number, y: number) => {
-    console.log('Canvas MouseDown at:', x, y);
+    console.log('Canvas MouseDown at world coordinates:', x, y);
     // TODO: hit test, select cadElement
   };
 
@@ -39,25 +48,29 @@ export const Canvas2D: React.FC<Canvas2DProps> = ({
   };
 
   return (
+    <ViewportProvider initialScale={initialZoom} limits={zoomLimits}>
     <div
       style={{
+        backgroundColor: "var(--color-background-strong)",
         position: 'relative',
         width,
         height,
+        overflow: 'hidden',
       }}
     >
-      <BackgroundLayer
-        width={width}
-        height={height}
-        zIndex={0}
-        CanvasKit={CanvasKit}
-        cadElements={cadElements}
-      />
 
       <GridLayer
         width={width}
         height={height}
+        zIndex={0}
+      />
+
+      <BackgroundLayer
+        width={width}
+        height={height}
         zIndex={1}
+        CanvasKit={CanvasKit}
+        cadElements={cadElements}
       />
 
       <InteractionLayer
@@ -68,6 +81,9 @@ export const Canvas2D: React.FC<Canvas2DProps> = ({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
       />
+
+      {showControls && <ViewportControls />}
     </div>
+    </ViewportProvider>
   );
 };
