@@ -9,3 +9,5 @@ export const getCssColorValues = (varName: string): [number, number, number] => 
   
   return [rgbValues[0], rgbValues[1], rgbValues[2]];
 };
+
+  // TODO canvas.clear(CanvasKit.Color(...getCssColorValues('--color-background-strong-opacity'), 1));
