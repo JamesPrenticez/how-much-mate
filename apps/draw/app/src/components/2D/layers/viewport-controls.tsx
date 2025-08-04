@@ -1,5 +1,5 @@
 import React from 'react';
-import { useViewport } from './viewport-provider';
+import { useViewportStore } from './viewport.store';
 
 interface ViewportControlsProps {
   className?: string;
@@ -10,7 +10,11 @@ export const ViewportControls = ({
   className,
   style,
 }: ViewportControlsProps) => {
-  const { viewport, limits, zoomIn, zoomOut, resetView } = useViewport();
+  const viewport = useViewportStore((s) => s.viewport);
+  const limits = useViewportStore((s) => s.limits);
+  const zoomIn = useViewportStore((s) => s.zoomIn);
+  const zoomOut = useViewportStore((s) => s.zoomOut);
+  const resetView = useViewportStore((s) => s.resetView);
 
   const zoomPercentage = Math.round(viewport.scale * 100);
   const canZoomIn = viewport.scale < limits.maxScale;

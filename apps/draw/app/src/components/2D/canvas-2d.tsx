@@ -6,6 +6,7 @@ import { BackgroundLayer, GridLayer, InteractionLayer } from './layers';
 import { ViewportLimits } from './layers/types';
 import { ViewportProvider } from './layers/viewport-provider';
 import { ViewportControls } from './layers/viewport-controls';
+import { initializeViewport, useViewportStore } from './layers/viewport.store';
 
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 800;
@@ -28,6 +29,7 @@ export const Canvas2D: React.FC<Canvas2DProps> = ({
   showControls = true
 }) => {
   const [CanvasKit, setCanvasKit] = useState<CanvasKitType | null>(null);
+  const screenToWorld = useViewportStore((state) => state.screenToWorld);
 
   // Load CanvasKit WASM
   useEffect(() => {
@@ -47,8 +49,12 @@ export const Canvas2D: React.FC<Canvas2DProps> = ({
     // TODO: handle mouse up (end drag operations)
   };
 
+    // Initialize viewport on mount
+  useEffect(() => {
+    initializeViewport(initialZoom, zoomLimits);
+  }, [initialZoom, zoomLimits]);
+
   return (
-    <ViewportProvider initialScale={initialZoom} limits={zoomLimits}>
     <div
       style={{
         backgroundColor: "var(--color-background-strong)",
@@ -84,6 +90,5 @@ export const Canvas2D: React.FC<Canvas2DProps> = ({
 
       {showControls && <ViewportControls />}
     </div>
-    </ViewportProvider>
   );
 };

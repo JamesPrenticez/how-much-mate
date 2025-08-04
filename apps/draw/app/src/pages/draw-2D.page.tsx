@@ -5,7 +5,7 @@ import { CadElement } from '@draw/models';
 export const Draw2DPage = () => {
   const elements = useElementStore((s) => s.elements)
 
-const cadElements: CadElement[] | null = elements?.[0]?.elementSubGroups?.[0]?.cadElements ?? null;
+  const cadElements: CadElement[] | null = elements?.[0]?.elementSubGroups?.[0]?.cadElements ?? null;
 
   return (
     cadElements ? (

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { CanvasLayerProps } from './types';
-import { useViewport } from './viewport-provider';
+import { useViewportStore } from './viewport.store';
 
 interface GridLayerProps extends CanvasLayerProps {
   gridSize?: number;
@@ -15,7 +15,7 @@ export const GridLayer = ({
   gridColor = '#eee'
 }: GridLayerProps ) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { viewport } = useViewport();
+  const viewport = useViewportStore((s) => s.viewport);
 
   useEffect(() => {
     const dpr = window.devicePixelRatio || 1;

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { CanvasLayerProps } from './types';
 import { CadElement, GeometryType } from '@draw/models';
 import type { CanvasKit as CanvasKitType } from 'canvaskit-wasm';
-import { useViewport } from './viewport-provider';
+import { useViewportStore } from './viewport.store';
 
 interface BackgroundLayerProps extends CanvasLayerProps {
   CanvasKit: CanvasKitType | null;
@@ -23,7 +23,7 @@ export const BackgroundLayer = ({
   strokeWidth = 2
 }: BackgroundLayerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { viewport } = useViewport();
+  const viewport = useViewportStore((state) => state.viewport);
 
   useEffect(() => {
     if (!CanvasKit || !canvasRef.current) return;
