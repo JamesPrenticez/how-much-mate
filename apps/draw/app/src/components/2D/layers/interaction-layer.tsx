@@ -3,10 +3,26 @@ import { CanvasLayerProps } from './types';
 import { useViewportStore } from './viewport.store';
 
 interface InteractionLayerProps extends CanvasLayerProps {
-  onMouseDown?: (x: number, y: number, event: React.MouseEvent<HTMLCanvasElement>) => void;
-  onMouseMove?: (x: number, y: number, event: React.MouseEvent<HTMLCanvasElement>) => void;
-  onMouseUp?: (x: number, y: number, event: React.MouseEvent<HTMLCanvasElement>) => void;
-  onClick?: (x: number, y: number, event: React.MouseEvent<HTMLCanvasElement>) => void;
+  onMouseDown?: (
+    x: number,
+    y: number,
+    event: React.MouseEvent<HTMLCanvasElement>
+  ) => void;
+  onMouseMove?: (
+    x: number,
+    y: number,
+    event: React.MouseEvent<HTMLCanvasElement>
+  ) => void;
+  onMouseUp?: (
+    x: number,
+    y: number,
+    event: React.MouseEvent<HTMLCanvasElement>
+  ) => void;
+  onClick?: (
+    x: number,
+    y: number,
+    event: React.MouseEvent<HTMLCanvasElement>
+  ) => void;
 }
 
 export const InteractionLayer = ({
@@ -16,7 +32,7 @@ export const InteractionLayer = ({
   onMouseDown,
   onMouseMove,
   onMouseUp,
-  onClick
+  onClick,
 }: InteractionLayerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const viewport = useViewportStore((s) => s.viewport);
@@ -24,7 +40,7 @@ export const InteractionLayer = ({
   const zoomIn = useViewportStore((s) => s.zoomIn);
   const zoomOut = useViewportStore((s) => s.zoomOut);
   const screenToWorld = useViewportStore((s) => s.screenToWorld);
-  
+
   const [isPanning, setIsPanning] = useState(false);
   const [lastPanPoint, setLastPanPoint] = useState({ x: 0, y: 0 });
 
@@ -37,15 +53,18 @@ export const InteractionLayer = ({
     }
   }, [viewport.offsetX, viewport.offsetY, isPanning]);
 
-  const updatePanThrottled = useCallback((offsetX: number, offsetY: number) => {
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
-    
-    animationFrameRef.current = requestAnimationFrame(() => {
-      setPan(offsetX, offsetY);
-    });
-  }, [setPan]);
+  const updatePanThrottled = useCallback(
+    (offsetX: number, offsetY: number) => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+
+      animationFrameRef.current = requestAnimationFrame(() => {
+        setPan(offsetX, offsetY);
+      });
+    },
+    [setPan]
+  );
 
   const getCanvasCoordinates = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -56,7 +75,7 @@ export const InteractionLayer = ({
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const { x: screenX, y: screenY } = getCanvasCoordinates(e);
-    
+
     if (isPanning) {
       const deltaX = screenX - lastPanPoint.x;
       const deltaY = screenY - lastPanPoint.y;
@@ -64,9 +83,11 @@ export const InteractionLayer = ({
       currentPanOffset.current.x += deltaX;
       currentPanOffset.current.y += deltaY;
 
-      updatePanThrottled(currentPanOffset.current.x, currentPanOffset.current.y);
+      updatePanThrottled(
+        currentPanOffset.current.x,
+        currentPanOffset.current.y
+      );
       setLastPanPoint({ x: screenX, y: screenY });
-
     } else {
       const worldCoords = screenToWorld(screenX, screenY);
       onMouseMove?.(worldCoords.x, worldCoords.y, e);
@@ -77,7 +98,8 @@ export const InteractionLayer = ({
     const { x: screenX, y: screenY } = getCanvasCoordinates(e);
     const worldCoords = screenToWorld(screenX, screenY);
 
-    if (e.button === 1 || (e.button === 0 && e.ctrlKey)) { // Middle mouse or Ctrl+Left mouse for panning
+    if (e.button === 1 || (e.button === 0 && e.ctrlKey)) {
+      // Middle mouse or Ctrl+Left mouse for panning
       setIsPanning(true);
       setLastPanPoint({ x: screenX, y: screenY });
       e.preventDefault();
@@ -98,7 +120,6 @@ export const InteractionLayer = ({
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = undefined;
       }
-
     } else {
       onMouseUp?.(worldCoords.x, worldCoords.y, e); // what does this do for us?
     }
@@ -110,16 +131,46 @@ export const InteractionLayer = ({
     onClick?.(worldCoords.x, worldCoords.y, e);
   };
 
-  const handleWheel = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
-    e.preventDefault();
-    const { x: screenX, y: screenY } = getCanvasCoordinates(e);
-    
-    if (e.deltaY < 0) {
-      zoomIn(screenX, screenY);
-    } else {
-      zoomOut(screenX, screenY);
-    }
-  }, [zoomIn, zoomOut]);
+  // const handleWheel = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
+  //   e.preventDefault();
+  //   const { x: screenX, y: screenY } = getCanvasCoordinates(e);
+
+  //   if (e.deltaY < 0) {
+  //     zoomIn(screenX, screenY);
+  //   } else {
+  //     zoomOut(screenX, screenY);
+  //   }
+  // }, [zoomIn, zoomOut]);
+
+  // Because you're calling e.preventDefault() inside the wheel event handler on a canvas, and by default, wheel events are treated as passive
+  // Passive event listeners improve scroll performance by letting the browser handle scroll events without waiting for JS execution.
+  // But for things like zoomable canvases, you must disable this optimization.
+  useEffect(
+    function handleWheel() {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const wheelHandler = (e: WheelEvent) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const screenX = e.clientX - rect.left;
+        const screenY = e.clientY - rect.top;
+
+        if (e.deltaY < 0) {
+          zoomIn(screenX, screenY);
+        } else {
+          zoomOut(screenX, screenY);
+        }
+      };
+
+      canvas.addEventListener('wheel', wheelHandler, { passive: false });
+
+      return () => {
+        canvas.removeEventListener('wheel', wheelHandler);
+      };
+    },
+    [zoomIn, zoomOut]
+  );
 
   // Cleanup on unmount
   useEffect(() => {
@@ -146,7 +197,7 @@ export const InteractionLayer = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onClick={handleClick}
-      onWheel={handleWheel}
+      // onWheel={handleWheel}
       onContextMenu={(e) => e.preventDefault()} // Prevent client right-click menu - we could add our own here
     />
   );
