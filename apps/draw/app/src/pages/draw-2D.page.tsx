@@ -1,10 +1,8 @@
-import { useElementStore } from '@draw/stores';
-import { Canvas2D } from '../components/2D/canvas-2d';
-import { CadElement } from '@draw/models';
-import { Canvas } from '../components/canvas/canvas';
+
+import Demo from '../components/canvas/demo';
 
 export const Draw2DPage = () => {
-  return <Canvas />
+  return <Demo />
   // const elements = useElementStore((s) => s.elements)
 
   // const cadElements: CadElement[] | null = elements?.[0]?.elementSubGroups?.[0]?.cadElements ?? null;

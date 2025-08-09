@@ -1,31 +1,20 @@
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useImperativeHandle,
-  forwardRef,
-} from 'react';
+import React, { useRef, useState, useCallback, useEffect, useImperativeHandle, forwardRef } from 'react';
+import type { CanvasKit as CanvasKitType } from 'canvaskit-wasm';
+import { loadCanvasKit } from './loader';
+import {
+  Canvas,
+  CanvasKitInstance,
+  PannableCanvasKitProps,
+  PannableCanvasKitRef,
+  Shape,
+  Surface,
+  View
+} from "./types"
 
-type View = { x: number; y: number; scale: number };
+const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
 
-type Props = {
-  width: number;
-  height: number;
-  draw: (ctx: CanvasRenderingContext2D, view: View, dpr: number) => void;
-  initialScale?: number;
-  initialX?: number;
-  initialY?: number;
-  className?: string;
-  background?: string;
-  enableZoom?: boolean;
-  wheelZoomFactor?: number;
-  minZoom?: number;
-  maxZoom?: number;
-};
-
-const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
-
-export const PannableCanvasKit = forwardRef(function PannableCanvasKit(
+// CanvasKit-powered pannable canvas component
+export const PannableCanvasKit = forwardRef<PannableCanvasKitRef, PannableCanvasKitProps>(function PannableCanvasKit(
   {
     width,
     height,
@@ -39,13 +28,14 @@ export const PannableCanvasKit = forwardRef(function PannableCanvasKit(
     wheelZoomFactor = 0.0015,
     minZoom = 0.1,
     maxZoom = 8,
-  }: Props,
+  },
   ref
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const surfaceRef = useRef<Surface | null>(null);
+  const canvasKitRef = useRef<CanvasKitInstance | null>(null);
   const dprRef = useRef<number>(1);
 
-  // Clamp initial scale
   const initialClampedScale = clamp(initialScale, minZoom, maxZoom);
   const viewRef = useRef<View>({
     x: initialX,
@@ -53,57 +43,124 @@ export const PannableCanvasKit = forwardRef(function PannableCanvasKit(
     scale: initialClampedScale,
   });
 
-  const pointerActiveRef = useRef(false);
+  const pointerActiveRef = useRef<boolean>(false);
   const lastPointerPos = useRef<{ x: number; y: number } | null>(null);
 
   const drawFrame = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Clear canvas properly
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const CanvasKit = canvasKitRef.current;
+    if (!CanvasKit || !surfaceRef.current) return;
+    
+    const surface = surfaceRef.current;
+    const canvas = surface.getCanvas();
+    
+    // Clear with background
     if (background === 'transparent') {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.clear(CanvasKit.TRANSPARENT);
     } else {
-      ctx.fillStyle = background;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const paint = new CanvasKit.Paint();
+      paint.setColor(CanvasKit.parseColorString(background));
+      canvas.drawPaint(paint);
+      paint.delete();
     }
 
+    // Save canvas state
+    canvas.save();
+
+    // Apply transform: translate then scale
     const { x, y, scale } = viewRef.current;
+    canvas.translate(x, y);
+    canvas.scale(scale, scale);
 
-    // Apply transform: scale first, then translate in world coords
-    ctx.setTransform(
-      scale * dprRef.current,
-      0,
-      0,
-      scale * dprRef.current,
-      x * dprRef.current,
-      y * dprRef.current
-    );
+    // Call the draw function
+    draw(canvas, viewRef.current, dprRef.current, CanvasKit);
 
-    draw(ctx, viewRef.current, dprRef.current);
+    // Restore canvas state
+    canvas.restore();
+
+    // Flush the surface
+    surface.flush();
   }, [background, draw]);
 
+  // Initialize CanvasKit and surface
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const setSize = () => {
+    let mounted = true;
+    
+    const init = async () => {
+      try {
+        // Load CanvasKit WASM
+        const CanvasKit = await loadCanvasKit();
+        
+        if (!mounted) return;
+        
+        // Store the CanvasKit instance
+        canvasKitRef.current = CanvasKit;
+        
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        dprRef.current = dpr;
+        
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+
+        const surface = CanvasKit.MakeCanvasSurface(canvas);
+        if (!surface) {
+          console.error('Failed to create CanvasKit surface');
+          return;
+        }
+        
+        surfaceRef.current = surface;
+        drawFrame();
+      } catch (error) {
+        console.error('Failed to initialize CanvasKit:', error);
+      }
+    };
+
+    init();
+    
+    return () => {
+      mounted = false;
+      if (surfaceRef.current) {
+        surfaceRef.current.delete();
+        surfaceRef.current = null;
+      }
+    };
+  }, [width, height, drawFrame]);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      const CanvasKit = canvasKitRef.current;
+      if (!CanvasKit || !canvasRef.current) return;
+      
+      const canvas = canvasRef.current;
       const dpr = Math.max(1, window.devicePixelRatio || 1);
       dprRef.current = dpr;
+      
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
-      drawFrame();
+
+      if (surfaceRef.current) {
+        surfaceRef.current.delete();
+      }
+      
+      const surface = CanvasKit.MakeCanvasSurface(canvas);
+      if (surface) {
+        surfaceRef.current = surface;
+        drawFrame();
+      }
     };
-    setSize();
-    window.addEventListener('resize', setSize);
-    return () => window.removeEventListener('resize', setSize);
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [width, height, drawFrame]);
 
-  // Panning: track pointer position, update view.x/y (world space)
+  // Panning logic
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -125,8 +182,6 @@ export const PannableCanvasKit = forwardRef(function PannableCanvasKit(
       const dy = ev.clientY - lastPointerPos.current.y;
       lastPointerPos.current = { x: ev.clientX, y: ev.clientY };
 
-      // Panning offsets are in screen space and should be applied directly to the view offset
-      // The view offset (x, y) represents the screen position of world origin (0, 0)
       viewRef.current.x += dx;
       viewRef.current.y += dy;
 
@@ -135,13 +190,11 @@ export const PannableCanvasKit = forwardRef(function PannableCanvasKit(
 
     const onPointerUp = (ev: PointerEvent) => {
       pointerActiveRef.current = false;
-
       try {
         canvas.releasePointerCapture(ev.pointerId);
       } catch (error) {
         console.warn('Failed to release pointer capture:', error);
       }
-
       lastPointerPos.current = null;
     };
 
@@ -158,7 +211,7 @@ export const PannableCanvasKit = forwardRef(function PannableCanvasKit(
     };
   }, [drawFrame]);
 
-  // Wheel zoom, anchored to mouse, with clamping
+  // Zoom logic
   useEffect(() => {
     if (!enableZoom) return;
     const canvas = canvasRef.current;
@@ -167,31 +220,19 @@ export const PannableCanvasKit = forwardRef(function PannableCanvasKit(
     const onWheel = (ev: WheelEvent) => {
       ev.preventDefault();
 
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
       const { scale, x, y } = viewRef.current;
 
-      // Get mouse position relative to canvas
       const rect = canvas.getBoundingClientRect();
       const mouseX = ev.clientX - rect.left;
       const mouseY = ev.clientY - rect.top;
 
-      // Convert mouse position to world coordinates BEFORE zoom
-      // The current transform is: screenX = worldX * scale + x
-      // So: worldX = (screenX - x) / scale
       const worldMouseX = (mouseX - x) / scale;
       const worldMouseY = (mouseY - y) / scale;
 
-      // Calculate new scale based on wheel delta
       const zoomAmount = 1 - ev.deltaY * wheelZoomFactor;
       let newScale = scale * zoomAmount;
       newScale = clamp(newScale, minZoom, maxZoom);
 
-      // Calculate new view offset so that the world point under the mouse
-      // appears at the same screen position after zoom
-      // We want: mouseX = worldMouseX * newScale + newX
-      // So: newX = mouseX - worldMouseX * newScale
       const newX = mouseX - worldMouseX * newScale;
       const newY = mouseY - worldMouseY * newScale;
 
@@ -203,7 +244,7 @@ export const PannableCanvasKit = forwardRef(function PannableCanvasKit(
     };
 
     canvas.addEventListener('wheel', onWheel, { passive: false });
-    return () => canvas.removeEventListener('wheel', onWheel as EventListener);
+    return () => canvas.removeEventListener('wheel', onWheel);
   }, [enableZoom, wheelZoomFactor, minZoom, maxZoom, drawFrame]);
 
   // Imperative API
@@ -220,7 +261,6 @@ export const PannableCanvasKit = forwardRef(function PannableCanvasKit(
         const mx = center.x - rect.left;
         const my = center.y - rect.top;
 
-        // Convert mouse pos to world coords before zoom
         const worldX = (mx - viewRef.current.x) / viewRef.current.scale;
         const worldY = (my - viewRef.current.y) / viewRef.current.scale;
 
@@ -233,11 +273,9 @@ export const PannableCanvasKit = forwardRef(function PannableCanvasKit(
       drawFrame();
     },
     getView: () => ({ ...viewRef.current }),
+    getCanvasKit: () => canvasKitRef.current,
+    getSurface: () => surfaceRef.current,
   }));
-
-  useEffect(() => {
-    drawFrame();
-  }, [drawFrame]);
 
   return (
     <div className={`relative ${className}`} style={{ width, height }}>
