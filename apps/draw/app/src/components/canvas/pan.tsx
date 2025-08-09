@@ -10,6 +10,8 @@ import {
   Surface,
   View
 } from "./types"
+import { useHandleWindowResize } from './hook/use-handle-window-resize';
+import { useCanvasZoom } from './hook/use-canvas-zoom';
 
 const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
 
@@ -130,35 +132,17 @@ export const PannableCanvasKit = forwardRef<PannableCanvasKitRef, PannableCanvas
     };
   }, [width, height, drawFrame]);
 
+  // Do we need this - canvas is fixed size??
   // Handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      const CanvasKit = canvasKitRef.current;
-      if (!CanvasKit || !canvasRef.current) return;
-      
-      const canvas = canvasRef.current;
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
-      dprRef.current = dpr;
-      
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-
-      if (surfaceRef.current) {
-        surfaceRef.current.delete();
-      }
-      
-      const surface = CanvasKit.MakeCanvasSurface(canvas);
-      if (surface) {
-        surfaceRef.current = surface;
-        drawFrame();
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [width, height, drawFrame]);
+  useHandleWindowResize({
+    width,
+    height,
+    drawFrame,
+    canvasRef,
+    canvasKitRef,
+    surfaceRef,
+    dprRef,
+  });
 
   // Panning logic
   useEffect(() => {
@@ -212,40 +196,7 @@ export const PannableCanvasKit = forwardRef<PannableCanvasKitRef, PannableCanvas
   }, [drawFrame]);
 
   // Zoom logic
-  useEffect(() => {
-    if (!enableZoom) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const onWheel = (ev: WheelEvent) => {
-      ev.preventDefault();
-
-      const { scale, x, y } = viewRef.current;
-
-      const rect = canvas.getBoundingClientRect();
-      const mouseX = ev.clientX - rect.left;
-      const mouseY = ev.clientY - rect.top;
-
-      const worldMouseX = (mouseX - x) / scale;
-      const worldMouseY = (mouseY - y) / scale;
-
-      const zoomAmount = 1 - ev.deltaY * wheelZoomFactor;
-      let newScale = scale * zoomAmount;
-      newScale = clamp(newScale, minZoom, maxZoom);
-
-      const newX = mouseX - worldMouseX * newScale;
-      const newY = mouseY - worldMouseY * newScale;
-
-      viewRef.current.x = newX;
-      viewRef.current.y = newY;
-      viewRef.current.scale = newScale;
-
-      drawFrame();
-    };
-
-    canvas.addEventListener('wheel', onWheel, { passive: false });
-    return () => canvas.removeEventListener('wheel', onWheel);
-  }, [enableZoom, wheelZoomFactor, minZoom, maxZoom, drawFrame]);
+  useCanvasZoom(enableZoom, canvasRef, viewRef, wheelZoomFactor, minZoom, maxZoom, drawFrame, clamp);
 
   // Imperative API
   useImperativeHandle(ref, () => ({
