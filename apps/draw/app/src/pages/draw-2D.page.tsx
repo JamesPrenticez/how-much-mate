@@ -1,5 +1,5 @@
 
-import Demo from '../components/canvas/demo';
+import Demo from '../components/2D/demo';
 
 export const Draw2DPage = () => {
   return <Demo />

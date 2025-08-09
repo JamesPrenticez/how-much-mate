@@ -10,10 +10,10 @@ import {
   Surface,
   View
 } from "./types"
-import { useHandleWindowResize } from './hook/use-handle-window-resize';
-import { useCanvasZoom } from './hook/use-canvas-zoom';
-import { useCanvasPan } from './hook/use-canvas-pan';
-import { useCanvasKitInit } from './hook/use-canvas-kit-init';
+import { useHandleWindowResize } from './hooks/use-handle-window-resize';
+import { useCanvasZoom } from './hooks/use-canvas-zoom';
+import { useCanvasPan } from './hooks/use-canvas-pan';
+import { useCanvasKitInit } from './hooks/use-canvas-kit-init';
 
 const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
 
