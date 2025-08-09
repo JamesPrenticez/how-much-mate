@@ -13,11 +13,12 @@ import {
 import { useHandleWindowResize } from './hook/use-handle-window-resize';
 import { useCanvasZoom } from './hook/use-canvas-zoom';
 import { useCanvasPan } from './hook/use-canvas-pan';
+import { useCanvasKitInit } from './hook/use-canvas-kit-init';
 
 const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
 
 // CanvasKit-powered pannable canvas component
-export const PannableCanvasKit = forwardRef<PannableCanvasKitRef, PannableCanvasKitProps>(function PannableCanvasKit(
+export const Canvas2D = forwardRef<PannableCanvasKitRef, PannableCanvasKitProps>(function PannableCanvasKit(
   {
     width,
     height,
@@ -85,53 +86,16 @@ export const PannableCanvasKit = forwardRef<PannableCanvasKitRef, PannableCanvas
   }, [background, draw]);
 
   // Initialize CanvasKit and surface
-  useEffect(() => {
-    let mounted = true;
-    
-    const init = async () => {
-      try {
-        // Load CanvasKit WASM
-        const CanvasKit = await loadCanvasKit();
-        
-        if (!mounted) return;
-        
-        // Store the CanvasKit instance
-        canvasKitRef.current = CanvasKit;
-        
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const dpr = Math.max(1, window.devicePixelRatio || 1);
-        dprRef.current = dpr;
-        
-        canvas.width = Math.round(width * dpr);
-        canvas.height = Math.round(height * dpr);
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
-
-        const surface = CanvasKit.MakeCanvasSurface(canvas);
-        if (!surface) {
-          console.error('Failed to create CanvasKit surface');
-          return;
-        }
-        
-        surfaceRef.current = surface;
-        drawFrame();
-      } catch (error) {
-        console.error('Failed to initialize CanvasKit:', error);
-      }
-    };
-
-    init();
-    
-    return () => {
-      mounted = false;
-      if (surfaceRef.current) {
-        surfaceRef.current.delete();
-        surfaceRef.current = null;
-      }
-    };
-  }, [width, height, drawFrame]);
+  useCanvasKitInit(
+    width,
+    height,
+    canvasRef,
+    canvasKitRef,
+    dprRef,
+    surfaceRef,
+    drawFrame,
+    loadCanvasKit
+  );
 
   // Do we need this - canvas is fixed size??
   // Handle window resize

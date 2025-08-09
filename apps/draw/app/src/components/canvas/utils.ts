@@ -1,5 +1,4 @@
-import { Canvas } from "canvaskit-wasm";
-import { CanvasKitInstance, Shape, View } from "./types";
+import { Canvas, CanvasKitInstance, Shape, View } from "./types";
 
 // Layer drawing functions using CanvasKit
 export const drawGrid = (canvas: Canvas, view: View, dpr: number, CanvasKit: CanvasKitInstance): void => {
@@ -89,7 +88,7 @@ export const drawInteraction = (
     paint.setColor(CanvasKit.Color(255, 0, 0, 0.5 * 255));
     canvas.drawRect(
       CanvasKit.XYWHRect(dragPreview.x, dragPreview.y, dragPreview.width, dragPreview.height),
-      ...paint
+      paint
     );
     paint.delete();
   }

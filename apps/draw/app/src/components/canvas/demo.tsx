@@ -1,13 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Canvas, CanvasKitInstance, PannableCanvasKitRef, Shape, View } from "./types";
 import { loadCanvasKit } from "./loader";
-import { PannableCanvasKit } from "./pan";
+import { Canvas2D } from "./canvas2D";
 import { drawBackground, drawGrid, drawInteraction } from "./utils";
 
-// Global CanvasKit instance
-let CanvasKit: CanvasKitInstance | null = null;
-
-// Main component with layered drawing using CanvasKit
 export default function Demo(): JSX.Element {
   const apiRef = useRef<PannableCanvasKitRef>(null);
   const [canvasKitReady, setCanvasKitReady] = useState<boolean>(false);
@@ -149,7 +145,7 @@ export default function Demo(): JSX.Element {
         onClick={handleCanvasClick}
         className="border border-gray-300 rounded"
       >
-        <PannableCanvasKit
+        <Canvas2D
           ref={apiRef}
           width={800}
           height={600}
