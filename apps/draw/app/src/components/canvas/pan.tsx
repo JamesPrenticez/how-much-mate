@@ -12,6 +12,7 @@ import {
 } from "./types"
 import { useHandleWindowResize } from './hook/use-handle-window-resize';
 import { useCanvasZoom } from './hook/use-canvas-zoom';
+import { useCanvasPan } from './hook/use-canvas-pan';
 
 const clamp = (v: number, a: number, b: number): number => Math.max(a, Math.min(b, v));
 
@@ -145,55 +146,7 @@ export const PannableCanvasKit = forwardRef<PannableCanvasKitRef, PannableCanvas
   });
 
   // Panning logic
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const onPointerDown = (ev: PointerEvent) => {
-      pointerActiveRef.current = true;
-      try {
-        canvas.setPointerCapture(ev.pointerId);
-      } catch (error) {
-        console.warn('Failed to set pointer capture:', error);
-      }
-      lastPointerPos.current = { x: ev.clientX, y: ev.clientY };
-    };
-
-    const onPointerMove = (ev: PointerEvent) => {
-      if (!pointerActiveRef.current || !lastPointerPos.current) return;
-
-      const dx = ev.clientX - lastPointerPos.current.x;
-      const dy = ev.clientY - lastPointerPos.current.y;
-      lastPointerPos.current = { x: ev.clientX, y: ev.clientY };
-
-      viewRef.current.x += dx;
-      viewRef.current.y += dy;
-
-      drawFrame();
-    };
-
-    const onPointerUp = (ev: PointerEvent) => {
-      pointerActiveRef.current = false;
-      try {
-        canvas.releasePointerCapture(ev.pointerId);
-      } catch (error) {
-        console.warn('Failed to release pointer capture:', error);
-      }
-      lastPointerPos.current = null;
-    };
-
-    canvas.addEventListener('pointerdown', onPointerDown);
-    window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
-    window.addEventListener('pointercancel', onPointerUp);
-
-    return () => {
-      canvas.removeEventListener('pointerdown', onPointerDown);
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', onPointerUp);
-      window.removeEventListener('pointercancel', onPointerUp);
-    };
-  }, [drawFrame]);
+  useCanvasPan(canvasRef, pointerActiveRef, lastPointerPos, viewRef, drawFrame);
 
   // Zoom logic
   useCanvasZoom(enableZoom, canvasRef, viewRef, wheelZoomFactor, minZoom, maxZoom, drawFrame, clamp);
