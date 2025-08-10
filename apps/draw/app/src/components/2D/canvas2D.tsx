@@ -1,12 +1,9 @@
-import React, { useRef, useState, useCallback, useEffect, useImperativeHandle, forwardRef } from 'react';
-import type { CanvasKit as CanvasKitType } from 'canvaskit-wasm';
+import { useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { loadCanvasKit } from './loader';
 import {
-  Canvas,
   CanvasKitInstance,
   PannableCanvasKitProps,
   PannableCanvasKitRef,
-  Shape,
   Surface,
   View
 } from "./types"

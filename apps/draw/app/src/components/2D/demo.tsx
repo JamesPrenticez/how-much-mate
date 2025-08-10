@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Canvas, CanvasKitInstance, PannableCanvasKitRef, Shape, View } from "./types";
+import { PannableCanvasKitRef, Shape } from "./types";
 import { loadCanvasKit } from "./loader";
 import { Canvas2D } from "./canvas2D";
-import { drawBackground, drawGrid, drawInteraction } from "./utils";
+import { useDrawAll } from "./draw";
+import { useShapesStore } from "./draw/shapes.store";
 
 export default function Demo(): JSX.Element {
   const apiRef = useRef<PannableCanvasKitRef>(null);
   const [canvasKitReady, setCanvasKitReady] = useState<boolean>(false);
-  const [shapes, setShapes] = useState<Shape[]>([
-    { id: 1, x: 100, y: 100, width: 100, height: 100, color: 'red', selected: false },
-    { id: 2, x: 250, y: 150, width: 80, height: 120, color: 'blue', selected: false },
-    { id: 3, x: 400, y: 200, width: 150, height: 60, color: 'green', selected: false }
-  ]);
-  const [hoveredShape, setHoveredShape] = useState<Shape | null>(null);
-  const [dragPreview, setDragPreview] = useState<Shape | null>(null);
+
+  const drawAll = useDrawAll();
+  const shapes = useShapesStore((s) => s.shapes);
+  const setShapes = useShapesStore((s) => s.setShapes)
+  const hoveredShape = useShapesStore((s) => s.hoveredShape);
+  const setHoveredShape = useShapesStore((s) => s.setHoveredShape)
+
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
   // Check if CanvasKit is ready
@@ -69,27 +70,13 @@ export default function Demo(): JSX.Element {
     
     const clickedShape = getShapeAt(world.x, world.y);
     
-    setShapes(prevShapes => 
-      prevShapes.map(shape => ({
+    setShapes(
+      shapes.map(shape => ({
         ...shape,
         selected: shape.id === clickedShape?.id
       }))
     );
   }, [screenToWorld, getShapeAt]);
-
-  // Combined draw function that renders all layers using CanvasKit
-  const draw = useCallback((canvas: Canvas, view: View, dpr: number, CanvasKit: CanvasKitInstance) => {
-    if (!CanvasKit) return;
-    
-    // Layer 1: Grid (bottom layer)
-    drawGrid(canvas, view, dpr, CanvasKit);
-    
-    // Layer 2: Background shapes
-    drawBackground(canvas, view, dpr, CanvasKit, shapes);
-    
-    // Layer 3: Interaction layer (top layer)
-    drawInteraction(canvas, view, dpr, CanvasKit, hoveredShape, dragPreview);
-  }, [shapes, hoveredShape, dragPreview]);
 
   if (!canvasKitReady) {
     return (
@@ -116,7 +103,9 @@ export default function Demo(): JSX.Element {
           </button>
           <button 
             className="px-3 py-1 bg-green-500 text-white rounded text-sm"
-            onClick={() => setShapes(prev => prev.map(s => ({...s, selected: false})))}
+            onClick={() => {
+              setShapes(shapes.map(s => ({ ...s, selected: false })));
+            }}
           >
             Clear Selection
           </button>
@@ -132,7 +121,7 @@ export default function Demo(): JSX.Element {
                 color: `hsl(${Math.random() * 360}, 70%, 50%)`,
                 selected: false
               };
-              setShapes(prev => [...prev, newShape]);
+              setShapes([...shapes, newShape]);
             }}
           >
             Add Random Shape
@@ -151,7 +140,7 @@ export default function Demo(): JSX.Element {
           height={600}
           initialScale={1}
           background="white"
-          draw={draw}
+          draw={drawAll}
         />
       </div>
       
