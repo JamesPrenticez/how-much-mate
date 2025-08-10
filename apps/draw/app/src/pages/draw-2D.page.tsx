@@ -1,8 +1,8 @@
 
-import Demo from '../components/2D/demo';
+import { EntryPoint } from '../components/advanced/entry-point';
 
 export const Draw2DPage = () => {
-  return <Demo />
+  return <EntryPoint />
   // const elements = useElementStore((s) => s.elements)
 
   // const cadElements: CadElement[] | null = elements?.[0]?.elementSubGroups?.[0]?.cadElements ?? null;

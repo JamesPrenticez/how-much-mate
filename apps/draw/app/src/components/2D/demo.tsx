@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PannableCanvasKitRef, Shape } from "./types";
-import { loadCanvasKit } from "./loader";
+import { loadCanvasKit } from "../advanced/loader";
 import { Canvas2D } from "./canvas2D";
-import { useDrawAll } from "./draw";
+import { drawGrid, useDrawAll } from "./draw";
 import { useShapesStore } from "./draw/shapes.store";
 
 export default function Demo(): JSX.Element {
@@ -10,6 +10,7 @@ export default function Demo(): JSX.Element {
   const [canvasKitReady, setCanvasKitReady] = useState<boolean>(false);
 
   const drawAll = useDrawAll();
+
   const shapes = useShapesStore((s) => s.shapes);
   const setShapes = useShapesStore((s) => s.setShapes)
   const hoveredShape = useShapesStore((s) => s.hoveredShape);
@@ -88,51 +89,10 @@ export default function Demo(): JSX.Element {
   }
 
   return (
-    <div className="p-4">
-      <div className="mb-4">
-        <h2 className="text-xl font-bold mb-2">CanvasKit Multi-Layer Canvas Demo</h2>
-        <p className="text-gray-600 mb-2">
-          Powered by Skia's CanvasKit for high-performance rendering. Click shapes to select, hover for preview.
-        </p>
-        <div className="flex gap-2">
-          <button 
-            className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
-            onClick={() => apiRef.current?.zoomTo(1)}
-          >
-            Reset Zoom
-          </button>
-          <button 
-            className="px-3 py-1 bg-green-500 text-white rounded text-sm"
-            onClick={() => {
-              setShapes(shapes.map(s => ({ ...s, selected: false })));
-            }}
-          >
-            Clear Selection
-          </button>
-          <button 
-            className="px-3 py-1 bg-purple-500 text-white rounded text-sm"
-            onClick={() => {
-              const newShape: Shape = {
-                id: Date.now(),
-                x: Math.random() * 400 + 100,
-                y: Math.random() * 300 + 100,
-                width: Math.random() * 100 + 50,
-                height: Math.random() * 100 + 50,
-                color: `hsl(${Math.random() * 360}, 70%, 50%)`,
-                selected: false
-              };
-              setShapes([...shapes, newShape]);
-            }}
-          >
-            Add Random Shape
-          </button>
-        </div>
-      </div>
-      
+    <div>
       <div 
         onMouseMove={handleCanvasMouseMove}
         onClick={handleCanvasClick}
-        className="border border-gray-300 rounded"
       >
         <Canvas2D
           ref={apiRef}
@@ -147,7 +107,7 @@ export default function Demo(): JSX.Element {
       <div className="mt-4 text-sm text-gray-600">
         <p>
           Shapes: {shapes.length} | Selected: {shapes.filter(s => s.selected).length} | 
-          Hovered: {hoveredShape?.id || 'none'} | Powered by Skia CanvasKit
+          Hovered: {hoveredShape?.id || 'none'}
         </p>
       </div>
     </div>
