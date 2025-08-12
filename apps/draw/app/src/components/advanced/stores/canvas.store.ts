@@ -1,13 +1,14 @@
 import { create } from 'zustand';
-import { CanvasKitInstance, View } from './models';
-import { initialConfig } from './config';
-import { clamp } from './utils';
+import { View } from '../models';
+import { initialConfig } from '../config';
+import { clamp } from '../utils';
+import { CanvasKit } from 'canvaskit-wasm';
 
 type CanvasState = {
   view: View;
   setView: (view: Partial<View>) => void;
-  canvasKit: CanvasKitInstance | null;
-  setCanvasKit: (canvasKit: CanvasKitInstance) => void;
+  canvasKit: CanvasKit | null;
+  setCanvasKit: (canvasKit: CanvasKit) => void;
 };
 
 export const useCanvasStore = create<CanvasState>((set) => ({

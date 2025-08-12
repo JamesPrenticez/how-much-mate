@@ -1,14 +1,15 @@
 import styled from "@emotion/styled";
 import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { initialConfig } from "../config";
-import { loadCanvasKit } from "../loader";
+import { loadCanvasKit } from "../loader/loader";
 
 import { 
   clamp
 } from "../utils";
 
 import { CanvasKitInstance, View } from "../models";
-import { useCanvasStore } from "../canvas.store";
+import { useCanvasStore } from "../stores/canvas.store";
+import { useCanvasKitLoader } from "../loader";
 
 const Container = styled.div`
   position: relative;
@@ -22,19 +23,7 @@ const Container = styled.div`
 `
 
 export const InteractionLayer = ({ children }: PropsWithChildren) => {
-  const setCanvasKit = useCanvasStore((s) => s.setCanvasKit);
-  
-  // Load CanvasKit once
-  useEffect(() => {
-    let mounted = true;
-    loadCanvasKit().then((ck) => {
-      if (mounted) setCanvasKit(ck);
-    });
-    return () => {
-      // throw error
-      mounted = false;
-    };
-  }, [setCanvasKit]);
+  useCanvasKitLoader();
 
   return (
     <Container

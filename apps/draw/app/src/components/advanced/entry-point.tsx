@@ -1,18 +1,34 @@
 import { InteractionLayer } from './layers/interaction.layer'
 import { CanvasLayer } from './layers/canvas.layer'
-import { drawSimpleRect } from './draw'
-import { drawSimpleRect2 } from './draw/simple-rect-2'
+import { 
+  drawSimpleRect1,
+  drawSimpleRect2,
+  drawSimpleRect3
+} from './draw'
+import { useShapesStore } from './stores';
+import { drawGeometry } from './draw/draw-geometry';
 
 export const EntryPoint = () => {
+  const shapes = useShapesStore((s) => s.shapes);
+
   return (
       <InteractionLayer>
 
         <CanvasLayer
-          draw={drawSimpleRect}
+          id="grid-layer"
+          draw={drawSimpleRect1}
           borderColor="fuchsia"
         />
+        
         <CanvasLayer
-          draw={drawSimpleRect2}
+          id="background-layer"
+          draw={drawGeometry(shapes)}
+          borderColor="cyan"
+        />
+
+        <CanvasLayer
+          id="edit-layer"
+          draw={drawSimpleRect3}
           borderColor="cyan"
         /> 
 

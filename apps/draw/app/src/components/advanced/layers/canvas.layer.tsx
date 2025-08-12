@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import styled from '@emotion/styled';
 import { initialConfig } from "../config";
-import { useCanvasStore } from '../canvas.store';
+import { useCanvasStore } from '../stores/canvas.store';
 import { DrawFunction } from '../models';
 
 const StyledCanvas = styled.canvas`
@@ -10,11 +10,13 @@ const StyledCanvas = styled.canvas`
 `
 
 interface CanvasLayerProps {
+  id: string;
   draw: DrawFunction;
   borderColor: string;
 }
 
 export const CanvasLayer = ({
+  id,
   draw,
   borderColor
 }: CanvasLayerProps) => {
@@ -26,7 +28,7 @@ export const CanvasLayer = ({
   useEffect(() => {
     if (!canvasKit || !canvasRef.current) return;
 
-    const surface = canvasKit.MakeCanvasSurface(canvasRef.current);
+    const surface = canvasKit.MakeWebGLCanvasSurface(canvasRef.current);
     if (!surface) return;
 
     const canvas = surface.getCanvas();
@@ -52,6 +54,7 @@ export const CanvasLayer = ({
 
   return (
       <StyledCanvas
+        id={id}
         ref={canvasRef}
         onContextMenu={(e) => e.preventDefault()}
         width={initialConfig.width}

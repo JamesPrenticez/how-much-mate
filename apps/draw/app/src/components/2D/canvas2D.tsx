@@ -1,5 +1,5 @@
 import { useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
-import { loadCanvasKit } from '../advanced/loader';
+import { loadCanvasKit } from '../advanced/loader/loader';
 import {
   CanvasKitInstance,
   PannableCanvasKitProps,

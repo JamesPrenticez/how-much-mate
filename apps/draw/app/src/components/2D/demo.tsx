@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PannableCanvasKitRef, Shape } from "./types";
-import { loadCanvasKit } from "../advanced/loader";
+import { loadCanvasKit } from "../advanced/loader/loader";
 import { Canvas2D } from "./canvas2D";
 import { drawGrid, useDrawAll } from "./draw";
 import { useShapesStore } from "./draw/shapes.store";
