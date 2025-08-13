@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { InteractionLayer } from './layers/interaction/interaction.layer';
+import { InteractionLayer } from './layers/interaction.layer';
 import { CanvasLayer } from './layers/canvas.layer';
 import { useShapesStore } from './stores';
 

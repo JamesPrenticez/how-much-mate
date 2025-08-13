@@ -4,6 +4,7 @@ export const initialConfig = {
   y: 0,
   minZoom: 0.1,
   maxZoom: 8,
+  zoomSpeed: 0.002,
   width: 800,
   height: 600,
 }
