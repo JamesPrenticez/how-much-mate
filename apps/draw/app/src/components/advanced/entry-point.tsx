@@ -8,8 +8,8 @@ import { mockShapes } from './shapes.mock';
 import { useEffect } from 'react';
 
 export const EntryPoint = () => {
-  const shapes = useShapesStore((s) => s.shapes);
   const setShapes = useShapesStore((s) => s.setShapes);
+  const quadtree = useShapesStore((s) => s.quadtree); // This is effectivly visiable shapes
 
   // This is just a mock API call for now
   // We need to set the shapes in order to trigger building the quad tree
@@ -31,7 +31,7 @@ export const EntryPoint = () => {
 
       <CanvasLayer
         id="background-layer"
-        draw={drawGeometry()} //hmm
+        draw={drawGeometry(quadtree)} //hmm
         borderColor="cyan"
       />
 

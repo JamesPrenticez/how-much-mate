@@ -25,10 +25,9 @@ export const CanvasLayer = ({
 
   const canvasKit = useCanvasStore((s) => s.canvasKit);
   const view = useCanvasStore((s) => s.view);
-  const quadtree = useShapesStore((s) => s.quadtree);
 
   useEffect(() => {
-    if (!canvasKit || !canvasRef.current || !quadtree) return;
+    if (!canvasKit || !canvasRef.current) return;
 
     const surface = canvasKit.MakeWebGLCanvasSurface(canvasRef.current);
     if (!surface) return;
@@ -41,7 +40,7 @@ export const CanvasLayer = ({
     canvas.scale(view.scale, view.scale);
 
     // Draw
-    draw(canvas, canvasKit, view, quadtree);
+    draw(canvas, canvasKit, view);
 
     canvas.restore();
     
@@ -52,7 +51,7 @@ export const CanvasLayer = ({
     return () => {
       surface.dispose(); // Use dispose(), not flush()
     };
-  }, [canvasKit, view, quadtree]);
+  }, [canvasKit, draw, view]);
 
   return (
       <StyledCanvas

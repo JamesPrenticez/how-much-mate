@@ -1,16 +1,13 @@
-import { getViewWorldBounds } from '../utils';
+import { getViewWorldBounds, Quadtree } from '../utils';
 import { initialConfig } from '../config';
 import { DrawFunction } from '../models';
 
-export const drawGeometry = (): DrawFunction => {
-  return (canvas, canvasKit, view, quadtree) => {
+export const drawGeometry = (quadtree: Quadtree | null): DrawFunction => {
+  return (canvas, canvasKit, view) => {
     if (!quadtree) return;
-    console.log()
 
     const bounds = getViewWorldBounds(view, initialConfig.width, initialConfig.height);
     const visibleShapes = quadtree.query(bounds);
-
-    console.log(visibleShapes)
 
     visibleShapes.forEach((shape) => {
       const paint = new canvasKit.Paint();

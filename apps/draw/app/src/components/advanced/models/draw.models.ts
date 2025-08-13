@@ -17,8 +17,8 @@ export interface ShapeDrawContext extends DrawContext {
 // Options 2 - Function overloads provide a cleaner syntax
 export type DrawFunction<TExtra = undefined> =
   TExtra extends undefined
-    ? (canvas: Canvas, canvasKit: CanvasKit, view: View, quadtree: Quadtree) => void
-    : (canvas: Canvas, canvasKit: CanvasKit, view: View, quadtree: Quadtree, extra: TExtra) => void;
+    ? (canvas: Canvas, canvasKit: CanvasKit, view: View) => void
+    : (canvas: Canvas, canvasKit: CanvasKit, view: View, extra: TExtra) => void;
 
 // Temp solution
 export type Shape = {
