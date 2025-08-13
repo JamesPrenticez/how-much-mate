@@ -1,14 +1,16 @@
+import { useEffect } from 'react';
 import { InteractionLayer } from './layers/interaction/interaction.layer';
 import { CanvasLayer } from './layers/canvas.layer';
-import { drawSimpleRect1, drawSimpleRect3 } from './draw';
 import { useShapesStore } from './stores';
-import { drawGeometry } from './draw/draw-geometry';
+
+import { drawGeometry, drawHoveredOutline } from './draw';
 
 import { mockShapes } from './shapes.mock';
-import { useEffect } from 'react';
 
 export const EntryPoint = () => {
   const setShapes = useShapesStore((s) => s.setShapes);
+  const hoveredShape = useShapesStore((s) => s.hoveredShape);
+
   const quadtree = useShapesStore((s) => s.quadtree); // This is effectivly visiable shapes
 
   // This is just a mock API call for now
@@ -23,19 +25,24 @@ export const EntryPoint = () => {
 
   return (
     <InteractionLayer>
-      <CanvasLayer
+      {/* <CanvasLayer
         id="grid-layer"
         draw={drawSimpleRect1}
         borderColor="fuchsia"
-      />
+      /> */}
 
       <CanvasLayer
         id="background-layer"
-        draw={drawGeometry(quadtree)} //hmm
+        draw={drawGeometry(quadtree)}
         borderColor="cyan"
       />
 
-      <CanvasLayer id="edit-layer" draw={drawSimpleRect3} borderColor="cyan" />
+      <CanvasLayer 
+        id="edit-layer"
+        draw={drawHoveredOutline(hoveredShape)}
+        borderColor="cyan"
+      />
+
     </InteractionLayer>
   );
 };

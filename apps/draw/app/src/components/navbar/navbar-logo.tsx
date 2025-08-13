@@ -30,6 +30,10 @@ const LogoNavLink = styled(NavLink)`
     color: var(--color-primary);
   }
 
+  .subtle {
+    color: var(--color-text-subtle);
+  }
+
   @media ${device.tablet} {
     gap: 0.5rem;
     .logo {
@@ -48,7 +52,7 @@ export const NavLogo = () => {
         {ICONS.Cube}
       </div>
       <Title>
-        Draw<span className="primary">.</span>
+        Draw<span className='subtle'>Machine</span><span className="primary">.</span>
       </Title>
     </LogoNavLink>
   );
