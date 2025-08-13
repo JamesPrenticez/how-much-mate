@@ -2,9 +2,12 @@ import { create } from 'zustand';
 import { Shape } from '../models';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { produce } from 'immer';
+import { Quadtree } from '../utils';
+import { initialConfig } from '../config';
 
 interface ShapeState {
   shapes: Shape[];
+  quadtree: Quadtree | null;
   setShapes: (shapes: Shape[]) => void;
 
   hoveredShape: Shape | null;
@@ -16,18 +19,22 @@ interface ShapeState {
 
 export const useShapesStore = create<ShapeState>()(
   subscribeWithSelector((set, get) => ({
-    shapes: [
-      { id: 1, x: 100, y: 100, width: 100, height: 100, color: 'red', selected: false },
-      { id: 2, x: 250, y: 150, width: 80, height: 120, color: 'blue', selected: false },
-      { id: 3, x: 400, y: 200, width: 150, height: 60, color: 'green', selected: false }
-    ],
+    shapes: [],
+    quadtree: null,
     hoveredShape: null,
     dragPreview: null,
     
     setShapes: (shapes: Shape[]) => {
+      // Build quadtree once whenever shapes update
+      const qt = new Quadtree({ x: 0, y: 0, width: initialConfig.worldWidth, height: initialConfig.worldHeight });
+      shapes.forEach(s =>
+        qt.insert({ ...s, width: s.width, height: s.height })
+      );
+
       set(
         produce<ShapeState>((state) => {
           state.shapes = shapes;
+          state.quadtree = qt;
         })
       );
     },

@@ -21,6 +21,7 @@ export type DrawFunction<TExtra = undefined> =
 // Temp solution
 export type Shape = {
   id: number;
+  type: "line" | "rectangle";
   x: number;
   y: number;
   width: number;
