@@ -31,7 +31,7 @@ export const EntryPoint = () => {
 
       <CanvasLayer
         id="background-layer"
-        draw={drawGeometry(shapes)}
+        draw={drawGeometry()} //hmm
         borderColor="cyan"
       />
 

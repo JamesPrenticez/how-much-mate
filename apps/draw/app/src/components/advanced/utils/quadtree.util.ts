@@ -1,5 +1,33 @@
 import { Shape } from "../models";
 
+// 1. World Bounds aka boundry
+// What it is:
+// The root quadtree node’s width & height — the space your entire document fits in.
+
+// Why it matters:
+// If the world bounds are way bigger than your actual shapes, the tree will waste levels splitting huge empty space.
+// If too small, shapes outside bounds won’t be stored unless you dynamically expand.
+
+// Tuning options:
+
+// Static World Bounds — If your canvas/doc is fixed-size (e.g., 5000×5000 world units), just set that once.
+
+// Dynamic Bounds — Expand or rebuild the quadtree when shapes go outside the current bounds.
+
+// Example:
+// If your drawing area can scroll infinitely, start with a reasonable bounds (e.g., viewport × 4), and rebuild quadtree if a shape falls outside.
+
+// 1. Bucket Size (a.k.a. Capacity per Node) aka capacity
+// What it is:
+// The maximum number of shapes a single quadtree node can hold before it splits into 4 children.
+
+// Trade-offs:
+
+// Bucket Size	Pros	Cons
+// Small (e.g. 1–4)	Very fine-grained, fewer shapes per query	Deep tree → more recursion overhead
+// Large (e.g. 20–50)	Shallow tree, less recursion	More shapes per query, slower lookups in dense areas
+
+
 interface Rect {
   x: number;
   y: number;

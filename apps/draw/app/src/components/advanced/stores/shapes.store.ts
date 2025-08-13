@@ -3,7 +3,7 @@ import { Shape } from '../models';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { produce } from 'immer';
 import { Quadtree } from '../utils';
-import { initialConfig } from '../config';
+import { BUCKET_SIZE, WORLD_BOUNDS } from '../config';
 
 interface ShapeState {
   shapes: Shape[];
@@ -23,11 +23,11 @@ export const useShapesStore = create<ShapeState>()(
     quadtree: null,
     hoveredShape: null,
     dragPreview: null,
-    
+
     setShapes: (shapes: Shape[]) => {
       // Build quadtree once whenever shapes update
-      const qt = new Quadtree({ x: 0, y: 0, width: initialConfig.worldWidth, height: initialConfig.worldHeight });
-      shapes.forEach(s =>
+      const qt = new Quadtree(WORLD_BOUNDS, BUCKET_SIZE);
+      shapes.forEach((s) =>
         qt.insert({ ...s, width: s.width, height: s.height })
       );
 
@@ -54,6 +54,5 @@ export const useShapesStore = create<ShapeState>()(
         })
       );
     },
-
-  })
-));
+  }))
+);

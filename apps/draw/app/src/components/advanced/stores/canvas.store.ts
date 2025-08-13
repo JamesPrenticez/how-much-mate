@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Shape, View } from '../models';
+import { View } from '../models';
 import { initialConfig } from '../config';
 import { clamp } from '../utils';
 import { CanvasKit } from 'canvaskit-wasm';

@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { initialConfig } from "../config";
 import { useCanvasStore } from '../stores/canvas.store';
 import { DrawFunction } from '../models';
+import { useShapesStore } from '../stores';
 
 const StyledCanvas = styled.canvas`
   position: absolute;
@@ -24,9 +25,10 @@ export const CanvasLayer = ({
 
   const canvasKit = useCanvasStore((s) => s.canvasKit);
   const view = useCanvasStore((s) => s.view);
+  const quadtree = useShapesStore((s) => s.quadtree);
 
   useEffect(() => {
-    if (!canvasKit || !canvasRef.current) return;
+    if (!canvasKit || !canvasRef.current || !quadtree) return;
 
     const surface = canvasKit.MakeWebGLCanvasSurface(canvasRef.current);
     if (!surface) return;
@@ -39,7 +41,7 @@ export const CanvasLayer = ({
     canvas.scale(view.scale, view.scale);
 
     // Draw
-    draw(canvas, canvasKit);
+    draw(canvas, canvasKit, view, quadtree);
 
     canvas.restore();
     
@@ -50,7 +52,7 @@ export const CanvasLayer = ({
     return () => {
       surface.dispose(); // Use dispose(), not flush()
     };
-  }, [canvasKit, view]);
+  }, [canvasKit, view, quadtree]);
 
   return (
       <StyledCanvas
