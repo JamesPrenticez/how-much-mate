@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
-import { PropsWithChildren, useCallback, useRef } from 'react';
+import { PropsWithChildren } from 'react';
 import { initialConfig } from '../config';
 import { useCanvasKitLoader } from '../loader';
-import { screenToWorld } from '../utils';
-import { useCanvasStore, useShapesStore } from '../stores';
+import { useShapesStore } from '../stores';
 import { useHover, usePan, useZoom } from '../hooks';
 
 const Container = styled.div`
