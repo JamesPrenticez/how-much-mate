@@ -27,7 +27,7 @@ export const InteractionLayer = ({ children }: PropsWithChildren) => {
 
   const hover = useHover();
   const pan = usePan();
-  useZoom();
+  const zoom = useZoom();
 
   return (
     <Container
@@ -36,6 +36,7 @@ export const InteractionLayer = ({ children }: PropsWithChildren) => {
         pan.onMouseMove(e);
         if (!e.buttons) hover.onMouseMove(e); // only hover when not dragging
       }}
+      onWheel={zoom} 
       onMouseUp={pan.onMouseUp}
       style={{
         height: initialConfig.height + 50,
