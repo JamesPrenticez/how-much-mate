@@ -10,11 +10,15 @@ export const initialConfig = {
 }
 
 // Quadtree
+const viewportWidth = 1920;
+const viewportHeight = 1080;
+
+// world bounds = viewport * 4, centered at 0,0
 export const WORLD_BOUNDS = {
-  x: 0,
-  y: 0,
-  width: 5000,
-  height: 5000
+  x: -(viewportWidth * 2),
+  y: -(viewportHeight * 2),
+  width: viewportWidth * 4,
+  height: viewportHeight * 4,
 };
 
 export const BUCKET_SIZE = 8; // tweak for perf — 4–16 is a good range

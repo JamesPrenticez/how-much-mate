@@ -28,6 +28,9 @@ import { Shape } from "../models";
 // Large (e.g. 20–50)	Shallow tree, less recursion	More shapes per query, slower lookups in dense areas
 
 
+// But we go a step further here with auto-expansion
+// this allows us to infinatly add shapes but make sure the quad tree grows to the correct size
+
 interface Rect {
   x: number;
   y: number;
@@ -48,6 +51,48 @@ export class Quadtree {
   constructor(boundary: Rect, capacity = 4) {
     this.boundary = boundary;
     this.capacity = capacity;
+  }
+
+  // Expand root to include out-of-bounds shape
+  static ensureContains(root: Quadtree, shape: Shape): Quadtree {
+    let { x, y, width, height } = root.boundary;
+
+    // already fits
+    if (root.intersects(root.boundary, shape)) return root;
+
+    // Expand until the shape fits
+    while (!root.intersects(root.boundary, shape)) {
+      const expandLeft = shape.x < x;
+      const expandUp = shape.y < y;
+
+      const newWidth = width * 2;
+      const newHeight = height * 2;
+
+      // Shift origin if expanding left/up
+      x = expandLeft ? x - width : x;
+      y = expandUp ? y - height : y;
+
+      const newBoundary: Rect = { x, y, width: newWidth, height: newHeight };
+      const newRoot = new Quadtree(newBoundary, root.capacity);
+      newRoot.insertNode(root); // reinsert old tree into new root
+      root = newRoot;
+
+      width = newWidth;
+      height = newHeight;
+    }
+
+    return root;
+  }
+
+  // helper: reinsert entire old tree into new one
+  private insertNode(node: Quadtree) {
+    node.shapes.forEach(s => this.insert(s));
+    if (node.divided) {
+      node.northwest && this.insertNode(node.northwest);
+      node.northeast && this.insertNode(node.northeast);
+      node.southwest && this.insertNode(node.southwest);
+      node.southeast && this.insertNode(node.southeast);
+    }
   }
 
   subdivide() {
@@ -78,7 +123,6 @@ export class Quadtree {
     if (this.southeast!.insert(shape)) return true;
     if (this.southwest!.insert(shape)) return true;
 
-    // Shouldn't reach here if shape fits in boundary
     return false;
   }
 

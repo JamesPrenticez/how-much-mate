@@ -24,20 +24,19 @@ export const useShapesStore = create<ShapeState>()(
     hoveredShape: null,
     dragPreview: null,
 
-    setShapes: (shapes: Shape[]) => {
-      // Build quadtree once whenever shapes update
-      const qt = new Quadtree(WORLD_BOUNDS, BUCKET_SIZE);
-      shapes.forEach((s) =>
-        qt.insert({ ...s, width: s.width, height: s.height })
-      );
+setShapes: (shapes: Shape[]) => {
+  let qt = new Quadtree(WORLD_BOUNDS, BUCKET_SIZE);
 
-      set(
-        produce<ShapeState>((state) => {
-          state.shapes = shapes;
-          state.quadtree = qt;
-        })
-      );
-    },
+  shapes.forEach((s) => {
+    qt = Quadtree.ensureContains(qt, s); // expand root if needed
+    qt.insert(s);
+  });
+
+  set(produce<ShapeState>((state) => {
+    state.shapes = shapes;
+    state.quadtree = qt;
+  }));
+},
 
     setHoveredShape: (shape: Shape | null) => {
       set(
