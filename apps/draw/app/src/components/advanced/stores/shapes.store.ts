@@ -12,9 +12,6 @@ interface ShapeState {
 
   hoveredShape: Shape | null;
   setHoveredShape: (shape: Shape | null) => void;
-
-  dragPreview: Shape | null;
-  setDragPreview: (shape: Shape | null) => void;
 }
 
 export const useShapesStore = create<ShapeState>()(
@@ -22,34 +19,27 @@ export const useShapesStore = create<ShapeState>()(
     shapes: [],
     quadtree: null,
     hoveredShape: null,
-    dragPreview: null,
 
-setShapes: (shapes: Shape[]) => {
-  let qt = new Quadtree(WORLD_BOUNDS, BUCKET_SIZE);
+    setShapes: (shapes: Shape[]) => {
+      let qt = new Quadtree(WORLD_BOUNDS, BUCKET_SIZE);
 
-  shapes.forEach((s) => {
-    qt = Quadtree.ensureContains(qt, s); // expand root if needed
-    qt.insert(s);
-  });
+      shapes.forEach((s) => {
+        qt = Quadtree.ensureContains(qt, s);
+        qt.insert(s);
+      });
 
-  set(produce<ShapeState>((state) => {
-    state.shapes = shapes;
-    state.quadtree = qt;
-  }));
-},
+      set(
+        produce<ShapeState>((state) => {
+          state.shapes = shapes;
+          state.quadtree = qt;
+        })
+      );
+    },
 
     setHoveredShape: (shape: Shape | null) => {
       set(
         produce<ShapeState>((state) => {
           state.hoveredShape = shape;
-        })
-      );
-    },
-
-    setDragPreview: (shape: Shape | null) => {
-      set(
-        produce<ShapeState>((state) => {
-          state.dragPreview = shape;
         })
       );
     },

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useCallback, useRef } from 'react';
 import { initialConfig } from '../config';
 import { useCanvasKitLoader } from '../loader';
 import { useShapesStore } from '../stores';
@@ -38,13 +38,14 @@ export const InteractionLayer = ({ children }: PropsWithChildren) => {
       }}
       onWheel={zoom} 
       onMouseUp={pan.onMouseUp}
+      
       style={{
         height: initialConfig.height + 50,
         width: initialConfig.width + 50,
       }}
     >
       <Overlay>
-        <p>{useShapesStore.getState().hoveredShape?.id ?? 'none'}</p>
+        {/* <p>{useShapesStore.getState().hoveredShape?.id ?? 'none'}</p> */}
       </Overlay>
       {children}
     </Container>
