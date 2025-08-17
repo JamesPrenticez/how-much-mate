@@ -1,5 +1,4 @@
 import type { Canvas, CanvasKit } from "canvaskit-wasm";
-import { Quadtree } from "../utils";
 import { View } from "./view.models";
 
 export interface DrawContext {
@@ -14,7 +13,7 @@ export interface ShapeDrawContext extends DrawContext {
 // Options 1 - This is technically better
 // export type DrawFunction<TContext extends DrawContext = DrawContext> = (ctx: TContext) => void;
 
-// Options 2 - Function overloads provide a cleaner syntax
+// Options 2 - Function overloads provide a cleaner syntax, but extra is loose
 export type DrawFunction<TExtra = undefined> =
   TExtra extends undefined
     ? (canvas: Canvas, canvasKit: CanvasKit, view: View) => void

@@ -1,12 +1,14 @@
 import { useCallback, useEffect } from "react";
 import { screenToWorld } from "../utils";
 import { useCanvasStore, useShapesStore } from "../stores";
+import { useSelectionHandles } from "./use-canvas-selection-handles";
 
 export const useSelection = () => {
   const setSelectedShape = useShapesStore(s => s.setSelectedShape);
   const selectedShape = useShapesStore(s => s.selectedShape);
   const quadtree = useShapesStore(s => s.quadtree);
   const view = useCanvasStore(s => s.view);
+  const { getHandleAtPoint } = useSelectionHandles();
 
   const clearSelection = useCallback(() => {
     setSelectedShape(null);
@@ -36,6 +38,19 @@ export const useSelection = () => {
       y: e.clientY - rect.top - 25,
     };
     const worldCoords = screenToWorld(screenCoords.x, screenCoords.y, view);
+
+    // If we already have a selected shape, first check if we clicked on its handles
+    if (selectedShape) {
+      const clickedHandle = getHandleAtPoint(worldCoords.x, worldCoords.y);
+      if (clickedHandle) {
+        // If we clicked a handle, don't change selection and prevent panning
+        console.log('Handle clicked:', clickedHandle);
+        e.stopPropagation();
+        return;
+      }
+    }
+
+    // If not a handle click, proceed with normal selection logic
     const pointerRect = {
       x: worldCoords.x - 1,
       y: worldCoords.y - 1,
@@ -53,7 +68,7 @@ export const useSelection = () => {
     if (clickedShape) {
       e.stopPropagation();
     }
-  }, [quadtree, view, setSelectedShape]);
+  }, [quadtree, view, selectedShape, setSelectedShape, getHandleAtPoint]);
 
   return { 
     onMouseDown, 

@@ -11,6 +11,7 @@ export const EntryPoint = () => {
   const setShapes = useShapesStore((s) => s.setShapes);
   const hoveredShape = useShapesStore((s) => s.hoveredShape);
   const selectedShape = useShapesStore((s) => s.selectedShape);
+  const hoveredHandle = useShapesStore(s => s.hoveredHandle);
 
   const quadtree = useShapesStore((s) => s.quadtree); // This is effectivly visiable shapes
 
@@ -46,7 +47,7 @@ export const EntryPoint = () => {
 
       <CanvasLayer 
         id="selected-layer"
-        draw={drawSelectedOutline(selectedShape)}
+        draw={drawSelectedOutline(selectedShape, hoveredHandle)}
         borderColor="cyan"
       />
 

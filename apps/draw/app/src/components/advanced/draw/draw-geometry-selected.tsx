@@ -1,7 +1,7 @@
 import { DrawFunction, Shape } from "../models";
 import { useCanvasStore } from "../stores";
 
-export const drawSelectedOutline = (selectedShape: Shape | null): DrawFunction => {
+export const drawSelectedOutline = (selectedShape: Shape | null, hoveredHandle: string | null): DrawFunction => {
   return (canvas, canvasKit) => {
     if (!selectedShape) return;
     const view = useCanvasStore.getState().view;
@@ -24,22 +24,32 @@ export const drawSelectedOutline = (selectedShape: Shape | null): DrawFunction =
     );
     
     // Draw selection handles (small squares at corners)
-    const handleSize = 8 / view.scale;
+    const baseHandleSize = 8 / view.scale;
+    const hoveredHandleSize = 12 / view.scale; // Larger when hovered
+    
     const handlePaint = new canvasKit.Paint();
     handlePaint.setStyle(canvasKit.PaintStyle.Fill);
     handlePaint.setColor(canvasKit.parseColorString('#ff6b35'));
     
-    // Corner handles
-    const corners = [
-      { x: selectedShape.x - handleSize/2, y: selectedShape.y - handleSize/2 },
-      { x: selectedShape.x + selectedShape.width - handleSize/2, y: selectedShape.y - handleSize/2 },
-      { x: selectedShape.x - handleSize/2, y: selectedShape.y + selectedShape.height - handleSize/2 },
-      { x: selectedShape.x + selectedShape.width - handleSize/2, y: selectedShape.y + selectedShape.height - handleSize/2 },
+    // Corner handles with their types
+    const handles = [
+      { type: 'nw', x: selectedShape.x, y: selectedShape.y },
+      { type: 'ne', x: selectedShape.x + selectedShape.width, y: selectedShape.y },
+      { type: 'sw', x: selectedShape.x, y: selectedShape.y + selectedShape.height },
+      { type: 'se', x: selectedShape.x + selectedShape.width, y: selectedShape.y + selectedShape.height },
     ];
     
-    corners.forEach(corner => {
+    handles.forEach(handle => {
+      const isHovered = hoveredHandle === handle.type;
+      const handleSize = isHovered ? hoveredHandleSize : baseHandleSize;
+      
       canvas.drawRect(
-        canvasKit.XYWHRect(corner.x, corner.y, handleSize, handleSize),
+        canvasKit.XYWHRect(
+          handle.x - handleSize/2, 
+          handle.y - handleSize/2, 
+          handleSize, 
+          handleSize
+        ),
         handlePaint
       );
     });
