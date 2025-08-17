@@ -3,13 +3,14 @@ import { InteractionLayer } from './layers/interaction.layer';
 import { CanvasLayer } from './layers/canvas.layer';
 import { useShapesStore } from './stores';
 
-import { drawGeometry, drawHoveredOutline } from './draw';
+import { drawGeometry, drawHoveredOutline, drawSelectedOutline } from './draw';
 
 import { mockShapes } from './shapes.mock';
 
 export const EntryPoint = () => {
   const setShapes = useShapesStore((s) => s.setShapes);
   const hoveredShape = useShapesStore((s) => s.hoveredShape);
+  const selectedShape = useShapesStore((s) => s.selectedShape);
 
   const quadtree = useShapesStore((s) => s.quadtree); // This is effectivly visiable shapes
 
@@ -38,8 +39,14 @@ export const EntryPoint = () => {
       />
 
       <CanvasLayer 
-        id="edit-layer"
+        id="hover-layer"
         draw={drawHoveredOutline(hoveredShape)}
+        borderColor="cyan"
+      />
+
+      <CanvasLayer 
+        id="selected-layer"
+        draw={drawSelectedOutline(selectedShape)}
         borderColor="cyan"
       />
 

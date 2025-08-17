@@ -2,7 +2,7 @@ import { useRef, useCallback } from 'react';
 import { useCanvasStore } from '../stores';
 import { useSharedRAF } from './use-canvas-raf';
 
-export const usePan = (enableKeyboardPan = false) => {
+export const usePan = () => {
   const setView = useCanvasStore((s) => s.setView);
   const view = useCanvasStore((s) => s.view);
 
@@ -47,42 +47,10 @@ export const usePan = (enableKeyboardPan = false) => {
     isPanning.current = false;
   }, []);
 
-  // TODO
-  // const onKeyDown = useCallback(
-  //   (e: React.KeyboardEvent) => {
-  //     if (!enableKeyboardPan) return;
-
-  //     const step = 20;
-  //     const currentView = view;
-
-  //     const processKeyPan = () => {
-  //       console.log(e.key)
-  //       switch (e.key) {
-  //         case 'ArrowUp':
-  //           setView({ ...currentView, y: currentView.y + step });
-  //           break;
-  //         case 'ArrowDown':
-  //           setView({ ...currentView, y: currentView.y - step });
-  //           break;
-  //         case 'ArrowLeft':
-  //           setView({ ...currentView, x: currentView.x + step });
-  //           break;
-  //         case 'ArrowRight':
-  //           setView({ ...currentView, x: currentView.x - step });
-  //           break;
-  //       }
-  //     };
-
-  //     scheduleUpdate(processKeyPan);
-  //   },
-  //   [enableKeyboardPan, scheduleUpdate, setView, view]
-  // );
-
   return {
     onMouseDown,
     onMouseMove,
     onMouseUp,
-    // onKeyDown,
     isPanning: () => isPanning.current,
   };
 };

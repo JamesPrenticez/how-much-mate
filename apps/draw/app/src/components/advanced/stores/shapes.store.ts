@@ -12,6 +12,9 @@ interface ShapeState {
 
   hoveredShape: Shape | null;
   setHoveredShape: (shape: Shape | null) => void;
+
+  selectedShape: Shape | null;
+  setSelectedShape: (shape: Shape | null) => void;
 }
 
 export const useShapesStore = create<ShapeState>()(
@@ -19,6 +22,7 @@ export const useShapesStore = create<ShapeState>()(
     shapes: [],
     quadtree: null,
     hoveredShape: null,
+    selectedShape: null,
 
     setShapes: (shapes: Shape[]) => {
       let qt = new Quadtree(WORLD_BOUNDS, BUCKET_SIZE);
@@ -40,6 +44,14 @@ export const useShapesStore = create<ShapeState>()(
       set(
         produce<ShapeState>((state) => {
           state.hoveredShape = shape;
+        })
+      );
+    },
+
+    setSelectedShape: (shape: Shape | null) => {
+      set(
+        produce<ShapeState>((state) => {
+          state.selectedShape = shape;
         })
       );
     },
