@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useCanvasStore, useShapesStore } from "../stores";
+import { getShapeBoundingRect } from "../utils";
 
 export const useSelectionHandles = () => {
   const selectedShape = useShapesStore(s => s.selectedShape);
@@ -11,11 +12,14 @@ export const useSelectionHandles = () => {
     const handleSize = 8 / view.scale;
     const tolerance = handleSize;
     
+    // Get bounding rectangle for the selected shape
+    const boundingRect = getShapeBoundingRect(selectedShape);
+    
     const handles = [
-      { type: 'nw', x: selectedShape.x, y: selectedShape.y },
-      { type: 'ne', x: selectedShape.x + selectedShape.width, y: selectedShape.y },
-      { type: 'sw', x: selectedShape.x, y: selectedShape.y + selectedShape.height },
-      { type: 'se', x: selectedShape.x + selectedShape.width, y: selectedShape.y + selectedShape.height },
+      { type: 'nw', x: boundingRect.x, y: boundingRect.y },
+      { type: 'ne', x: boundingRect.x + boundingRect.width, y: boundingRect.y },
+      { type: 'sw', x: boundingRect.x, y: boundingRect.y + boundingRect.height },
+      { type: 'se', x: boundingRect.x + boundingRect.width, y: boundingRect.y + boundingRect.height },
     ];
     
     for (const handle of handles) {

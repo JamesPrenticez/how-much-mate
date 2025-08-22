@@ -1,6 +1,6 @@
-import { Rect, Shape } from "../models";
+import { Shape } from "../models";
 
-export const getShapeBoundingRect = (shape: Shape): Rect => {
+export const getShapeBoundingRect = (shape: Shape): { x: number; y: number; width: number; height: number } => {
   switch (shape.type) {
     case 'rectangle':
       return {
@@ -20,12 +20,12 @@ export const getShapeBoundingRect = (shape: Shape): Rect => {
       return {
         x: minX - strokeWidth / 2,
         y: minY - strokeWidth / 2,
-        width: (maxX - minX) + strokeWidth,
-        height: (maxY - minY) + strokeWidth
+        width: Math.max(10, (maxX - minX) + strokeWidth), // Min 10px for easier selection
+        height: Math.max(10, (maxY - minY) + strokeWidth)
       };
 
     case 'polyline':
-      if (shape.points.length === 0) return { x: 0, y: 0, width: 0, height: 0 };
+      if (shape.points.length === 0) return { x: 0, y: 0, width: 10, height: 10 };
       
       const xs = shape.points.map(p => p.x);
       const ys = shape.points.map(p => p.y);
@@ -38,20 +38,21 @@ export const getShapeBoundingRect = (shape: Shape): Rect => {
       return {
         x: polyMinX - polyStrokeWidth / 2,
         y: polyMinY - polyStrokeWidth / 2,
-        width: (polyMaxX - polyMinX) + polyStrokeWidth,
-        height: (polyMaxY - polyMinY) + polyStrokeWidth
+        width: Math.max(10, (polyMaxX - polyMinX) + polyStrokeWidth),
+        height: Math.max(10, (polyMaxY - polyMinY) + polyStrokeWidth)
       };
 
     case 'point':
       const radius = shape.radius || 3;
+      const padding = Math.max(5, radius); // Ensure minimum selection area
       return {
-        x: shape.x - radius,
-        y: shape.y - radius,
-        width: radius * 2,
-        height: radius * 2
+        x: shape.x - padding,
+        y: shape.y - padding,
+        width: padding * 2,
+        height: padding * 2
       };
 
     default:
-      return { x: 0, y: 0, width: 0, height: 0 };
+      return { x: 0, y: 0, width: 10, height: 10 };
   }
 };

@@ -1,5 +1,5 @@
 import { Rect, Shape } from '../models';
-import { getShapeBoundingRect } from './get-shape-bounding-rect';
+import { getShapeBoundingRect } from './get-shape-bounding-rect.util';
 
 // 1. World Bounds aka boundry
 // What it is:
