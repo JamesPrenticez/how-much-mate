@@ -55,6 +55,7 @@ export const useShapesStore = create<ShapeState>()(
     setSelectedShape: (shape: Shape | null) => {
       set(
         produce<ShapeState>((state) => {
+          state.hoveredShape = null;
           state.selectedShape = shape;
         })
       );

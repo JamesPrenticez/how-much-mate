@@ -3,7 +3,7 @@ import { PropsWithChildren, useCallback, useRef } from 'react';
 import { initialConfig } from '../config';
 import { useCanvasKitLoader } from '../loader';
 import { useShapesStore } from '../stores';
-import { useHover, usePan, useSelection, useZoom } from '../hooks';
+import { useHover, usePan, useSelection, useShapeMovement, useZoom } from '../hooks';
 
 const Container = styled.div`
   position: relative;
@@ -23,23 +23,49 @@ export const InteractionLayer = ({ children }: PropsWithChildren) => {
   const pan = usePan();
   const zoom = useZoom();
   const selection = useSelection();
+  const movement = useShapeMovement();
+
+    const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    // Try shape movement first (highest priority)
+    movement.onMouseDown(e);
+    
+    // If movement didn't consume the event, try selection
+    if (!movement.isDragging()) {
+      if (e.button === 0) {
+        selection.onMouseDown(e);
+      }
+    }
+    
+    // Finally, handle panning (lowest priority)
+    if (!movement.isDragging()) {
+      pan.onMouseDown(e);
+    }
+  }, [movement, selection, pan]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    // Handle movement if we're dragging
+    if (movement.isDragging()) {
+      movement.onMouseMove(e);
+    } else {
+      // Otherwise handle pan and hover
+      pan.onMouseMove(e);
+      if (!e.buttons) {
+        hover.onMouseMove(e);
+      }
+    }
+  }, [movement, pan, hover]);
+
+  const handleMouseUp = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    movement.onMouseUp();
+    pan.onMouseUp();
+  }, [movement, pan]);
 
   return (
     <Container
-      onMouseDown={(e) => {
-        // Handle selection on left click
-        if (e.button === 0) {
-          selection.onMouseDown(e);
-        }
-        // Handle panning on middle click (or if selection didn't consume the event)
-        pan.onMouseDown(e);
-      }}
-      onMouseMove={(e) => {
-        pan.onMouseMove(e);
-        if (!e.buttons) hover.onMouseMove(e); // only hover when not dragging
-      }}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
       onWheel={zoom} 
-      onMouseUp={pan.onMouseUp}
       onKeyDown={selection.clearSelection}
       
       style={{
