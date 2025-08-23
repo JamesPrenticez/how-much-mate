@@ -105,4 +105,17 @@ export const mockShapes: Shape[] = [
     color: '#00FF00',
     selected: false,
   },
+
+      ...Array.from({ length: 50 }, (_, i) => ({
+    id: i + 5,
+    type: 'rectangle' as const,
+    x: Math.floor(Math.random() * 800 - 400), // range -400 to 400
+    y: Math.floor(Math.random() * 600 - 300), // range -300 to 300
+    width: Math.floor(Math.random() * 100) + 20, // 20–120
+    height: Math.floor(Math.random() * 100) + 20, // 20–120
+    color: `#${Math.floor(Math.random() * 0xffffff)
+      .toString(16)
+      .padStart(6, '0')}`,
+    selected: false,
+  })),
 ];

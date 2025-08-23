@@ -6,6 +6,7 @@ import { useShapesStore } from './stores';
 import { drawGeometry, drawHoveredOutline, drawSelectedOutline } from './draw';
 
 import { mockShapes } from './shapes.mock';
+import { mockShapes2 } from './shapes2.mock';
 
 export const EntryPoint = () => {
   const setShapes = useShapesStore((s) => s.setShapes);
@@ -19,7 +20,7 @@ export const EntryPoint = () => {
   // We need to set the shapes in order to trigger building the quad tree
   useEffect(() => {
     try {
-      setShapes(mockShapes);
+      setShapes(mockShapes2);
     } catch (err) {
       console.error("Failed to set mock shapes", err);
     }
