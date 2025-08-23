@@ -1,7 +1,8 @@
 import { useRef, useCallback } from 'react';
 import { useShapesStore, useCanvasStore } from '../stores';
-import { screenToWorld } from '../utils';
+import { getShapeBoundingRect, moveShape, screenToWorld } from '../utils';
 import { useSharedRAF } from './use-canvas-raf';
+import { Shape } from '../models';
 
 export const useShapeMovement = () => {
   const selectedShape = useShapesStore(s => s.selectedShape);
@@ -12,13 +13,13 @@ export const useShapeMovement = () => {
   
   const isDragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
-  const shapeStartPos = useRef({ x: 0, y: 0 });
+  const shapeStartState = useRef<Shape | null>(null);
   const latestMouse = useRef<{ x: number, y: number, rect: DOMRect } | null>(null);
   
   const { scheduleUpdate } = useSharedRAF();
 
   const processDrag = useCallback(() => {
-    if (!isDragging.current || !latestMouse.current || !selectedShape) return;
+    if (!isDragging.current || !latestMouse.current || !selectedShape || !shapeStartState.current) return;
 
     const { x, y, rect } = latestMouse.current;
     const screenCoords = {
@@ -31,15 +32,8 @@ export const useShapeMovement = () => {
     const deltaX = worldCoords.x - dragStart.current.x;
     const deltaY = worldCoords.y - dragStart.current.y;
     
-    const newX = shapeStartPos.current.x + deltaX;
-    const newY = shapeStartPos.current.y + deltaY;
-    
-    // Create the updated shape
-    const updatedShape = {
-      ...selectedShape,
-      x: newX,
-      y: newY
-    };
+    // Create the updated shape based on its type
+    const updatedShape = moveShape(shapeStartState.current, deltaX, deltaY);
     
     // Update the shapes array
     const updatedShapes = shapes.map(shape => {
@@ -65,18 +59,19 @@ export const useShapeMovement = () => {
     };
     const worldCoords = screenToWorld(screenCoords.x, screenCoords.y, view);
     
-    // Check if we're clicking on the selected shape to start dragging
+    // Check if we're clicking within the selected shape's bounding rectangle for movement
+    const boundingRect = getShapeBoundingRect(selectedShape);
     const isClickingSelectedShape = (
-      worldCoords.x >= selectedShape.x &&
-      worldCoords.x <= selectedShape.x + selectedShape.width &&
-      worldCoords.y >= selectedShape.y &&
-      worldCoords.y <= selectedShape.y + selectedShape.height
+      worldCoords.x >= boundingRect.x &&
+      worldCoords.x <= boundingRect.x + boundingRect.width &&
+      worldCoords.y >= boundingRect.y &&
+      worldCoords.y <= boundingRect.y + boundingRect.height
     );
     
     if (isClickingSelectedShape) {
       isDragging.current = true;
       dragStart.current = worldCoords;
-      shapeStartPos.current = { x: selectedShape.x, y: selectedShape.y };
+      shapeStartState.current = { ...selectedShape }; // Store the initial state
       
       // Prevent the event from bubbling to selection/pan handlers
       e.stopPropagation();
@@ -100,6 +95,7 @@ export const useShapeMovement = () => {
   const onMouseUp = useCallback(() => {
     isDragging.current = false;
     latestMouse.current = null;
+    shapeStartState.current = null;
   }, []);
 
   return {
@@ -109,3 +105,4 @@ export const useShapeMovement = () => {
     isDragging: () => isDragging.current
   };
 };
+

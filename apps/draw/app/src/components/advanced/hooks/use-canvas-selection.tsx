@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { isPointOnLine, isPointOnPolyline, screenToWorld } from "../utils";
+import { getShapeBoundingRect, isPointOnLine, isPointOnPolyline, screenToWorld } from "../utils";
 import { useCanvasStore, useShapesStore } from "../stores";
 import { useSelectionHandles } from "./use-canvas-selection-handles";
 import { Shape } from "../models";
@@ -74,6 +74,17 @@ export const useSelection = () => {
       if (clickedHandle) {
         // If we clicked a handle, don't change selection and prevent panning
         console.log('Handle clicked:', clickedHandle);
+        e.stopPropagation();
+        return;
+      }
+
+      // Check if we clicked within the selected shape's bounding rectangle
+      const selectedBounds = getShapeBoundingRect(selectedShape);
+      if (worldCoords.x >= selectedBounds.x && 
+          worldCoords.x <= selectedBounds.x + selectedBounds.width &&
+          worldCoords.y >= selectedBounds.y && 
+          worldCoords.y <= selectedBounds.y + selectedBounds.height) {
+        // Clicked within the selected shape's bounding box - keep it selected
         e.stopPropagation();
         return;
       }
