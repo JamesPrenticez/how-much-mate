@@ -1,20 +1,12 @@
 import { useEffect } from 'react';
 import { InteractionLayer } from './layers/interaction.layer';
-import { CanvasLayer } from './layers/canvas.layer';
 import { useShapesStore } from './stores';
 
-import { drawGeometry, drawHoveredOutline, drawSelectedOutline } from './draw';
-
-import { mockShapes } from './shapes.mock';
 import { mockShapes2 } from './shapes2.mock';
+import { Canvas } from './layers';
 
 export const EntryPoint = () => {
   const setShapes = useShapesStore((s) => s.setShapes);
-  const hoveredShape = useShapesStore((s) => s.hoveredShape);
-  const selectedShape = useShapesStore((s) => s.selectedShape);
-  const hoveredHandle = useShapesStore(s => s.hoveredHandle);
-
-  const quadtree = useShapesStore((s) => s.quadtree); // This is effectivly visiable shapes
 
   // This is just a mock API call for now
   // We need to set the shapes in order to trigger building the quad tree
@@ -28,30 +20,7 @@ export const EntryPoint = () => {
 
   return (
     <InteractionLayer>
-      {/* <CanvasLayer
-        id="grid-layer"
-        draw={drawSimpleRect1}
-        borderColor="fuchsia"
-      /> */}
-
-      <CanvasLayer
-        id="background-layer"
-        draw={drawGeometry(quadtree)}
-        borderColor="cyan"
-      />
-
-      <CanvasLayer 
-        id="hover-layer"
-        draw={drawHoveredOutline(hoveredShape)}
-        borderColor="cyan"
-      />
-
-      <CanvasLayer 
-        id="selected-layer"
-        draw={drawSelectedOutline(selectedShape, hoveredHandle)}
-        borderColor="cyan"
-      />
-
+      <Canvas />
     </InteractionLayer>
   );
 };
