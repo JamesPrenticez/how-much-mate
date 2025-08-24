@@ -1,14 +1,18 @@
+// viewport-culler.util.ts - Enhanced with better caching for drag operations
+
 import { Rect, Shape, View } from "../models";
 import { Quadtree } from "./quadtree.util";
+import { getShapeBoundingRect } from "./get-shape-bounding-rect.util";
 
 export class ViewportCuller {
   private lastViewportBounds: Rect | null = null;
   private cachedVisibleShapes: Shape[] = [];
   private cacheValid = false;
+  private lastViewHash = '';
+  private lastQuadtreeTimestamp = 0;
 
   // Calculate precise viewport bounds with margin
   getViewportBounds(view: View, canvasWidth: number, canvasHeight: number, margin = 100): Rect {
-    // Convert screen space to world space
     const worldLeft = (-view.x) / view.scale - margin;
     const worldTop = (-view.y) / view.scale - margin;
     const worldWidth = canvasWidth / view.scale + (margin * 2);
@@ -20,6 +24,12 @@ export class ViewportCuller {
       width: worldWidth,
       height: worldHeight
     };
+  }
+
+  // Create hash for viewport + quadtree state
+  private createViewHash(view: View, canvasWidth: number, canvasHeight: number, quadtreeTimestamp: number): string {
+    const bounds = this.getViewportBounds(view, canvasWidth, canvasHeight);
+    return `${Math.round(bounds.x)}_${Math.round(bounds.y)}_${Math.round(bounds.width)}_${Math.round(bounds.height)}_${quadtreeTimestamp}`;
   }
 
   // Check if viewport has changed significantly
@@ -35,76 +45,81 @@ export class ViewportCuller {
     return xDiff > threshold || yDiff > threshold || wDiff > threshold || hDiff > threshold;
   }
 
-  // Get visible shapes with caching
+  // Get visible shapes with enhanced caching
   getVisibleShapes(
     quadtree: Quadtree, 
     view: View, 
     canvasWidth: number, 
     canvasHeight: number,
+    quadtreeTimestamp: number = Date.now(),
     forceRefresh = false
   ): Shape[] {
-    const viewportBounds = this.getViewportBounds(view, canvasWidth, canvasHeight);
+    const viewHash = this.createViewHash(view, canvasWidth, canvasHeight, quadtreeTimestamp);
     
-    // Use cache if viewport hasn't changed much
-    if (!forceRefresh && this.cacheValid && !this.hasViewportChanged(viewportBounds)) {
+    // Use cache if nothing has changed
+    if (!forceRefresh && 
+        this.cacheValid && 
+        viewHash === this.lastViewHash &&
+        quadtreeTimestamp === this.lastQuadtreeTimestamp) {
       return this.cachedVisibleShapes;
     }
 
     // Query quadtree with viewport bounds
+    const viewportBounds = this.getViewportBounds(view, canvasWidth, canvasHeight);
     this.cachedVisibleShapes = quadtree.query(viewportBounds);
+    
+    // Update cache state
     this.lastViewportBounds = viewportBounds;
+    this.lastViewHash = viewHash;
+    this.lastQuadtreeTimestamp = quadtreeTimestamp;
     this.cacheValid = true;
 
     return this.cachedVisibleShapes;
   }
 
+  // Optimized: Get visible shapes excluding a specific shape (for drag preview)
+  getVisibleShapesExcluding(
+    quadtree: Quadtree,
+    view: View,
+    canvasWidth: number,
+    canvasHeight: number,
+    excludeShapeId: number,
+    quadtreeTimestamp: number = Date.now()
+  ): Shape[] {
+    const allVisible = this.getVisibleShapes(
+      quadtree, 
+      view, 
+      canvasWidth, 
+      canvasHeight, 
+      quadtreeTimestamp
+    );
+    
+    return allVisible.filter(shape => shape.id !== excludeShapeId);
+  }
+
   // Invalidate cache when shapes change
   invalidateCache() {
     this.cacheValid = false;
+    this.lastViewHash = '';
+    this.lastQuadtreeTimestamp = 0;
   }
 
   // Check if a specific shape is in viewport
   isShapeInViewport(shape: Shape, view: View, canvasWidth: number, canvasHeight: number): boolean {
     const viewportBounds = this.getViewportBounds(view, canvasWidth, canvasHeight, 0);
-    const shapeBounds = this.getShapeBounds(shape);
+    const shapeBounds = getShapeBoundingRect(shape);
     
     return this.rectsOverlap(viewportBounds, shapeBounds);
   }
 
-  private getShapeBounds(shape: Shape): Rect {
-    switch (shape.type) {
-      case 'rectangle':
-        return { x: shape.x, y: shape.y, width: shape.width, height: shape.height };
-      
-      case 'line':
-        const minX = Math.min(shape.x1, shape.x2);
-        const maxX = Math.max(shape.x1, shape.x2);
-        const minY = Math.min(shape.y1, shape.y2);
-        const maxY = Math.max(shape.y1, shape.y2);
-        return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
-      
-      case 'point':
-        const radius = shape.radius || 3;
-        return { x: shape.x - radius, y: shape.y - radius, width: radius * 2, height: radius * 2 };
-      
-      case 'polyline':
-        if (shape.points.length === 0) return { x: 0, y: 0, width: 0, height: 0 };
-        const xs = shape.points.map((p: { x: number; y: number } ) => p.x);
-        const ys = shape.points.map((p: { x: number; y: number } ) => p.y);
-        const polyMinX = Math.min(...xs);
-        const polyMaxX = Math.max(...xs);
-        const polyMinY = Math.min(...ys);
-        const polyMaxY = Math.max(...ys);
-        return { 
-          x: polyMinX, 
-          y: polyMinY, 
-          width: polyMaxX - polyMinX, 
-          height: polyMaxY - polyMinY 
-        };
-      
-      default:
-        return { x: 0, y: 0, width: 0, height: 0 };
-    }
+  // Get cache statistics for debugging
+  getCacheStats() {
+    return {
+      cacheValid: this.cacheValid,
+      cachedShapeCount: this.cachedVisibleShapes.length,
+      lastViewHash: this.lastViewHash,
+      lastQuadtreeTimestamp: this.lastQuadtreeTimestamp
+    };
   }
 
   private rectsOverlap(a: Rect, b: Rect): boolean {

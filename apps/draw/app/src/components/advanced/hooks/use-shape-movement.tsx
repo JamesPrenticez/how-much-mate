@@ -1,3 +1,5 @@
+// use-shape-movement.tsx - Optimized with drag preview and deferred updates
+
 import { useRef, useCallback } from 'react';
 import { useShapesStore, useCanvasStore } from '../stores';
 import { getShapeBoundingRect, moveShape, screenToWorld } from '../utils';
@@ -6,9 +8,8 @@ import { Shape } from '../models';
 
 export const useShapeMovement = () => {
   const selectedShape = useShapesStore(s => s.selectedShape);
-  const shapes = useShapesStore(s => s.shapes);
-  const setShapes = useShapesStore(s => s.setShapes);
-  const setSelectedShape = useShapesStore(s => s.setSelectedShape);
+  const setDragState = useShapesStore(s => s.setDragState);
+  const commitDraggedShape = useShapesStore(s => s.commitDraggedShape);
   const view = useCanvasStore(s => s.view);
   
   const isDragging = useRef(false);
@@ -18,6 +19,7 @@ export const useShapeMovement = () => {
   
   const { scheduleUpdate } = useSharedRAF();
 
+  // Optimized: Only updates preview shape, no quadtree rebuilding
   const processDrag = useCallback(() => {
     if (!isDragging.current || !latestMouse.current || !selectedShape || !shapeStartState.current) return;
 
@@ -32,21 +34,13 @@ export const useShapeMovement = () => {
     const deltaX = worldCoords.x - dragStart.current.x;
     const deltaY = worldCoords.y - dragStart.current.y;
     
-    // Create the updated shape based on its type
-    const updatedShape = moveShape(shapeStartState.current, deltaX, deltaY);
+    // Create the updated shape for preview
+    const previewShape = moveShape(shapeStartState.current, deltaX, deltaY);
     
-    // Update the shapes array
-    const updatedShapes = shapes.map(shape => {
-      if (shape.id === selectedShape.id) {
-        return updatedShape;
-      }
-      return shape;
-    });
+    // Update only the drag preview (lightweight operation)
+    setDragState(true, previewShape);
     
-    // Update both the shapes and the selected shape reference
-    setShapes(updatedShapes);
-    setSelectedShape(updatedShape);
-  }, [selectedShape, shapes, setShapes, setSelectedShape, view]);
+  }, [selectedShape, view, setDragState]);
 
   const onMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     // Only handle left mouse button
@@ -59,7 +53,7 @@ export const useShapeMovement = () => {
     };
     const worldCoords = screenToWorld(screenCoords.x, screenCoords.y, view);
     
-    // Check if we're clicking within the selected shape's bounding rectangle for movement
+    // Check if we're clicking within the selected shape's bounding rectangle
     const boundingRect = getShapeBoundingRect(selectedShape);
     const isClickingSelectedShape = (
       worldCoords.x >= boundingRect.x &&
@@ -71,13 +65,16 @@ export const useShapeMovement = () => {
     if (isClickingSelectedShape) {
       isDragging.current = true;
       dragStart.current = worldCoords;
-      shapeStartState.current = { ...selectedShape }; // Store the initial state
+      shapeStartState.current = { ...selectedShape };
       
-      // Prevent the event from bubbling to selection/pan handlers
+      // Start drag state (excludes shape from background cache)
+      setDragState(true, selectedShape);
+      
+      // Prevent event bubbling
       e.stopPropagation();
       e.preventDefault();
     }
-  }, [selectedShape, view]);
+  }, [selectedShape, view, setDragState]);
 
   const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!isDragging.current) return;
@@ -89,14 +86,30 @@ export const useShapeMovement = () => {
       rect 
     };
     
+    // Schedule lightweight preview update
     scheduleUpdate(processDrag);
   }, [scheduleUpdate, processDrag]);
 
   const onMouseUp = useCallback(() => {
+    if (!isDragging.current) return;
+    
+    // Get the final drag preview shape
+    const dragPreviewShape = useShapesStore.getState().dragPreviewShape;
+    
+    if (dragPreviewShape && selectedShape) {
+      // Commit the final shape position (this rebuilds quadtree once)
+      commitDraggedShape(dragPreviewShape);
+    } else {
+      // If no preview, just clear drag state
+      setDragState(false, null);
+    }
+    
+    // Reset drag state
     isDragging.current = false;
     latestMouse.current = null;
     shapeStartState.current = null;
-  }, []);
+    
+  }, [selectedShape, commitDraggedShape, setDragState]);
 
   return {
     onMouseDown,
@@ -105,4 +118,3 @@ export const useShapeMovement = () => {
     isDragging: () => isDragging.current
   };
 };
-
