@@ -4,6 +4,7 @@ import { initialConfig } from "../config";
 import { useCanvasStore, useShapesStore } from '../stores';
 import { drawGeometry, drawHoveredOutline, drawSelectedOutline } from '../draw';
 import type { Surface } from 'canvaskit-wasm';
+import { ViewportCuller } from '../utils/viewport-culler.util';
 
 const StyledCanvas = styled.canvas`
   position: absolute;
@@ -23,6 +24,8 @@ export const Canvas = () => {
   const hoveredShape = useShapesStore((s) => s.hoveredShape);
   const selectedShape = useShapesStore((s) => s.selectedShape);
   const hoveredHandle = useShapesStore(s => s.hoveredHandle);
+
+  const viewportCuller = new ViewportCuller();
 
   // Create surface only once
   useEffect(() => {
@@ -65,7 +68,7 @@ export const Canvas = () => {
         renderShapesDirectly(canvas, canvasKit, modifiedShapes);
       } else {
         // Normal rendering
-        drawGeometry(quadtree)(canvas, canvasKit, view);
+        drawGeometry(quadtree, viewportCuller)(canvas, canvasKit, view);
       }
     }
 

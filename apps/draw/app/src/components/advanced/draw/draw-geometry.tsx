@@ -1,15 +1,22 @@
-import { getViewWorldBounds, Quadtree } from '../utils';
+import { Quadtree } from '../utils';
 import { initialConfig } from '../config';
 import { DrawFunction, Shape } from '../models';
 import type { Canvas, CanvasKit } from "canvaskit-wasm";
+import { ViewportCuller } from '../utils/viewport-culler.util';
 
-export const drawGeometry = (quadtree: Quadtree | null): DrawFunction => {
+export const drawGeometry = (quadtree: Quadtree | null, viewportCuller: ViewportCuller): DrawFunction => {
   return (canvas, canvasKit, view) => {
     if (!quadtree) return;
 
-    const bounds = getViewWorldBounds(view, initialConfig.width, initialConfig.height);
-    const visibleShapes = quadtree.query(bounds);
+    // Get only visible shapes
+    const visibleShapes = viewportCuller.getVisibleShapes(
+      quadtree, 
+      view, 
+      initialConfig.width, // canvas width
+      initialConfig.height  // canvas height
+    );
 
+    // Render only visible shapes
     visibleShapes.forEach((shape) => {
       drawShape(canvas, canvasKit, shape);
     });
