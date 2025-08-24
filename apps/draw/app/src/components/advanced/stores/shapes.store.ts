@@ -1,9 +1,22 @@
+// shapes.store.ts - Enhanced with performance metrics
+
 import { create } from 'zustand';
 import { Shape } from '../models';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { produce } from 'immer';
 import { Quadtree } from '../utils';
 import { BUCKET_SIZE, WORLD_BOUNDS } from '../config';
+
+interface PerformanceMetrics {
+  fps: number;
+  avgRenderTime: number;
+  cacheHitRate: number;
+  visibleShapes: number;
+  totalShapes: number;
+  isDragging: boolean;
+  backgroundCacheValid: boolean;
+  lastUpdated: number;
+}
 
 interface ShapeState {
   shapes: Shape[];
@@ -12,6 +25,8 @@ interface ShapeState {
   
   // Performance tracking
   lastQuadtreeRebuild: number;
+  performanceMetrics: PerformanceMetrics;
+  updatePerformanceMetrics: (metrics: Partial<PerformanceMetrics>) => void;
   
   hoveredShape: Shape | null;
   setHoveredShape: (shape: Shape | null) => void;
@@ -31,11 +46,23 @@ interface ShapeState {
   commitDraggedShape: (finalShape: Shape) => void;
 }
 
+const initialPerformanceMetrics: PerformanceMetrics = {
+  fps: 0,
+  avgRenderTime: 0,
+  cacheHitRate: 0,
+  visibleShapes: 0,
+  totalShapes: 0,
+  isDragging: false,
+  backgroundCacheValid: false,
+  lastUpdated: Date.now()
+};
+
 export const useShapesStore = create<ShapeState>()(
   subscribeWithSelector((set, get) => ({
     shapes: [],
     quadtree: null,
     lastQuadtreeRebuild: Date.now(),
+    performanceMetrics: initialPerformanceMetrics,
     hoveredShape: null,
     selectedShape: null,
     hoveredHandle: null,
@@ -43,6 +70,8 @@ export const useShapesStore = create<ShapeState>()(
     dragPreviewShape: null,
 
     setShapes: (shapes: Shape[]) => {
+      const startTime = performance.now();
+      
       // Expensive operation - rebuild quadtree
       let qt = new Quadtree(WORLD_BOUNDS, BUCKET_SIZE);
 
@@ -51,11 +80,26 @@ export const useShapesStore = create<ShapeState>()(
         qt.insert(s);
       });
 
+      const rebuildTime = performance.now() - startTime;
+      console.log(`Quadtree rebuilt: ${shapes.length} shapes in ${rebuildTime.toFixed(2)}ms`);
+
       set(
         produce<ShapeState>((state) => {
           state.shapes = shapes;
           state.quadtree = qt;
           state.lastQuadtreeRebuild = Date.now();
+        })
+      );
+    },
+
+    updatePerformanceMetrics: (metrics: Partial<PerformanceMetrics>) => {
+      set(
+        produce<ShapeState>((state) => {
+          state.performanceMetrics = {
+            ...state.performanceMetrics,
+            ...metrics,
+            lastUpdated: Date.now()
+          };
         })
       );
     },
@@ -96,6 +140,7 @@ export const useShapesStore = create<ShapeState>()(
 
     // Optimized: Only rebuild quadtree when drag is complete
     commitDraggedShape: (finalShape: Shape) => {
+      const startTime = performance.now();
       const { shapes } = get();
       
       const updatedShapes = shapes.map(shape => {
@@ -111,6 +156,9 @@ export const useShapesStore = create<ShapeState>()(
         qt = Quadtree.ensureContains(qt, s);
         qt.insert(s);
       });
+
+      const commitTime = performance.now() - startTime;
+      console.log(`Drag committed: quadtree rebuilt in ${commitTime.toFixed(2)}ms`);
 
       set(
         produce<ShapeState>((state) => {

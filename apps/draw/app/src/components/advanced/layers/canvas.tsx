@@ -1,4 +1,4 @@
-// canvas.tsx - Performance-optimized with background caching
+// canvas.tsx - Enhanced with persistent cache management
 
 import { useEffect, useRef, useCallback } from 'react'
 import styled from '@emotion/styled';
@@ -21,10 +21,18 @@ export const Canvas = () => {
   const lastFrameTime = useRef(0);
   const frameRef = useRef<number>(0);
   
-  // Cache invalidation tracking
+  // Enhanced cache management
   const backgroundCacheValid = useRef(false);
   const lastViewHash = useRef<string>('');
   const excludedShapeId = useRef<number | null>(null);
+  const surfacesInitialized = useRef(false);
+  
+  // Performance metrics
+  const frameCount = useRef(0);
+  const lastFpsTime = useRef(0);
+  const renderTimes = useRef<number[]>([]);
+  const cacheHits = useRef(0);
+  const cacheMisses = useRef(0);
 
   const canvasKit = useCanvasStore((s) => s.canvasKit);
   const view = useCanvasStore((s) => s.view);
@@ -34,54 +42,84 @@ export const Canvas = () => {
   const hoveredHandle = useShapesStore(s => s.hoveredHandle);
   const isDragging = useShapesStore(s => s.isDragging);
   const dragPreviewShape = useShapesStore(s => s.dragPreviewShape);
+  const updatePerformanceMetrics = useShapesStore(s => s.updatePerformanceMetrics);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const viewportCuller = new ViewportCuller();
 
   // Create view hash for cache invalidation
   const createViewHash = useCallback((view: any, quadtreeVersion: any) => {
-    return `${view.x}_${view.y}_${view.scale}_${quadtreeVersion}`;
+    return `${Math.round(view.x * 100)}_${Math.round(view.y * 100)}_${Math.round(view.scale * 1000)}_${quadtreeVersion}`;
   }, []);
 
-  // Create surfaces
-  useEffect(() => {
-    if (!canvasKit || !canvasRef.current) return;
+  // Initialize surfaces with better lifecycle management
+  const initializeSurfaces = useCallback(() => {
+    if (!canvasKit || !canvasRef.current || surfacesInitialized.current) return;
 
-    // Main surface
-    surfaceRef.current = canvasKit.MakeWebGLCanvasSurface(canvasRef.current);
-    
-    // Background cache surface (same size as main canvas)
-    backgroundSurfaceRef.current = canvasKit.MakeSurface(
-      initialConfig.width, 
-      initialConfig.height
-    );
-    
-    return () => {
+    try {
+      // Dispose existing surfaces first
       surfaceRef.current?.dispose();
       backgroundSurfaceRef.current?.dispose();
-      surfaceRef.current = null;
-      backgroundSurfaceRef.current = null;
-    };
+
+      // Create new surfaces
+      surfaceRef.current = canvasKit.MakeWebGLCanvasSurface(canvasRef.current);
+      backgroundSurfaceRef.current = canvasKit.MakeSurface(
+        initialConfig.width, 
+        initialConfig.height
+      );
+      
+      if (surfaceRef.current && backgroundSurfaceRef.current) {
+        surfacesInitialized.current = true;
+        backgroundCacheValid.current = false; // Force cache rebuild
+        console.log('Canvas surfaces initialized');
+      }
+    } catch (error) {
+      console.error('Failed to initialize canvas surfaces:', error);
+      surfacesInitialized.current = false;
+    }
   }, [canvasKit]);
 
+  // Initialize surfaces when CanvasKit is available
+  useEffect(() => {
+    if (canvasKit) {
+      initializeSurfaces();
+    }
+    
+    return () => {
+      // Only dispose when component actually unmounts, not on re-renders
+      if (!canvasKit) {
+        surfaceRef.current?.dispose();
+        backgroundSurfaceRef.current?.dispose();
+        surfaceRef.current = null;
+        backgroundSurfaceRef.current = null;
+        surfacesInitialized.current = false;
+      }
+    };
+  }, [canvasKit, initializeSurfaces]);
+
   // Invalidate background cache when needed
-  const invalidateBackgroundCache = useCallback(() => {
+  const invalidateBackgroundCache = useCallback((reason: string) => {
     backgroundCacheValid.current = false;
     excludedShapeId.current = null;
+    cacheMisses.current++;
+    console.log(`Cache invalidated: ${reason}`);
   }, []);
 
   // Watch for changes that require cache invalidation
   useEffect(() => {
     const currentHash = createViewHash(view, quadtree?.shapes?.length || 0);
     if (currentHash !== lastViewHash.current) {
-      invalidateBackgroundCache();
+      invalidateBackgroundCache(`View changed: ${lastViewHash.current} -> ${currentHash}`);
       lastViewHash.current = currentHash;
     }
   }, [view, quadtree, createViewHash, invalidateBackgroundCache]);
 
   // Render background to cache surface
   const renderBackgroundCache = useCallback(() => {
-    if (!canvasKit || !backgroundSurfaceRef.current || !quadtree) return;
+    if (!canvasKit || !backgroundSurfaceRef.current || !quadtree || !surfacesInitialized.current) return;
 
+    const startTime = performance.now();
+    
     const canvas = backgroundSurfaceRef.current.getCanvas();
     canvas.clear(canvasKit.TRANSPARENT);
 
@@ -110,12 +148,17 @@ export const Canvas = () => {
     canvas.restore();
     backgroundSurfaceRef.current.flush();
     backgroundCacheValid.current = true;
+    
+    const renderTime = performance.now() - startTime;
+    console.log(`Background cache rebuilt: ${backgroundShapes.length} shapes in ${renderTime.toFixed(2)}ms`);
   }, [canvasKit, view, quadtree, viewportCuller]);
 
-  // Main render function with layer compositing
+  // Main render function with performance tracking
   const render = useCallback((timestamp: number) => {
-    if (!canvasKit || !surfaceRef.current || !backgroundSurfaceRef.current) return;
+    if (!canvasKit || !surfaceRef.current || !backgroundSurfaceRef.current || !surfacesInitialized.current) return;
 
+    const renderStart = performance.now();
+    
     // Throttle to 60fps max
     if (timestamp - lastFrameTime.current < 16.67) {
       frameRef.current = requestAnimationFrame(render);
@@ -125,13 +168,11 @@ export const Canvas = () => {
 
     // Update background cache if needed
     if (isDragging && selectedShape) {
-      // When starting drag, exclude the selected shape from background
       if (excludedShapeId.current !== selectedShape.id) {
         excludedShapeId.current = selectedShape.id;
         backgroundCacheValid.current = false;
       }
     } else {
-      // When not dragging, include all shapes in background
       if (excludedShapeId.current !== null) {
         excludedShapeId.current = null;
         backgroundCacheValid.current = false;
@@ -140,6 +181,9 @@ export const Canvas = () => {
 
     if (!backgroundCacheValid.current) {
       renderBackgroundCache();
+      cacheMisses.current++;
+    } else {
+      cacheHits.current++;
     }
 
     // Composite final frame
@@ -151,7 +195,7 @@ export const Canvas = () => {
     canvas.drawImage(backgroundImage, 0, 0);
     backgroundImage.delete();
 
-    // Layer 2: Draw foreground elements (shapes being dragged, hover, selection)
+    // Layer 2: Draw foreground elements
     canvas.save();
     canvas.translate(view.x, view.y);
     canvas.scale(view.scale, view.scale);
@@ -175,14 +219,43 @@ export const Canvas = () => {
     canvas.restore();
     surfaceRef.current.flush();
 
+    // Performance tracking
+    const renderTime = performance.now() - renderStart;
+    renderTimes.current.push(renderTime);
+    if (renderTimes.current.length > 60) {
+      renderTimes.current.shift(); // Keep only last 60 frames
+    }
+
+    frameCount.current++;
+    
+    // Update FPS every second
+    if (timestamp - lastFpsTime.current >= 1000) {
+      const fps = frameCount.current;
+      const avgRenderTime = renderTimes.current.reduce((a, b) => a + b, 0) / renderTimes.current.length;
+      const cacheHitRate = (cacheHits.current / (cacheHits.current + cacheMisses.current)) * 100;
+      
+      updatePerformanceMetrics({
+        fps,
+        avgRenderTime,
+        cacheHitRate,
+        visibleShapes: quadtree ? viewportCuller.getVisibleShapes(quadtree, view, initialConfig.width, initialConfig.height).length : 0,
+        totalShapes: quadtree?.shapes?.length || 0,
+        isDragging,
+        backgroundCacheValid: backgroundCacheValid.current
+      });
+      
+      frameCount.current = 0;
+      lastFpsTime.current = timestamp;
+    }
+
     // Continue animation loop
     frameRef.current = requestAnimationFrame(render);
   }, [canvasKit, view, quadtree, hoveredShape, selectedShape, hoveredHandle, 
-      isDragging, dragPreviewShape, renderBackgroundCache]);
+      isDragging, dragPreviewShape, renderBackgroundCache, viewportCuller, updatePerformanceMetrics]);
 
   // Start render loop
   useEffect(() => {
-    if (canvasKit && surfaceRef.current && backgroundSurfaceRef.current) {
+    if (canvasKit && surfacesInitialized.current) {
       frameRef.current = requestAnimationFrame(render);
     }
     
@@ -191,11 +264,13 @@ export const Canvas = () => {
         cancelAnimationFrame(frameRef.current);
       }
     };
-  }, [render]);
+  }, [render, canvasKit, surfacesInitialized.current]);
 
   // Invalidate cache when shapes change
   useEffect(() => {
-    invalidateBackgroundCache();
+    if (quadtree) {
+      invalidateBackgroundCache('Shapes changed');
+    }
   }, [quadtree, invalidateBackgroundCache]);
 
   return (
