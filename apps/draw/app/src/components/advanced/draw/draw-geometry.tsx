@@ -1,32 +1,13 @@
-import { Quadtree } from '../utils';
-import { initialConfig } from '../config';
-import { DrawFunction, Shape } from '../models';
+import { Shape } from '../models';
 import type { Canvas, CanvasKit } from "canvaskit-wasm";
-import { ViewportCuller } from '../utils/viewport-culler.util';
-
-export const drawGeometry = (quadtree: Quadtree | null, viewportCuller: ViewportCuller): DrawFunction => {
-  return (canvas, canvasKit, view) => {
-    if (!quadtree) return;
-
-    // Get only visible shapes
-    const visibleShapes = viewportCuller.getVisibleShapes(
-      quadtree, 
-      view, 
-      initialConfig.width, // canvas width
-      initialConfig.height  // canvas height
-    );
-
-    // Render only visible shapes
-    visibleShapes.forEach((shape) => {
-      drawShape(canvas, canvasKit, shape);
-    });
-  };
-};
 
 // Shape Types
-const drawShape = (canvas: Canvas, canvasKit: CanvasKit, shape: Shape) => {
+export const drawGeometry = (canvas: Canvas, canvasKit: CanvasKit, shape: Shape) => {
   const paint = new canvasKit.Paint();
   paint.setColor(canvasKit.parseColorString(shape.color));
+
+  // Antialiasing
+  paint.setAntiAlias(true);
 
   switch (shape.type) {
     case 'rectangle':
@@ -39,6 +20,8 @@ const drawShape = (canvas: Canvas, canvasKit: CanvasKit, shape: Shape) => {
     case 'line':
       paint.setStyle(canvasKit.PaintStyle.Stroke);
       paint.setStrokeWidth(shape.strokeWidth || 2);
+      paint.setStrokeCap(canvasKit.StrokeCap.Round);
+      paint.setStrokeJoin(canvasKit.StrokeJoin.Round);
       
       const linePath = new canvasKit.Path();
       linePath.moveTo(shape.x1, shape.y1);
@@ -52,6 +35,8 @@ const drawShape = (canvas: Canvas, canvasKit: CanvasKit, shape: Shape) => {
       
       paint.setStyle(canvasKit.PaintStyle.Stroke);
       paint.setStrokeWidth(shape.strokeWidth || 2);
+      paint.setStrokeCap(canvasKit.StrokeCap.Round);
+      paint.setStrokeJoin(canvasKit.StrokeJoin.Round);
       
       const polyPath = new canvasKit.Path();
       const firstPoint = shape.points[0];

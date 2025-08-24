@@ -13,6 +13,9 @@ export const drawHoveredOutline = (hoveredShape: Shape | null): DrawFunction => 
     paint.setStrokeWidth(2 / view.scale);
     paint.setColor(canvasKit.parseColorString('#3caffc'));
 
+    // Antialiasing
+    paint.setAntiAlias(true);
+
     switch (hoveredShape.type) {
       case 'rectangle':
         canvas.drawRect(

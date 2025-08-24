@@ -132,6 +132,7 @@ export const useShapesStore = create<ShapeState>()(
     setDragState: (isDragging: boolean, previewShape?: Shape | null) => {
       set(
         produce<ShapeState>((state) => {
+          state.hoveredShape = null;
           state.isDragging = isDragging;
           state.dragPreviewShape = previewShape || null;
         })

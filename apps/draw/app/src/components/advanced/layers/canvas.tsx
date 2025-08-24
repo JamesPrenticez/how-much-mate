@@ -1,5 +1,3 @@
-// canvas.tsx - Enhanced with persistent cache management
-
 import { useEffect, useRef, useCallback } from 'react'
 import styled from '@emotion/styled';
 import { initialConfig } from "../config";
@@ -7,7 +5,6 @@ import { useCanvasStore, useShapesStore } from '../stores';
 import { drawGeometry, drawHoveredOutline, drawSelectedOutline } from '../draw';
 import type { Surface } from 'canvaskit-wasm';
 import { ViewportCuller } from '../utils/viewport-culler.util';
-import { Shape } from '../models';
 
 const StyledCanvas = styled.canvas`
   position: absolute;
@@ -142,7 +139,7 @@ export const Canvas = () => {
 
     // Render background shapes
     backgroundShapes.forEach((shape) => {
-      renderSingleShape(canvas, canvasKit, shape);
+      drawGeometry(canvas, canvasKit, shape);
     });
 
     canvas.restore();
@@ -202,7 +199,7 @@ export const Canvas = () => {
 
     // Draw drag preview shape if dragging
     if (isDragging && dragPreviewShape) {
-      renderSingleShape(canvas, canvasKit, dragPreviewShape);
+      drawGeometry(canvas, canvasKit, dragPreviewShape);
     }
 
     // Draw hover outline (only if not dragging)
@@ -283,58 +280,3 @@ export const Canvas = () => {
     />
   );
 };
-
-// Optimized single shape rendering function
-function renderSingleShape(canvas: any, canvasKit: any, shape: Shape) {
-  const paint = new canvasKit.Paint();
-  paint.setColor(canvasKit.parseColorString(shape.color));
-
-  switch (shape.type) {
-    case 'rectangle':
-      canvas.drawRect(
-        canvasKit.XYWHRect(shape.x, shape.y, shape.width, shape.height),
-        paint
-      );
-      break;
-
-    case 'line':
-      paint.setStyle(canvasKit.PaintStyle.Stroke);
-      paint.setStrokeWidth(shape.strokeWidth || 2);
-      
-      const linePath = new canvasKit.Path();
-      linePath.moveTo(shape.x1, shape.y1);
-      linePath.lineTo(shape.x2, shape.y2);
-      canvas.drawPath(linePath, paint);
-      linePath.delete();
-      break;
-
-    case 'polyline':
-      if (shape.points.length < 2) break;
-      
-      paint.setStyle(canvasKit.PaintStyle.Stroke);
-      paint.setStrokeWidth(shape.strokeWidth || 2);
-      
-      const polyPath = new canvasKit.Path();
-      const firstPoint = shape.points[0];
-      polyPath.moveTo(firstPoint.x, firstPoint.y);
-      
-      for (let i = 1; i < shape.points.length; i++) {
-        polyPath.lineTo(shape.points[i].x, shape.points[i].y);
-      }
-      
-      if (shape.closed) {
-        polyPath.close();
-      }
-      
-      canvas.drawPath(polyPath, paint);
-      polyPath.delete();
-      break;
-
-    case 'point':
-      const radius = shape.radius || 3;
-      canvas.drawCircle(shape.x, shape.y, radius, paint);
-      break;
-  }
-
-  paint.delete();
-}

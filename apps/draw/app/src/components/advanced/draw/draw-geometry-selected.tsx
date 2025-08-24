@@ -15,6 +15,9 @@ export const drawSelectedOutline = (selectedShape: Shape | null, hoveredHandle: 
     paint.setStyle(canvasKit.PaintStyle.Stroke);
     paint.setStrokeWidth(2 / view.scale);
     paint.setColor(canvasKit.parseColorString('#ff6b35')); // Orange for selection
+
+    // Antialiasing
+    paint.setAntiAlias(true);
     
     // Draw bounding rectangle outline
     canvas.drawRect(
@@ -34,6 +37,9 @@ export const drawSelectedOutline = (selectedShape: Shape | null, hoveredHandle: 
     const handlePaint = new canvasKit.Paint();
     handlePaint.setStyle(canvasKit.PaintStyle.Fill);
     handlePaint.setColor(canvasKit.parseColorString('#ff6b35'));
+    
+    // Antialiasing
+    handlePaint.setAntiAlias(true)
     
     // Corner handles with their types based on bounding rect
     const handles = [
