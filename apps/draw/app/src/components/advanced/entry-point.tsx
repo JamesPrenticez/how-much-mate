@@ -1,11 +1,9 @@
-// entry-point.tsx - Enhanced with performance dashboard
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { InteractionLayer } from './layers/interaction.layer';
 import { useShapesStore } from './stores';
-import { mockShapes2 } from './shapes2.mock';
+import { mockShapes } from './shapes.mock';
 import { Canvas } from './layers';
-import { PerformanceDashboard } from './performance-metrics';
 
 const Container = styled.div`
   position: relative;
@@ -49,8 +47,8 @@ const LoadingOverlay = styled.div<{ show: boolean }>`
 
 const ControlPanel = styled.div`
   position: fixed;
-  top: 10px;
-  left: 10px;
+  bottom: 10px;
+  right: 10px;
   background: rgba(255, 255, 255, 0.9);
   padding: 12px;
   border-radius: 8px;
@@ -59,27 +57,6 @@ const ControlPanel = styled.div`
   backdrop-filter: blur(4px);
   border: 1px solid #ddd;
   z-index: 1000;
-  
-  h4 {
-    margin: 0 0 8px 0;
-    color: #333;
-    font-size: 13px;
-  }
-  
-  label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 6px;
-    cursor: pointer;
-    
-    input[type="checkbox"] {
-      margin-right: 6px;
-    }
-    
-    span {
-      color: #555;
-    }
-  }
   
   button {
     background: #007bff;
@@ -99,9 +76,7 @@ const ControlPanel = styled.div`
 
 export const EntryPoint = () => {
   const setShapes = useShapesStore((s) => s.setShapes);
-  const performanceMetrics = useShapesStore(s => s.performanceMetrics);
   const [isLoading, setIsLoading] = useState(true);
-  const [showDashboard, setShowDashboard] = useState(true);
   const [loadTime, setLoadTime] = useState(0);
 
   // Initialize shapes with performance tracking
@@ -113,7 +88,7 @@ export const EntryPoint = () => {
         // Simulate some async loading time to show the loading state
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        setShapes(mockShapes2);
+        setShapes(mockShapes);
         
         const endTime = performance.now();
         setLoadTime(endTime - startTime);
@@ -155,7 +130,7 @@ export const EntryPoint = () => {
       <LoadingOverlay show={isLoading}>
         <div>
           <h3>🚀 Initializing High-Performance Canvas</h3>
-          <p>Loading {mockShapes2.length} shapes and building spatial index...</p>
+          <p>Loading {mockShapes.length} shapes and building spatial index...</p>
           {loadTime > 0 && (
             <p style={{ marginTop: '8px', color: '#007bff' }}>
               Loaded in {loadTime.toFixed(2)}ms
@@ -165,35 +140,15 @@ export const EntryPoint = () => {
       </LoadingOverlay>
       
       <ControlPanel>
-        <h4>🎛️ Controls</h4>
-        
-        <label>
-          <input 
-            type="checkbox" 
-            checked={showDashboard}
-            onChange={(e) => setShowDashboard(e.target.checked)}
-          />
-          <span>Show Performance Dashboard</span>
-        </label>
-        
         <button onClick={generateMoreShapes}>
           Add 500 More Shapes
         </button>
-        
-        <div style={{ marginTop: '8px', fontSize: '11px', color: '#666' }}>
-          <div>💡 Tips:</div>
-          <div>• Middle-click to pan</div>
-          <div>• Scroll to zoom</div>
-          <div>• Click shapes to select</div>
-          <div>• Drag to move</div>
-        </div>
       </ControlPanel>
 
       <InteractionLayer>
         <Canvas />
       </InteractionLayer>
-      
-      {showDashboard && <PerformanceDashboard />}
+
     </Container>
   );
 };
