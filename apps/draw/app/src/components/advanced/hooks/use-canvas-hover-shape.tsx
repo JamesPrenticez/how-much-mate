@@ -1,7 +1,6 @@
 import { useRef, useCallback } from 'react';
 import { useShapesStore, useCanvasStore } from '../stores';
 import { screenToWorld } from '../utils';
-import { useSharedRAF } from './use-canvas-raf';
 import { useSelectionHandles } from './use-canvas-selection-handles';
 
 export const useHover = () => {
@@ -11,16 +10,21 @@ export const useHover = () => {
   const view = useCanvasStore(s => s.view);
   const { getHandleAtPoint } = useSelectionHandles();
 
-  const latestEvent = useRef<{x:number, y:number, rect:DOMRect} | null>(null);
-  const { scheduleUpdate } = useSharedRAF();
+  const lastUpdate = useRef(0);
 
-  const processHover = useCallback(() => {
-    if (!latestEvent.current || !quadtree) return;
+  const onMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!quadtree) return;
+    
+    // OPTIMIZATION: Direct processing, no RAF batching
+    // Throttle to 60fps for hover (16ms)
+    const now = performance.now();
+    if (now - lastUpdate.current < 16) return;
+    lastUpdate.current = now;
 
-    const { x, y, rect } = latestEvent.current;
+    const rect = e.currentTarget.getBoundingClientRect();
     const screenCoords = {
-      x: x - rect.left - 25,
-      y: y - rect.top - 25,
+      x: e.clientX - rect.left - 25,
+      y: e.clientY - rect.top - 25,
     };
     const worldCoords = screenToWorld(screenCoords.x, screenCoords.y, view);
     
@@ -46,13 +50,6 @@ export const useHover = () => {
       candidates.length > 0 ? candidates[candidates.length - 1] : null
     );
   }, [quadtree, view, setHoveredShape, setHoveredHandle, getHandleAtPoint]);
-
-  const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!quadtree) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    latestEvent.current = { x: e.clientX, y: e.clientY, rect };
-    scheduleUpdate(processHover);
-  }, [quadtree, scheduleUpdate, processHover]);
 
   return { onMouseMove };
 };

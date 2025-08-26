@@ -2,46 +2,45 @@ import { useCallback, useRef } from "react";
 import { useCanvasStore } from "../stores";
 import { clamp, screenToWorld } from "../utils";
 import { initialConfig } from "../config";
-import { useSharedRAF } from './use-canvas-raf';
 
-export function useZoom() {
-  const view = useCanvasStore((s) => s.view);
-  const setView = useCanvasStore((s) => s.setView);
-  const latestEvent = useRef<React.WheelEvent | null>(null);
-  const { scheduleUpdate } = useSharedRAF();
+export const useZoom = () => {
+ const setView = useCanvasStore(s => s.setView);
+  const view = useCanvasStore(s => s.view);
+  
+  const lastZoom = useRef(0);
 
-  const processZoom = useCallback(() => {
-    if (!latestEvent.current) return;
-
-    const e = latestEvent.current;
+  const onWheel = useCallback((e: React.WheelEvent) => {
+    // OPTIMIZATION: Direct zoom response - no RAF batching
+    // Target 120fps for smooth zoom
+    const now = performance.now();
+    if (now - lastZoom.current < 8) return;
+    lastZoom.current = now;
+    
     const delta = -e.deltaY * initialConfig.zoomSpeed;
-    const newScale = clamp(view.scale * (1 + delta), initialConfig.minZoom, initialConfig.maxZoom);
-
+    const newScale = clamp(
+      view.scale * (1 + delta), 
+      initialConfig.minZoom, 
+      initialConfig.maxZoom
+    );
+    
     const target = e.target as HTMLElement;
     const rect = target.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-
-    const worldBeforeZoom = screenToWorld(mouseX, mouseY, view);
-
+    
+    const worldBefore = screenToWorld(mouseX, mouseY, view);
+    
+    // IMMEDIATE zoom update
     setView({
       scale: newScale,
-      x: mouseX - worldBeforeZoom.x * newScale,
-      y: mouseY - worldBeforeZoom.y * newScale,
+      x: mouseX - worldBefore.x * newScale,
+      y: mouseY - worldBefore.y * newScale,
     });
-
-    latestEvent.current = null;
-  }, [view, setView]);
-
-  const onWheel = useCallback((e: React.WheelEvent) => {
-    // e.preventDefault();
-    latestEvent.current = e;
-    scheduleUpdate(processZoom);
-  }, [scheduleUpdate, processZoom]);
+    
+  }, [setView, view]);
 
   return onWheel;
-}
-
+};
 
 // export function useZoom() {
 //   const view = useCanvasStore((s) => s.view);
