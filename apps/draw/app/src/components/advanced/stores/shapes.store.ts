@@ -1,4 +1,4 @@
-// shapes.store.ts - Enhanced with performance metrics
+// stores/shapes.store.ts - Enhanced with resize functionality
 
 import { create } from 'zustand';
 import { Shape } from '../models';
@@ -14,6 +14,7 @@ interface PerformanceMetrics {
   visibleShapes: number;
   totalShapes: number;
   isDragging: boolean;
+  isResizing: boolean;
   backgroundCacheValid: boolean;
   lastUpdated: number;
 }
@@ -42,8 +43,15 @@ interface ShapeState {
   dragPreviewShape: Shape | null;
   setDragState: (isDragging: boolean, previewShape?: Shape | null) => void;
   
+  // Resize state for performance optimization
+  isResizing: boolean;
+  resizePreviewShape: Shape | null;
+  resizeHandle: string | null;
+  setResizeState: (isResizing: boolean, previewShape?: Shape | null, handle?: string | null) => void;
+  
   // Deferred quadtree updates
   commitDraggedShape: (finalShape: Shape) => void;
+  commitResizedShape: (finalShape: Shape) => void;
 }
 
 const initialPerformanceMetrics: PerformanceMetrics = {
@@ -53,6 +61,7 @@ const initialPerformanceMetrics: PerformanceMetrics = {
   visibleShapes: 0,
   totalShapes: 0,
   isDragging: false,
+  isResizing: false,
   backgroundCacheValid: false,
   lastUpdated: Date.now()
 };
@@ -68,6 +77,9 @@ export const useShapesStore = create<ShapeState>()(
     hoveredHandle: null,
     isDragging: false,
     dragPreviewShape: null,
+    isResizing: false,
+    resizePreviewShape: null,
+    resizeHandle: null,
 
     setShapes: (shapes: Shape[]) => {
       const startTime = performance.now();
@@ -135,6 +147,28 @@ export const useShapesStore = create<ShapeState>()(
           state.hoveredShape = null;
           state.isDragging = isDragging;
           state.dragPreviewShape = previewShape || null;
+          // Clear resize state when starting drag
+          if (isDragging) {
+            state.isResizing = false;
+            state.resizePreviewShape = null;
+            state.resizeHandle = null;
+          }
+        })
+      );
+    },
+
+    setResizeState: (isResizing: boolean, previewShape?: Shape | null, handle?: string | null) => {
+      set(
+        produce<ShapeState>((state) => {
+          state.hoveredShape = null;
+          state.isResizing = isResizing;
+          state.resizePreviewShape = previewShape || null;
+          state.resizeHandle = handle || null;
+          // Clear drag state when starting resize
+          if (isResizing) {
+            state.isDragging = false;
+            state.dragPreviewShape = null;
+          }
         })
       );
     },
@@ -168,6 +202,41 @@ export const useShapesStore = create<ShapeState>()(
           state.selectedShape = finalShape;
           state.isDragging = false;
           state.dragPreviewShape = null;
+          state.lastQuadtreeRebuild = Date.now();
+        })
+      );
+    },
+
+    // Optimized: Only rebuild quadtree when resize is complete
+    commitResizedShape: (finalShape: Shape) => {
+      const startTime = performance.now();
+      const { shapes } = get();
+      
+      const updatedShapes = shapes.map(shape => {
+        if (shape.id === finalShape.id) {
+          return finalShape;
+        }
+        return shape;
+      });
+      
+      // Rebuild quadtree with final dimensions
+      let qt = new Quadtree(WORLD_BOUNDS, BUCKET_SIZE);
+      updatedShapes.forEach((s) => {
+        qt = Quadtree.ensureContains(qt, s);
+        qt.insert(s);
+      });
+
+      const commitTime = performance.now() - startTime;
+      console.log(`Resize committed: quadtree rebuilt in ${commitTime.toFixed(2)}ms`);
+
+      set(
+        produce<ShapeState>((state) => {
+          state.shapes = updatedShapes;
+          state.quadtree = qt;
+          state.selectedShape = finalShape;
+          state.isResizing = false;
+          state.resizePreviewShape = null;
+          state.resizeHandle = null;
           state.lastQuadtreeRebuild = Date.now();
         })
       );

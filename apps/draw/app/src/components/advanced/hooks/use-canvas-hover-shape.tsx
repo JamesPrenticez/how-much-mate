@@ -1,3 +1,5 @@
+// hooks/use-canvas-hover-shape.tsx - Fixed hover detection for resize operations
+
 import { useRef, useCallback } from 'react';
 import { useShapesStore, useCanvasStore } from '../stores';
 import { screenToWorld } from '../utils';
@@ -9,6 +11,12 @@ export const useHover = () => {
   const quadtree = useShapesStore(s => s.quadtree);
   const view = useCanvasStore(s => s.view);
   const { getHandleAtPoint } = useSelectionHandles();
+  
+  // NEW: Get resize state to handle hover during resize
+  const isResizing = useShapesStore(s => s.isResizing);
+  const resizePreviewShape = useShapesStore(s => s.resizePreviewShape);
+  const isDragging = useShapesStore(s => s.isDragging);
+  const dragPreviewShape = useShapesStore(s => s.dragPreviewShape);
 
   const lastUpdate = useRef(0);
 
@@ -38,7 +46,14 @@ export const useHover = () => {
       return;
     }
     
-    // Otherwise, check for shape hover
+    // CRITICAL FIX: Don't do shape hover detection during drag/resize operations
+    // The preview shapes aren't in the quadtree, so hover detection will be inconsistent
+    if (isDragging || isResizing) {
+      setHoveredShape(null);
+      return;
+    }
+    
+    // Otherwise, check for shape hover using quadtree
     const pointerRect = {
       x: worldCoords.x - 1,
       y: worldCoords.y - 1,
@@ -49,7 +64,8 @@ export const useHover = () => {
     setHoveredShape(
       candidates.length > 0 ? candidates[candidates.length - 1] : null
     );
-  }, [quadtree, view, setHoveredShape, setHoveredHandle, getHandleAtPoint]);
+  }, [quadtree, view, setHoveredShape, setHoveredHandle, getHandleAtPoint, 
+      isDragging, isResizing, dragPreviewShape, resizePreviewShape]);
 
   return { onMouseMove };
 };

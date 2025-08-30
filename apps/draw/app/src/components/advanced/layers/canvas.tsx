@@ -1,18 +1,15 @@
-// raf-optimized-canvas.tsx - First step: eliminate RAF batching delays with null safety
-
 import { useEffect, useRef, useCallback } from 'react'
 import styled from '@emotion/styled';
 import { initialConfig } from "../config";
 import { useCanvasStore, useShapesStore } from '../stores';
-import { drawGeometry, drawHoveredOutline, drawSelectedOutline } from '../draw';
-import type { Surface, CanvasKit } from 'canvaskit-wasm';
+import { drawGeometry, drawHoveredOutline, drawSelectedOutline, drawResizePreview } from '../draw';
+import type { Surface } from 'canvaskit-wasm';
 import { ViewportCuller } from '../utils/viewport-culler.util';
 
 const StyledCanvas = styled.canvas`
   position: absolute;
   border: 1px solid red;
 `
-
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const surfaceRef = useRef<Surface | null>(null);
@@ -34,6 +31,8 @@ export const Canvas = () => {
   const hoveredHandle = useShapesStore(s => s.hoveredHandle);
   const isDragging = useShapesStore(s => s.isDragging);
   const dragPreviewShape = useShapesStore(s => s.dragPreviewShape);
+  const isResizing = useShapesStore(s => s.isResizing);
+  const resizePreviewShape = useShapesStore(s => s.resizePreviewShape);
 
   const viewportCuller = new ViewportCuller();
 
@@ -98,7 +97,7 @@ export const Canvas = () => {
     canvas.translate(view.x, view.y);
     canvas.scale(view.scale, view.scale);
 
-    // Get visible shapes, excluding the one being dragged
+    // Get visible shapes, excluding the one being dragged or resized
     const visibleShapes = viewportCuller.getVisibleShapes(
       quadtree, 
       view, 
@@ -106,7 +105,7 @@ export const Canvas = () => {
       initialConfig.height
     );
 
-    // Filter out the shape being dragged
+    // Filter out the shape being dragged or resized
     const backgroundShapes = excludedShapeId.current 
       ? visibleShapes.filter(shape => shape.id !== excludedShapeId.current)
       : visibleShapes;
@@ -146,6 +145,11 @@ export const Canvas = () => {
         excludedShapeId.current = selectedShape.id;
         backgroundCacheValid.current = false;
       }
+    } else if (isResizing && selectedShape) {
+      if (excludedShapeId.current !== selectedShape.id) {
+        excludedShapeId.current = selectedShape.id;
+        backgroundCacheValid.current = false;
+      }
     } else {
       if (excludedShapeId.current !== null) {
         excludedShapeId.current = null;
@@ -176,13 +180,23 @@ export const Canvas = () => {
       drawGeometry(canvas, canvasKit, dragPreviewShape);
     }
 
-    // Draw hover outline (only if not dragging)
-    if (!isDragging && hoveredShape) {
+    // Draw resize preview shape if resizing (semi-transparent with dashed outline)
+    if (isResizing && resizePreviewShape) {
+      drawResizePreview(resizePreviewShape)(canvas, canvasKit, view);
+    }
+
+    // Draw hover outline (only if not dragging or resizing)
+    if (!isDragging && !isResizing && hoveredShape) {
       drawHoveredOutline(hoveredShape)(canvas, canvasKit, view);
     }
 
     // Draw selection outline and handles
-    const shapeToOutline = isDragging && dragPreviewShape ? dragPreviewShape : selectedShape;
+    const shapeToOutline = isDragging && dragPreviewShape 
+      ? dragPreviewShape 
+      : isResizing && resizePreviewShape 
+        ? resizePreviewShape 
+        : selectedShape;
+        
     if (shapeToOutline) {
       drawSelectedOutline(shapeToOutline, hoveredHandle)(canvas, canvasKit, view);
     }
@@ -193,7 +207,7 @@ export const Canvas = () => {
     // Continue animation loop
     frameRef.current = requestAnimationFrame(render);
   }, [canvasKit, view, quadtree, hoveredShape, selectedShape, hoveredHandle, 
-      isDragging, dragPreviewShape, renderBackgroundCache]);
+      isDragging, dragPreviewShape, isResizing, resizePreviewShape, renderBackgroundCache]);
 
   // Initialize surfaces when CanvasKit is available
   useEffect(() => {
