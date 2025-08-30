@@ -31,7 +31,6 @@ const ScrollContainer = styled.div`
 
 export const ElementPanel = () => {
   const { elements } = useElementStore();
-console.log(elements)
   if (!elements) return <div>No Element Groups...</div>;
 
   return (
