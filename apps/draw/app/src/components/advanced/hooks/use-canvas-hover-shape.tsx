@@ -1,8 +1,7 @@
 import { useRef, useCallback } from 'react';
 import { useShapesStore, useCanvasStore } from '../stores';
-import { screenToWorld, isPointInShape } from '../utils';
+import { screenToWorld, isPointInShape, getTopmostShapeAtPoint } from '../utils';
 import { useSelectionHandles } from './use-canvas-selection-handles';
-import { Shape } from '../models';
 
 export const useHover = () => {
   const setHoveredShape = useShapesStore(s => s.setHoveredShape);
@@ -61,14 +60,13 @@ export const useHover = () => {
     };
     const candidates = quadtree.query(pointerRect);
     
-    // FIXED: Use precise hit detection instead of just taking the last candidate
-    let hoveredShape: Shape | null = null;
-    for (let i = candidates.length - 1; i >= 0; i--) {
-      if (isPointInShape(worldCoords.x, worldCoords.y, candidates[i])) {
-        hoveredShape = candidates[i];
-        break;
-      }
-    }
+    // Use z-index aware hit detection to get the topmost shape
+    // Improvement upon "isPointInShape"
+    const hoveredShape = getTopmostShapeAtPoint(
+      candidates, 
+      worldCoords.x, 
+      worldCoords.y, 
+    );
     
     setHoveredShape(hoveredShape);
   }, [quadtree, view, setHoveredShape, setHoveredHandle, getHandleAtPoint, 

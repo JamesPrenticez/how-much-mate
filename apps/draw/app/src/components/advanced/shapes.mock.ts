@@ -24,6 +24,7 @@ const generateShapes = (count: number): Shape[] => {
         height: randomBetween(20, 150),
         color: randomColor(),
         selected: false,
+        zIndex: i,
       };
     } else if (typeIndex === 1) {
       // Line
@@ -37,6 +38,7 @@ const generateShapes = (count: number): Shape[] => {
         strokeWidth: randomBetween(1, 5),
         color: randomColor(),
         selected: false,
+         zIndex: i,
       };
     } else if (typeIndex === 2) {
       // Polyline
@@ -54,6 +56,7 @@ const generateShapes = (count: number): Shape[] => {
         closed: Math.random() > 0.5,
         color: randomColor(),
         selected: false,
+        zIndex: i,
       };
     } else {
       // Point
@@ -65,6 +68,7 @@ const generateShapes = (count: number): Shape[] => {
         radius: randomBetween(2, 10),
         color: randomColor(),
         selected: false,
+        zIndex: i,
       };
     }
 

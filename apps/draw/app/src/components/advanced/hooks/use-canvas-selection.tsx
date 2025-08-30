@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { getShapeBoundingRect, isPointInShape, screenToWorld } from "../utils";
+import { getShapeBoundingRect, getTopmostShapeAtPoint, isPointInShape, screenToWorld } from "../utils";
 import { useCanvasStore, useShapesStore } from "../stores";
 import { useSelectionHandles } from "./use-canvas-selection-handles";
 import { Shape } from "../models";
@@ -73,14 +73,13 @@ export const useSelection = () => {
     
     const candidates = quadtree.query(pointerRect);
     
-    // Filter candidates by precise hit detection and find the topmost one
-    let clickedShape: Shape | null = null;
-    for (let i = candidates.length - 1; i >= 0; i--) {
-      if (isPointInShape(worldCoords.x, worldCoords.y, candidates[i])) {
-        clickedShape = candidates[i];
-        break;
-      }
-    }
+    // Use z-index aware hit detection to get the topmost shape
+    // Improvement upon "isPointInShape"
+    const clickedShape = getTopmostShapeAtPoint(
+      candidates, 
+      worldCoords.x, 
+      worldCoords.y, 
+    );
     
     // If we clicked on a shape, select it. If we clicked empty space, deselect
     setSelectedShape(clickedShape);

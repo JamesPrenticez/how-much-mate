@@ -6,6 +6,7 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import { produce } from 'immer';
 import { Quadtree } from '../utils';
 import { BUCKET_SIZE, WORLD_BOUNDS } from '../config';
+import { bringShapeToFront } from '../utils';
 
 interface PerformanceMetrics {
   fps: number;
@@ -48,6 +49,10 @@ interface ShapeState {
   resizePreviewShape: Shape | null;
   resizeHandle: string | null;
   setResizeState: (isResizing: boolean, previewShape?: Shape | null, handle?: string | null) => void;
+
+  // Z-index management
+  bringToFront: (shapeId: number) => void;
+  sendToBack: (shapeId: number) => void;
   
   // Deferred quadtree updates
   commitDraggedShape: (finalShape: Shape) => void;
@@ -168,6 +173,43 @@ export const useShapesStore = create<ShapeState>()(
           if (isResizing) {
             state.isDragging = false;
             state.dragPreviewShape = null;
+          }
+        })
+      );
+    },
+
+    // Z-index management functions
+    bringToFront: (shapeId: number) => {
+      const { shapes } = get();
+      const shapeIndex = shapes.findIndex(s => s.id === shapeId);
+      if (shapeIndex === -1) return;
+      
+      const shape = shapes[shapeIndex];
+      const updatedShape = bringShapeToFront(shape, shapes);
+      
+      set(
+        produce<ShapeState>((state) => {
+          state.shapes[shapeIndex] = updatedShape;
+          if (state.selectedShape?.id === shapeId) {
+            state.selectedShape = updatedShape;
+          }
+        })
+      );
+    },
+
+    sendToBack: (shapeId: number) => {
+      const { shapes } = get();
+      const shapeIndex = shapes.findIndex(s => s.id === shapeId);
+      if (shapeIndex === -1) return;
+      
+      const minZIndex = Math.min(...shapes.map(s => s.zIndex));
+      const updatedShape = { ...shapes[shapeIndex], zIndex: minZIndex - 1 };
+      
+      set(
+        produce<ShapeState>((state) => {
+          state.shapes[shapeIndex] = updatedShape;
+          if (state.selectedShape?.id === shapeId) {
+            state.selectedShape = updatedShape;
           }
         })
       );

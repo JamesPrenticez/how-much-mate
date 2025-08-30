@@ -5,6 +5,7 @@ import { useCanvasStore, useShapesStore } from '../stores';
 import { drawGeometry, drawHoveredOutline, drawSelectedOutline, drawResizePreview } from '../draw';
 import type { Surface } from 'canvaskit-wasm';
 import { ViewportCuller } from '../utils/viewport-culler.util';
+import { sortShapesByZIndex } from '../utils';
 
 const StyledCanvas = styled.canvas`
   position: absolute;
@@ -88,8 +89,6 @@ export const Canvas = () => {
       return;
     }
 
-    const startTime = performance.now();
-    
     const canvas = backgroundSurfaceRef.current.getCanvas();
     canvas.clear(canvasKit.TRANSPARENT);
 
@@ -110,8 +109,11 @@ export const Canvas = () => {
       ? visibleShapes.filter(shape => shape.id !== excludedShapeId.current)
       : visibleShapes;
 
+    // Sort shapes by z-index before rendering
+    const sortedBackgroudShapes = sortShapesByZIndex(backgroundShapes);
+
     // Render background shapes
-    backgroundShapes.forEach((shape) => {
+    sortedBackgroudShapes.forEach((shape) => {
       drawGeometry(canvas, canvasKit, shape);
     });
 
@@ -119,11 +121,8 @@ export const Canvas = () => {
     backgroundSurfaceRef.current.flush();
     backgroundCacheValid.current = true;
     
-    const renderTime = performance.now() - startTime;
-    console.log(`Background cache rebuilt: ${backgroundShapes.length} shapes in ${renderTime.toFixed(2)}ms`);
   }, [canvasKit, view, quadtree, viewportCuller]);
 
-  // KEY OPTIMIZATION: High-frequency render loop (no 16ms RAF bottleneck)
   const render = useCallback((timestamp: number) => {
     // Early exit with comprehensive null checking
     if (!canvasKit || !surfaceRef.current || !backgroundSurfaceRef.current || !surfacesInitialized.current) {
@@ -131,8 +130,8 @@ export const Canvas = () => {
       return;
     }
 
-    // TARGET: 120fps instead of 60fps (8.33ms instead of 16.67ms)
-    const targetFrameTime = 1000 / 120; // ~8.33ms
+    // TARGET: 144 fps
+    const targetFrameTime = 1000 / 144; 
     if (timestamp - lastFrameTime.current < targetFrameTime) {
       frameRef.current = requestAnimationFrame(render);
       return;

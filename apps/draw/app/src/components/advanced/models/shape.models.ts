@@ -9,6 +9,7 @@ interface BaseShape {
   id: number;
   color: string;
   selected: boolean;
+  zIndex: number;
 }
 
 export interface Rectangle extends BaseShape {
