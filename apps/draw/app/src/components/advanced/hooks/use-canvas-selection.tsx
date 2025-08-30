@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { getShapeBoundingRect, isPointOnLine, isPointOnPolyline, screenToWorld } from "../utils";
+import { getShapeBoundingRect, isPointInShape, screenToWorld } from "../utils";
 import { useCanvasStore, useShapesStore } from "../stores";
 import { useSelectionHandles } from "./use-canvas-selection-handles";
 import { Shape } from "../models";
@@ -26,34 +26,6 @@ export const useSelection = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [clearSelection]);
-
-  // Helper function to check if a point is inside a shape
-  const isPointInShape = useCallback((worldX: number, worldY: number, shape: Shape): boolean => {
-    switch (shape.type) {
-      case 'rectangle':
-        return (
-          worldX >= shape.x &&
-          worldX <= shape.x + shape.width &&
-          worldY >= shape.y &&
-          worldY <= shape.y + shape.height
-        );
-      
-      case 'line':
-        return isPointOnLine(worldX, worldY, shape.x1, shape.y1, shape.x2, shape.y2, shape.strokeWidth || 2);
-      
-      case 'polyline':
-        return isPointOnPolyline(worldX, worldY, shape.points, shape.strokeWidth || 2, shape.closed);
-      
-      case 'point':
-        const radius = shape.radius || 3;
-        const dx = worldX - shape.x;
-        const dy = worldY - shape.y;
-        return (dx * dx + dy * dy) <= ((radius + 3) * (radius + 3)); // Add 3px tolerance
-      
-      default:
-        return false;
-    }
-  }, []);
 
   const onMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!quadtree) return;

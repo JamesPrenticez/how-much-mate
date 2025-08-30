@@ -1,9 +1,8 @@
-// hooks/use-canvas-hover-shape.tsx - Fixed hover detection for resize operations
-
 import { useRef, useCallback } from 'react';
 import { useShapesStore, useCanvasStore } from '../stores';
-import { screenToWorld } from '../utils';
+import { screenToWorld, isPointInShape } from '../utils';
 import { useSelectionHandles } from './use-canvas-selection-handles';
+import { Shape } from '../models';
 
 export const useHover = () => {
   const setHoveredShape = useShapesStore(s => s.setHoveredShape);
@@ -12,7 +11,7 @@ export const useHover = () => {
   const view = useCanvasStore(s => s.view);
   const { getHandleAtPoint } = useSelectionHandles();
   
-  // NEW: Get resize state to handle hover during resize
+  // Get resize state to handle hover during resize
   const isResizing = useShapesStore(s => s.isResizing);
   const resizePreviewShape = useShapesStore(s => s.resizePreviewShape);
   const isDragging = useShapesStore(s => s.isDragging);
@@ -53,7 +52,7 @@ export const useHover = () => {
       return;
     }
     
-    // Otherwise, check for shape hover using quadtree
+    // Otherwise, check for shape hover using quadtree + precise hit testing
     const pointerRect = {
       x: worldCoords.x - 1,
       y: worldCoords.y - 1,
@@ -61,11 +60,19 @@ export const useHover = () => {
       height: 2,
     };
     const candidates = quadtree.query(pointerRect);
-    setHoveredShape(
-      candidates.length > 0 ? candidates[candidates.length - 1] : null
-    );
+    
+    // FIXED: Use precise hit detection instead of just taking the last candidate
+    let hoveredShape: Shape | null = null;
+    for (let i = candidates.length - 1; i >= 0; i--) {
+      if (isPointInShape(worldCoords.x, worldCoords.y, candidates[i])) {
+        hoveredShape = candidates[i];
+        break;
+      }
+    }
+    
+    setHoveredShape(hoveredShape);
   }, [quadtree, view, setHoveredShape, setHoveredHandle, getHandleAtPoint, 
-      isDragging, isResizing, dragPreviewShape, resizePreviewShape]);
+      isDragging, isResizing, dragPreviewShape, resizePreviewShape, isPointInShape]);
 
   return { onMouseMove };
 };
