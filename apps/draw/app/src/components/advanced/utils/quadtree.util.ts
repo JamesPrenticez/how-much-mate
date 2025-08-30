@@ -1,4 +1,5 @@
-import { Shape } from "../models";
+import { Rect, Shape } from '../models';
+import { getShapeBoundingRect } from './get-shape-bounding-rect.util';
 
 // 1. World Bounds aka boundry
 // What it is:
@@ -27,16 +28,8 @@ import { Shape } from "../models";
 // Small (e.g. 1–4)	Very fine-grained, fewer shapes per query	Deep tree → more recursion overhead
 // Large (e.g. 20–50)	Shallow tree, less recursion	More shapes per query, slower lookups in dense areas
 
-
 // But we go a step further here with auto-expansion
 // this allows us to infinatly add shapes but make sure the quad tree grows to the correct size
-
-interface Rect {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
 
 export class Quadtree {
   boundary: Rect;
@@ -54,16 +47,19 @@ export class Quadtree {
   }
 
   // Expand root to include out-of-bounds shape
-  static ensureContains(root: Quadtree, shape: Shape): Quadtree {
+ static ensureContains(root: Quadtree, shape: Shape): Quadtree {
     let { x, y, width, height } = root.boundary;
 
+    // Get bounding rect for the shape
+    const shapeBounds = getShapeBoundingRect(shape);
+
     // already fits
-    if (root.intersects(root.boundary, shape)) return root;
+    if (root.intersects(root.boundary, shapeBounds)) return root;
 
     // Expand until the shape fits
-    while (!root.intersects(root.boundary, shape)) {
-      const expandLeft = shape.x < x;
-      const expandUp = shape.y < y;
+    while (!root.intersects(root.boundary, shapeBounds)) {
+      const expandLeft = shapeBounds.x < x;
+      const expandUp = shapeBounds.y < y;
 
       const newWidth = width * 2;
       const newHeight = height * 2;
@@ -86,7 +82,7 @@ export class Quadtree {
 
   // helper: reinsert entire old tree into new one
   private insertNode(node: Quadtree) {
-    node.shapes.forEach(s => this.insert(s));
+    node.shapes.forEach((s) => this.insert(s));
     if (node.divided) {
       node.northwest && this.insertNode(node.northwest);
       node.northeast && this.insertNode(node.northeast);
@@ -100,10 +96,22 @@ export class Quadtree {
     const hw = width / 2;
     const hh = height / 2;
 
-    this.northeast = new Quadtree({ x: x + hw, y, width: hw, height: hh }, this.capacity);
-    this.northwest = new Quadtree({ x, y, width: hw, height: hh }, this.capacity);
-    this.southeast = new Quadtree({ x: x + hw, y: y + hh, width: hw, height: hh }, this.capacity);
-    this.southwest = new Quadtree({ x, y: y + hh, width: hw, height: hh }, this.capacity);
+    this.northeast = new Quadtree(
+      { x: x + hw, y, width: hw, height: hh },
+      this.capacity
+    );
+    this.northwest = new Quadtree(
+      { x, y, width: hw, height: hh },
+      this.capacity
+    );
+    this.southeast = new Quadtree(
+      { x: x + hw, y: y + hh, width: hw, height: hh },
+      this.capacity
+    );
+    this.southwest = new Quadtree(
+      { x, y: y + hh, width: hw, height: hh },
+      this.capacity
+    );
 
     this.divided = true;
   }
@@ -130,7 +138,8 @@ export class Quadtree {
     if (!this.intersects(this.boundary, range)) return found;
 
     for (const shape of this.shapes) {
-      if (this.intersects(shape, range)) {
+      const shapeBounds = getShapeBoundingRect(shape);
+      if (this.intersects(shapeBounds, range)) {
         found.push(shape);
       }
     }
@@ -145,7 +154,17 @@ export class Quadtree {
     return found;
   }
 
-  intersects(a: Rect, b: Rect): boolean {
+  intersects(a: Rect, b: Rect | Shape): boolean {
+    // If b is a Shape, convert it to a bounding rect
+    if ('type' in b) {
+      const boundingRect = getShapeBoundingRect(b as Shape);
+      return this.rectsIntersect(a, boundingRect);
+    }
+
+    return this.rectsIntersect(a, b as Rect);
+  }
+
+  private rectsIntersect(a: Rect, b: Rect): boolean {
     return !(
       b.x > a.x + a.width ||
       b.x + b.width < a.x ||

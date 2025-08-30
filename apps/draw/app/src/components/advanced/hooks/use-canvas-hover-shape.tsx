@@ -1,7 +1,8 @@
+// hooks/use-canvas-hover-shape.tsx - Fixed hover detection for resize operations
+
 import { useRef, useCallback } from 'react';
 import { useShapesStore, useCanvasStore } from '../stores';
 import { screenToWorld } from '../utils';
-import { useSharedRAF } from './use-canvas-raf';
 import { useSelectionHandles } from './use-canvas-selection-handles';
 
 export const useHover = () => {
@@ -10,17 +11,28 @@ export const useHover = () => {
   const quadtree = useShapesStore(s => s.quadtree);
   const view = useCanvasStore(s => s.view);
   const { getHandleAtPoint } = useSelectionHandles();
+  
+  // NEW: Get resize state to handle hover during resize
+  const isResizing = useShapesStore(s => s.isResizing);
+  const resizePreviewShape = useShapesStore(s => s.resizePreviewShape);
+  const isDragging = useShapesStore(s => s.isDragging);
+  const dragPreviewShape = useShapesStore(s => s.dragPreviewShape);
 
-  const latestEvent = useRef<{x:number, y:number, rect:DOMRect} | null>(null);
-  const { scheduleUpdate } = useSharedRAF();
+  const lastUpdate = useRef(0);
 
-  const processHover = useCallback(() => {
-    if (!latestEvent.current || !quadtree) return;
+  const onMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!quadtree) return;
+    
+    // OPTIMIZATION: Direct processing, no RAF batching
+    // Throttle to 60fps for hover (16ms)
+    const now = performance.now();
+    if (now - lastUpdate.current < 16) return;
+    lastUpdate.current = now;
 
-    const { x, y, rect } = latestEvent.current;
+    const rect = e.currentTarget.getBoundingClientRect();
     const screenCoords = {
-      x: x - rect.left - 25,
-      y: y - rect.top - 25,
+      x: e.clientX - rect.left - 25,
+      y: e.clientY - rect.top - 25,
     };
     const worldCoords = screenToWorld(screenCoords.x, screenCoords.y, view);
     
@@ -34,7 +46,14 @@ export const useHover = () => {
       return;
     }
     
-    // Otherwise, check for shape hover
+    // CRITICAL FIX: Don't do shape hover detection during drag/resize operations
+    // The preview shapes aren't in the quadtree, so hover detection will be inconsistent
+    if (isDragging || isResizing) {
+      setHoveredShape(null);
+      return;
+    }
+    
+    // Otherwise, check for shape hover using quadtree
     const pointerRect = {
       x: worldCoords.x - 1,
       y: worldCoords.y - 1,
@@ -45,14 +64,8 @@ export const useHover = () => {
     setHoveredShape(
       candidates.length > 0 ? candidates[candidates.length - 1] : null
     );
-  }, [quadtree, view, setHoveredShape, setHoveredHandle, getHandleAtPoint]);
-
-  const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!quadtree) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    latestEvent.current = { x: e.clientX, y: e.clientY, rect };
-    scheduleUpdate(processHover);
-  }, [quadtree, scheduleUpdate, processHover]);
+  }, [quadtree, view, setHoveredShape, setHoveredHandle, getHandleAtPoint, 
+      isDragging, isResizing, dragPreviewShape, resizePreviewShape]);
 
   return { onMouseMove };
 };

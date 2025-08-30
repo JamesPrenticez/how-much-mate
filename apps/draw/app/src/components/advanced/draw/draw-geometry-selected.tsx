@@ -1,24 +1,31 @@
 import { DrawFunction, Shape } from "../models";
 import { useCanvasStore } from "../stores";
+import { getShapeBoundingRect } from "../utils/get-shape-bounding-rect.util";
 
 export const drawSelectedOutline = (selectedShape: Shape | null, hoveredHandle: string | null): DrawFunction => {
   return (canvas, canvasKit) => {
     if (!selectedShape) return;
     const view = useCanvasStore.getState().view;
     
+    // Get bounding rectangle for any shape type
+    const boundingRect = getShapeBoundingRect(selectedShape);
+    
     // Create a stroke paint for selection (different color/style than hover)
     const paint = new canvasKit.Paint();
     paint.setStyle(canvasKit.PaintStyle.Stroke);
     paint.setStrokeWidth(2 / view.scale);
     paint.setColor(canvasKit.parseColorString('#ff6b35')); // Orange for selection
+
+    // Antialiasing
+    paint.setAntiAlias(true);
     
-    // Draw rectangle outline
+    // Draw bounding rectangle outline
     canvas.drawRect(
       canvasKit.XYWHRect(
-        selectedShape.x,
-        selectedShape.y,
-        selectedShape.width,
-        selectedShape.height
+        boundingRect.x,
+        boundingRect.y,
+        boundingRect.width,
+        boundingRect.height
       ),
       paint
     );
@@ -31,12 +38,15 @@ export const drawSelectedOutline = (selectedShape: Shape | null, hoveredHandle: 
     handlePaint.setStyle(canvasKit.PaintStyle.Fill);
     handlePaint.setColor(canvasKit.parseColorString('#ff6b35'));
     
-    // Corner handles with their types
+    // Antialiasing
+    handlePaint.setAntiAlias(true)
+    
+    // Corner handles with their types based on bounding rect
     const handles = [
-      { type: 'nw', x: selectedShape.x, y: selectedShape.y },
-      { type: 'ne', x: selectedShape.x + selectedShape.width, y: selectedShape.y },
-      { type: 'sw', x: selectedShape.x, y: selectedShape.y + selectedShape.height },
-      { type: 'se', x: selectedShape.x + selectedShape.width, y: selectedShape.y + selectedShape.height },
+      { type: 'nw', x: boundingRect.x, y: boundingRect.y },
+      { type: 'ne', x: boundingRect.x + boundingRect.width, y: boundingRect.y },
+      { type: 'sw', x: boundingRect.x, y: boundingRect.y + boundingRect.height },
+      { type: 'se', x: boundingRect.x + boundingRect.width, y: boundingRect.y + boundingRect.height },
     ];
     
     handles.forEach(handle => {

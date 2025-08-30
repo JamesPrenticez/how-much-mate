@@ -1,5 +1,6 @@
 import type { Canvas, CanvasKit } from "canvaskit-wasm";
 import { View } from "./view.models";
+import { Shape } from "./shape.models";
 
 export interface DrawContext {
   canvas: Canvas;
@@ -18,15 +19,3 @@ export type DrawFunction<TExtra = undefined> =
   TExtra extends undefined
     ? (canvas: Canvas, canvasKit: CanvasKit, view: View) => void
     : (canvas: Canvas, canvasKit: CanvasKit, view: View, extra: TExtra) => void;
-
-// Temp solution
-export type Shape = {
-  id: number;
-  type: "line" | "rectangle";
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  color: string;
-  selected: boolean;
-};

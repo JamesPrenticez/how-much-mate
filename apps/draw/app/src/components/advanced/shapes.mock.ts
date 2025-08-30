@@ -1,45 +1,78 @@
 import { Shape } from "./models";
 
-export const mockShapes: Shape[] = [
-  {
-    id: 1,
-    type: 'rectangle',
-    x: 300,
-    y: 100,
-    width: 100,
-    height: 100,
-    color: '#FF0000',
-    selected: false,
-  },
+const randomColor = () =>
+  `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
 
-  {
-    id: 3,
-    type: 'rectangle',
-    x: 300,
-    y: 200,
-    width: 150,
-    height: 60,
-    color: '#0000FF',
-    selected: false,
-  },
-  {
-    id: 4,
-    type: 'rectangle',
-    x: 0,
-    y: 0,
-    width: 10,
-    height: 10,
-    color: '#FF0f',
-    selected: false,
-  },
-    {
-    id: 2,
-    type: 'rectangle',
-    x: -100,
-    y: 0,
-    width: 10,
-    height: 10,
-    color: '#00FF00',
-    selected: false,
-  },
-];
+const randomBetween = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
+const generateShapes = (count: number): Shape[] => {
+  const shapes: Shape[] = [];
+
+  for (let i = 1; i <= count; i++) {
+    const typeIndex = randomBetween(0, 3);
+    let shape: Shape;
+
+    if (typeIndex === 0) {
+      // Rectangle
+      shape = {
+        id: i,
+        type: 'rectangle',
+        x: randomBetween(0, 600),
+        y: randomBetween(0, 400),
+        width: randomBetween(20, 150),
+        height: randomBetween(20, 150),
+        color: randomColor(),
+        selected: false,
+      };
+    } else if (typeIndex === 1) {
+      // Line
+      shape = {
+        id: i,
+        type: 'line',
+        x1: randomBetween(0, 600),
+        y1: randomBetween(0, 400),
+        x2: randomBetween(0, 600),
+        y2: randomBetween(0, 400),
+        strokeWidth: randomBetween(1, 5),
+        color: randomColor(),
+        selected: false,
+      };
+    } else if (typeIndex === 2) {
+      // Polyline
+      const pointCount = randomBetween(3, 6);
+      const points = Array.from({ length: pointCount }, () => ({
+        x: randomBetween(0, 600),
+        y: randomBetween(0, 400),
+      }));
+
+      shape = {
+        id: i,
+        type: 'polyline',
+        points,
+        strokeWidth: randomBetween(1, 4),
+        closed: Math.random() > 0.5,
+        color: randomColor(),
+        selected: false,
+      };
+    } else {
+      // Point
+      shape = {
+        id: i,
+        type: 'point',
+        x: randomBetween(0, 600),
+        y: randomBetween(0, 400),
+        radius: randomBetween(2, 10),
+        color: randomColor(),
+        selected: false,
+      };
+    }
+
+    shapes.push(shape);
+  }
+
+  return shapes;
+};
+
+// Example usage
+export const mockShapes = generateShapes(200);

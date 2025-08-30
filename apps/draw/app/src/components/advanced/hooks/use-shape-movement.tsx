@@ -1,106 +1,93 @@
 import { useRef, useCallback } from 'react';
 import { useShapesStore, useCanvasStore } from '../stores';
-import { screenToWorld } from '../utils';
-import { useSharedRAF } from './use-canvas-raf';
+import { getShapeBoundingRect, moveShape, screenToWorld } from '../utils';
+import { Shape } from '../models';
 
 export const useShapeMovement = () => {
   const selectedShape = useShapesStore(s => s.selectedShape);
-  const shapes = useShapesStore(s => s.shapes);
-  const setShapes = useShapesStore(s => s.setShapes);
-  const setSelectedShape = useShapesStore(s => s.setSelectedShape);
+  const setDragState = useShapesStore(s => s.setDragState);
+  const commitDraggedShape = useShapesStore(s => s.commitDraggedShape);
   const view = useCanvasStore(s => s.view);
   
   const isDragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
-  const shapeStartPos = useRef({ x: 0, y: 0 });
-  const latestMouse = useRef<{ x: number, y: number, rect: DOMRect } | null>(null);
-  
-  const { scheduleUpdate } = useSharedRAF();
+  const shapeStart = useRef<Shape | null>(null);
+  const lastUpdate = useRef(0);
 
-  const processDrag = useCallback(() => {
-    if (!isDragging.current || !latestMouse.current || !selectedShape) return;
-
-    const { x, y, rect } = latestMouse.current;
-    const screenCoords = {
-      x: x - rect.left - 25,
-      y: y - rect.top - 25,
-    };
-    const worldCoords = screenToWorld(screenCoords.x, screenCoords.y, view);
-    
-    // Calculate the delta from drag start
-    const deltaX = worldCoords.x - dragStart.current.x;
-    const deltaY = worldCoords.y - dragStart.current.y;
-    
-    const newX = shapeStartPos.current.x + deltaX;
-    const newY = shapeStartPos.current.y + deltaY;
-    
-    // Create the updated shape
-    const updatedShape = {
-      ...selectedShape,
-      x: newX,
-      y: newY
-    };
-    
-    // Update the shapes array
-    const updatedShapes = shapes.map(shape => {
-      if (shape.id === selectedShape.id) {
-        return updatedShape;
-      }
-      return shape;
-    });
-    
-    // Update both the shapes and the selected shape reference
-    setShapes(updatedShapes);
-    setSelectedShape(updatedShape);
-  }, [selectedShape, shapes, setShapes, setSelectedShape, view]);
-
-  const onMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    // Only handle left mouse button
+  const onMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button !== 0 || !selectedShape) return;
     
     const rect = e.currentTarget.getBoundingClientRect();
-    const screenCoords = {
-      x: e.clientX - rect.left - 25,
-      y: e.clientY - rect.top - 25,
-    };
-    const worldCoords = screenToWorld(screenCoords.x, screenCoords.y, view);
-    
-    // Check if we're clicking on the selected shape to start dragging
-    const isClickingSelectedShape = (
-      worldCoords.x >= selectedShape.x &&
-      worldCoords.x <= selectedShape.x + selectedShape.width &&
-      worldCoords.y >= selectedShape.y &&
-      worldCoords.y <= selectedShape.y + selectedShape.height
+    const worldCoords = screenToWorld(
+      e.clientX - rect.left - 25,
+      e.clientY - rect.top - 25,
+      view
     );
     
-    if (isClickingSelectedShape) {
+    // Check if clicking on selected shape
+    const boundingRect = getShapeBoundingRect(selectedShape);
+    const isInBounds = (
+      worldCoords.x >= boundingRect.x &&
+      worldCoords.x <= boundingRect.x + boundingRect.width &&
+      worldCoords.y >= boundingRect.y &&
+      worldCoords.y <= boundingRect.y + boundingRect.height
+    );
+    
+    if (isInBounds) {
       isDragging.current = true;
       dragStart.current = worldCoords;
-      shapeStartPos.current = { x: selectedShape.x, y: selectedShape.y };
+      shapeStart.current = { ...selectedShape };
       
-      // Prevent the event from bubbling to selection/pan handlers
+      // IMMEDIATE drag state - no delay
+      setDragState(true, selectedShape);
+      
       e.stopPropagation();
       e.preventDefault();
     }
-  }, [selectedShape, view]);
+  }, [selectedShape, setDragState, view]);
 
-  const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDragging.current) return;
+  const onMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDragging.current || !shapeStart.current) return;
+    
+    // OPTIMIZATION: Target 144fps for smooth drag (6.94ms)
+    const now = performance.now();
+    if (now - lastUpdate.current < 7) return;
+    lastUpdate.current = now;
     
     const rect = e.currentTarget.getBoundingClientRect();
-    latestMouse.current = { 
-      x: e.clientX, 
-      y: e.clientY, 
-      rect 
-    };
+    const worldCoords = screenToWorld(
+      e.clientX - rect.left - 25,
+      e.clientY - rect.top - 25,
+      view
+    );
     
-    scheduleUpdate(processDrag);
-  }, [scheduleUpdate, processDrag]);
+    const deltaX = worldCoords.x - dragStart.current.x;
+    const deltaY = worldCoords.y - dragStart.current.y;
+    
+    // IMMEDIATE preview update - no RAF delay
+    const previewShape = moveShape(shapeStart.current, deltaX, deltaY);
+    setDragState(true, previewShape);
+    
+  }, [setDragState, view]);
 
   const onMouseUp = useCallback(() => {
+    if (!isDragging.current) return;
+    
+    // Get the final drag preview shape
+    const dragPreviewShape = useShapesStore.getState().dragPreviewShape;
+    
+    if (dragPreviewShape && selectedShape) {
+      // Commit the final shape position
+      commitDraggedShape(dragPreviewShape);
+    } else {
+      // If no preview, just clear drag state
+      setDragState(false, null);
+    }
+    
+    // Reset drag state
     isDragging.current = false;
-    latestMouse.current = null;
-  }, []);
+    
+  }, [selectedShape, commitDraggedShape, setDragState]);
 
   return {
     onMouseDown,
